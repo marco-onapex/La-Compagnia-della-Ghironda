@@ -1,0 +1,10 @@
+# GitHub Pages configuration
+
+theme: jekyll-theme-slate
+title: La Compagnia della Ghironda
+description: Sito ufficiale della gilda The Miracle Shard
+show_downloads: false
+
+# SEO
+lang: it
+locale: it_IT
