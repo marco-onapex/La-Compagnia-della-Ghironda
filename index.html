@@ -13,12 +13,13 @@
     <title>La Compagnia della Ghironda - The Miracle Shard</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75'>🎻</text></svg>">
     <!-- Security headers -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://polyfill.io https://cdn.polyfill.io; style-src 'self' 'unsafe-hashes' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-hashes' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:;">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     
     <!-- Polyfill per IE11 e browser legacy (async per non bloccare page load) -->
-    <script async src="https://polyfill.io/v3/polyfill.min.js?features=IntersectionObserver,requestAnimationFrame"></script>
+    <script async src="https://cdn.jsdelivr.net/npm/intersection-observer@0.12/intersection-observer.js"></script>
+    <script async src="https://cdn.jsdelivr.net/npm/raf@3/index.js"></script>
     <!-- Google Fonts: Cinzel, Crimson Text per estetica medievale -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
