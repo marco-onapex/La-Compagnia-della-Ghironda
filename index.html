@@ -17,9 +17,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     
-    <!-- Polyfill per IE11 e browser legacy (async per non bloccare page load) -->
+    <!-- Polyfill per IE11: IntersectionObserver (requestAnimationFrame ha fallback nativo nel JS) -->
     <script async src="https://cdn.jsdelivr.net/npm/intersection-observer@0.12/intersection-observer.js"></script>
-    <script async src="https://cdn.jsdelivr.net/npm/raf@3/index.js"></script>
     <!-- Google Fonts: Cinzel, Crimson Text per estetica medievale -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
