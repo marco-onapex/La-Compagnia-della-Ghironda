@@ -1038,6 +1038,11 @@ footer a:focus-visible {
   border-radius: 1px;
 }
 
+.footer-link {
+  color: var(--color-accent-gold);
+  text-decoration: none;
+}
+
 /* ============================================
    RESPONSIVE - MOBILE FIRST
    ============================================ */
