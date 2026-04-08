@@ -128,6 +128,44 @@ body {
 }
 
 /* ============================================
+   IE11 FALLBACK - CSS Custom Properties
+   ============================================ */
+@supports not (--css: variables) {
+  body {
+    background-color: #0f0a1a;
+    color: #E8E0D4;
+  }
+  
+  header {
+    background: linear-gradient(180deg, 
+      rgba(32, 25, 42, 0.98) 0%, 
+      rgba(15, 10, 26, 0.95) 100%);
+  }
+  
+  .section h2 {
+    color: #EFC966;
+  }
+  
+  .section h3 {
+    color: #EFC966;
+  }
+  
+  .hero h1 {
+    color: #EFC966;
+  }
+  
+  .hero-subtitle {
+    color: #FF6B6B;
+  }
+  
+  footer {
+    background: linear-gradient(180deg, 
+      rgba(32, 25, 42, 0.98) 0%, 
+      rgba(15, 10, 26, 0.99) 100%);
+  }
+}
+
+/* ============================================
    ACCESSIBILITY & SKIP LINK
    ============================================ */
 

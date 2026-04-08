@@ -7,6 +7,17 @@
  */
 
 // ============================================
+// IE11 Compatibility Shim
+// ============================================
+
+// Fallback per requestAnimationFrame in IE9-IE10
+if (!window.requestAnimationFrame) {
+  window.requestAnimationFrame = function(callback) {
+    return setTimeout(callback, 16);
+  };
+}
+
+// ============================================
 // 1. Misura altezza header
 // ============================================
 
@@ -24,10 +35,15 @@ updateHeaderHeight();
 // Aggiorna al resize della finestra
 window.addEventListener('resize', updateHeaderHeight);
 
-// Aggiorna quando i font caricano
-document.fonts.ready.then(() => {
-  updateHeaderHeight();
-});
+// Aggiorna quando i font caricano (IE11 fallback)
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(() => {
+    updateHeaderHeight();
+  });
+} else {
+  // IE11 fallback: aggiorna dopo 1s per font load
+  setTimeout(updateHeaderHeight, 1000);
+}
 
 // ============================================
 // 2. Intersection Observer per titolo hero
