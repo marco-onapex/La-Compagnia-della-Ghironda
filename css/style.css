@@ -705,8 +705,9 @@ nav a:focus-visible {
       black 93%,
       rgba(0, 0, 0, 0.3) 97%,
       rgba(0, 0, 0, 0) 100%);
-  mask-composite: multiply, intersect;
   -webkit-mask-composite: source-in, source-in;
+  -moz-mask-composite: intersect, intersect;
+  mask-composite: intersect;
 }
 
 @keyframes gentle-float {
