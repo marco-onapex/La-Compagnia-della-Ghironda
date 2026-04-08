@@ -148,6 +148,35 @@ if (document.fonts && document.fonts.ready) {
 // 2. Intersection Observer per titolo hero
 // ============================================
 
+/**
+ * Inizializza visibilità dinamica del titolo nell'header usando Intersection Observer
+ * 
+ * Responsabilità:
+ * 1. Monitora quando il titolo hero (h1) esce dal viewport
+ * 2. Mostra il titolo nell'header (header-title-wrapper) solo quando hero title è nascosto
+ * 3. Gestisce aria-hidden e tabindex per accessibilità screen reader
+ * 4. Evita manipolazione DOM inutile mediante caching dello stato (lastLogoState)
+ * 
+ * ALGORITMO INTERSECTION OBSERVER:
+ * - Osserva l'elemento '.hero h1' con threshold [0, 0.2]
+ * - Se ratio < 0.2 (>80% uscito dal viewport) → mostra header title
+ * - Se ratio >= 0.2 (ancora visibile) → nascondi header title
+ * - Transizioni CSS fluide (visibility 300ms, opacity 300ms)
+ * 
+ * ACCESSIBILITÀ:
+ * - Quando visibile: aria-hidden="false", tabindex="0" (focusabile)
+ * - Quando nascosto: aria-hidden="true", tabindex="-1" (non focusabile)
+ * - Importante per screen reader: evita annuncio duplicato del titolo
+ * 
+ * RETRY LOGIC:
+ * - Se elementi DOM non trovati, riprova fino a DOM_RETRY_LIMIT (3 volte)
+ * - Timeout tra retry: DOM_RETRY_TIMEOUT_MS (500ms)
+ * - Fallback silenzioso se elementi non trovati dopo max retry
+ * 
+ * @function initHeaderTitleVisibility
+ * @param {number} [retryCount=0] - Numero di tentativi attuali (usato internamente)
+ * @returns {void}
+ */
 function initHeaderTitleVisibility(retryCount = 0) {
   const heroTitle = document.querySelector('.hero h1');
   const headerTitleWrapper = document.querySelector('.header-title-wrapper');
@@ -222,6 +251,38 @@ function initHeaderTitleVisibility(retryCount = 0) {
 // 3. Intersection Observer per sezioni attive
 // ============================================
 
+/**
+ * Gestisce aria-current per la navigazione attiva basata su scroll position
+ * 
+ * Responsabilità:
+ * 1. Traccia quale sezione è attualmente visibile nel viewport
+ * 2. Aggiorna aria-current="page" sul link di navigazione corrispondente
+ * 3. Rimuove aria-current dagli altri link
+ * 4. Fornisce feedback visuale e screen reader feedback
+ * 
+ * ALGORITMO:
+ * 1. Seleziona tutti gli elementi 'section[id]' (sezioni con ID)
+ * 2. Seleziona tutti i link 'nav a[href^="#"]' (link di navigazione)
+ * 3. Crea mappa sectionId → link element per lookups rapidi
+ * 4. IntersectionObserver monitora quando sezioni entrano in viewport
+ * 5. Quando sezione entry.isIntersecting={true}:
+ *    - Rimuovi aria-current da TUTTI i link
+ *    - Aggiungi aria-current="page" al link della sezione attiva
+ * 
+ * PARAMETRI OBSERVER:
+ * - rootMargin: '-85px 0px -66% 0px'
+ *   * -85px top: offset dell'header height (sezione considerate "visible" quando passano header)
+ *   * -66% bottom: sezione visibile solo nel top 34% della viewport (80% di scroll margin per priorità top)
+ * - threshold: [0, 0.5] = trigger al 0% e 50% visibility
+ * 
+ * NOTA ACCESSIBILITÀ:
+ * - aria-current="page" deve essere ON SOLO QUANDO entry.isIntersecting (non quando esce)
+ * - Previene annunci screen reader ridondanti
+ * - Link mantenuti nel tab order (nessun tabindex modificato)
+ * 
+ * @function initActiveNavLink
+ * @returns {void}
+ */
 function initActiveNavLink() {
   // Monitora tutte le sezioni
   const sections = document.querySelectorAll('section[id]');
@@ -278,6 +339,80 @@ function initActiveNavLink() {
 // 4. Calcola dimensioni ghironda e genera cerchi dinamici
 // ============================================
 
+/**
+ * Genera SVG concentrico dinamico con algoritmo Fractional Brownian Motion (fBm)
+ * Crea effetto di profondità infernale attorno all'icona della ghironda
+ * 
+ * RESPONSABILITÀ:
+ * 1. Misura dimensioni dell'elemento .ghironda-icon a runtime
+ * 2. Calcola 9 raggi concentrici basato su geometria della pagina
+ * 3. Genera 9 cerchi con bordi frastagliati (topografici) usando fBm
+ * 4. Imposta SVG via CSS custom property --ghironda-circles (background-image)
+ * 5. Ricalcola al resize della finestra (con debounce 500ms)
+ * 
+ * ALGORITMO CALCOLO RAGGI:
+ * Fase 1: Calcola r1 (raggio che inscrive l'immagine renderizzata)
+ *         - r1 = diagonale bounding box / 2
+ * 
+ * Fase 2: Calcola r9 (raggio che ricopre tutto l'hero section)
+ *         - Distanze dal centro immagine ai 4 angoli della hero section
+ *         - r9 = max(distanze) * 0.95 (GHIRONDA_RADIUS_SAFETY_FACTOR)
+ * 
+ * Fase 3: Calcola ratio di espansione logaritmica
+ *         - ratio = (r9 / r1) ^ (1/8)
+ *         - Questo fa sì che ratio^8 = r9/r1 (crescita esponenziale "naturale")
+ * 
+ * Fase 4: Genera 9 raggi
+ *         - r_i = r1 * ratio^i (per i=0..8)
+ *         - Far dal più piccolo (centro) al più grande (bordo)
+ * 
+ * ALGORITMO fBm (FRACTIONAL BROWNIAN MOTION):
+ * Crea contour topografiche naturali accumulando noise a multiple frequenze
+ * 
+ * Per ogni cerchio i (0-8):
+ *   1. Genera 200 punti attorno al circonferenza (numPoints)
+ *   2. Per ogni punto:
+ *      - angle = (j / 200) * 2π
+ *      - Accumula 3 ottave di perturbazione:
+ *        * octave 0: freq=2Hz,   amp=maxAmp        (onde grandi)
+ *        * octave 1: freq=4Hz,   amp=maxAmp/2      (onde medie)
+ *        * octave 2: freq=8Hz,   amp=maxAmp/4      (onde piccole)
+ *      - perturbation = Σ sin(angle * freq) * amp
+ *      - radius_finale = baseRadius + perturbation
+ *   3. Crea SVG path con linea M/L da questi 200 punti
+ * 
+ * STILE VISIVO (PALETTE DEL KUR NUGHUL):
+ * Fill colors (Colori infernali, dal cremisi gitano al nero):
+ *   - Centro (i=8):   #0a0000 (nero assoluto - abyss)
+ *   - Esterno (i=0):  #8B3A3A (rosso cremisi scuro - fuoco infernale)
+ * 
+ * Fill opacity (decrescente verso esterno):
+ *   - Centro: 80%
+ *   - Esterno: 16%
+ *   - Step: -8% per livello
+ * 
+ * Stroke (contorno topografico):
+ *   - Colori: nero/rosso scurissimo (#000000 centro, #330000 esterno)
+ *   - Width crescente verso esterno: 2.2px → 5.7px
+ *   - Opacity decrescente: 95% → 40%
+ *   - Effetto: linee di contorno "topografiche" ben marcate
+ * 
+ * SVG RENDERING:
+ * - ViewBox dimensionato su r9 * 2.1 (GHIRONDA_VIEWBOX_FACTOR)
+ * - Disegna dall'esterno al centro (i=8..0) → centro appare ON TOP
+ * - Codificato come data:image/svg+xml URL
+ * - Imposto in --ghironda-circles CSS custom property
+ * - Usato come background-image del .ghironda-wrapper
+ * 
+ * PERFORMANCE OPTIMIZATION:
+ * - Caching lastSvgUrl: rigenera SVG SOLO se dimensioni cambiano
+ * - Debounce resize: rigenera max 1x ogni 500ms durante resize
+ * - requestAnimationFrame fallback: genera async se immagine non caricata
+ * - Supporto IE11: setTimeout fallback per generazione asincrona
+ * 
+ * @function initDynamicConcentricCircles
+ * @returns {void}
+ */
 function initDynamicConcentricCircles() {
   const ghirondaImg = document.querySelector('.ghironda-icon');
   const ghirondaWrapper = document.querySelector('.ghironda-wrapper');
