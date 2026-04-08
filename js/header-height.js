@@ -1,19 +1,101 @@
 /**
  * Header Height Measurement & Dynamic Title Visibility
- * Best practices:
+ * 
+ * Core responsibilities:
  * 1. Misura l'altezza reale dell'header e la imposta come variabile CSS
  * 2. Usa Intersection Observer per monitorare quando il titolo hero esce dal viewport
  * 3. Mostra il titolo nell'header solo quando il titolo hero non è visibile
+ * 4. Gestisce la navigazione attiva con aria-current per accessibilità
+ * 5. Genera SVG concentrico dinamico basato su calcoli topografici (fBm algorithm)
  */
+
+// ============================================
+// Configuration Constants
+// ============================================
+
+/** Durata frame in millisecondi per requestAnimationFrame fallback (1000 / 60 FPS) */
+const RAF_FALLBACK_MS = 16;
+
+/** Timeout per attesa caricamento font in IE11 (ms) */
+const FONT_LOAD_TIMEOUT_MS = 1000;
+
+/** Retry timeout per elementi DOM non ancora pronti (ms) */
+const DOM_RETRY_TIMEOUT_MS = 500;
+
+/** Numero massimo di retry per inizializzazione elementi */
+const DOM_RETRY_LIMIT = 3;
+
+/** Threshold per Intersection Observer (Hero title visibility) */
+const HERO_VISIBILITY_THRESHOLD = [0, 0.2];
+
+/** Ratio minimo per considerare header title visibile (< 20% in viewport) */
+const HERO_VISIBILITY_RATIO_THRESHOLD = 0.2;
+
+/** Root margin per Intersection Observer sezioni */
+const SECTION_OBSERVER_ROOT_MARGIN = '-85px 0px -66% 0px';
+
+/** Thresholds per Intersection Observer sezioni */
+const SECTION_VISIBILITY_THRESHOLD = [0, 0.5];
+
+/** Fattore scala per raggio massimo ghironda (95% per non toccare bordo) */
+const GHIRONDA_RADIUS_SAFETY_FACTOR = 0.95;
+
+/** Numero totali di cerchi concentrici generati */
+const GHIRONDA_CIRCLE_COUNT = 9;
+
+/** Numero di octave per Fractional Brownian Motion algorithm */
+const FBM_OCTAVE_COUNT = 3;
+
+/** Frequenza base per ondulazioni topografiche */
+const FBM_BASE_FREQUENCY = 2;
+
+/** Numero punti per percorso SVG (qualità curva) */
+const SVG_PATH_POINTS = 200;
+
+/** Ampiezza minima perturbazione (% di raggio base) */
+const SVG_AMPLITUDE_MIN_FACTOR = 0.04;
+
+/** Ampiezza massima per livello esterno */
+const SVG_AMPLITUDE_LEVEL_FACTOR = 0.01;
+
+/** Larghezza stroke minima (px) */
+const SVG_STROKE_WIDTH_MIN = 2.2;
+
+/** Larghezza stroke massima (px) */
+const SVG_STROKE_WIDTH_MAX = 5.7;
+
+/** Opacità fill centro (80%) */
+const SVG_FILL_OPACITY_CENTER = 0.8;
+
+/** Decremento opacità per livello */
+const SVG_FILL_OPACITY_STEP = 0.08;
+
+/** Opacità stroke minima */
+const SVG_STROKE_OPACITY_MIN = 0.40;
+
+/** Opacità stroke centro */
+const SVG_STROKE_OPACITY_CENTER = 0.95;
+
+/** Decremento opacità stroke per livello */
+const SVG_STROKE_OPACITY_STEP = 0.07;
+
+/** Viewbox factor (moltiplicatore per r9) */
+const SVG_VIEWBOX_FACTOR = 2.1;
+
+/** Timeout debounce per resize (ms) */
+const RESIZE_DEBOUNCE_MS = 500;
 
 // ============================================
 // IE11 Compatibility Shim
 // ============================================
 
-// Fallback per requestAnimationFrame in IE9-IE10
+/**
+ * Polyfill per requestAnimationFrame nei browser legacy (IE9-IE10)
+ * Fallback a setTimeout con framerate ~60fps
+ */
 if (!window.requestAnimationFrame) {
   window.requestAnimationFrame = function(callback) {
-    return setTimeout(callback, 16);
+    return setTimeout(callback, RAF_FALLBACK_MS);
   };
 }
 
@@ -21,6 +103,23 @@ if (!window.requestAnimationFrame) {
 // 1. Misura altezza header
 // ============================================
 
+/**
+ * Aggiorna la variabile CSS --header-height basata sull'altezza reale dell'elemento <header>
+ * Necessario per calcoli di scroll-margin-top e posizionamento sticky corretto
+ * 
+ * Algoritmo:
+ * 1. Seleziona elemento header dal DOM
+ * 2. Legge offsetHeight (include padding, esclude margin)
+ * 3. Imposta --header-height presso root element per accessibilità CSS
+ * 
+ * Chiamato da:
+ * - Inizializzazione DOMContentReady
+ * - Event listener resize window
+ * - Promise document.fonts.ready (caricamento font completo)
+ * 
+ * @function updateHeaderHeight
+ * @returns {void}
+ */
 function updateHeaderHeight() {
   const header = document.querySelector('header');
   if (header) {
@@ -41,8 +140,8 @@ if (document.fonts && document.fonts.ready) {
     updateHeaderHeight();
   });
 } else {
-  // IE11 fallback: aggiorna dopo 1s per font load
-  setTimeout(updateHeaderHeight, 1000);
+  // IE11 fallback: aggiorna dopo timeout per font load asincrono
+  setTimeout(updateHeaderHeight, FONT_LOAD_TIMEOUT_MS);
 }
 
 // ============================================
