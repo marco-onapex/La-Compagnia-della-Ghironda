@@ -1015,6 +1015,16 @@ main {
   text-shadow: none;
 }
 
+/* Quote liberty styling - Citazione importante centrata in oro */
+.quote-liberty {
+  font-style: italic;
+  color: var(--color-accent-gold);
+  text-align: center;
+  margin: var(--sp-2xl) 0;
+  font-size: var(--fs-lg);
+  letter-spacing: 0.05em;
+}
+
 .section strong {
   color: var(--color-gipsy-red);
   font-weight: 700;
