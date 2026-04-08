@@ -33,30 +33,16 @@ document.fonts.ready.then(() => {
 // 2. Intersection Observer per titolo hero
 // ============================================
 
-function initHeaderTitleVisibility() {
-  console.log('📋 initHeaderTitleVisibility() called');
-  console.log('📋 document.readyState:', document.readyState);
-  
+function initHeaderTitleVisibility(retryCount = 0) {
   const heroTitle = document.querySelector('.hero h1');
   const headerTitleWrapper = document.querySelector('.header-title-wrapper');
   const headerTitleLink = document.querySelector('.header-title-link');
   const headerContainer = document.querySelector('.header-container');
   
-  console.log('📍 Ricerca elementi:', {
-    heroTitle: !!heroTitle,
-    headerTitleWrapper: !!headerTitleWrapper,
-    headerTitleLink: !!headerTitleLink,
-    headerContainer: !!headerContainer
-  });
-  console.log('📊 Conteggio DOM:', {
-    '.hero elements': document.querySelectorAll('.hero').length,
-    'h1 elements': document.querySelectorAll('h1').length,
-    '.header-title-wrapper elements': document.querySelectorAll('.header-title-wrapper').length
-  });
-  
   if (!heroTitle || !headerTitleWrapper || !headerContainer) {
-    console.error('❌ Elementi critici non trovati! Riprovo tra 500ms...');
-    setTimeout(initHeaderTitleVisibility, 500);
+    if (retryCount < 3) {
+      setTimeout(() => initHeaderTitleVisibility(retryCount + 1), 500);
+    }
     return;
   }
 
@@ -77,7 +63,7 @@ function initHeaderTitleVisibility() {
         // Se il titolo hero è FUORI dal viewport (ratio < 0.2), mostra il logo
         const shouldShowLogo = entry.intersectionRatio < 0.2;
         
-        console.log('🎯 Hero Title Ratio:', entry.intersectionRatio.toFixed(2), '| Show Logo:', shouldShowLogo);
+
         
         // Previeni DOM manipulation se lo stato non è cambiato
         if (shouldShowLogo === lastLogoState) return;
@@ -115,7 +101,6 @@ function initHeaderTitleVisibility() {
   );
 
   observer.observe(heroTitle);
-  console.log('✅ Intersection Observer inizializzato su:', heroTitle);
 }
 
 // ============================================
@@ -123,17 +108,11 @@ function initHeaderTitleVisibility() {
 // ============================================
 
 function initActiveNavLink() {
-  console.log('📋 initActiveNavLink() called');
-  
   // Monitora tutte le sezioni
   const sections = document.querySelectorAll('section[id]');
   const navLinks = document.querySelectorAll('nav a[href^="#"]');
   
-  console.log('📊 Sezioni trovate:', sections.length);
-  console.log('📊 Link nav trovati:', navLinks.length);
-  
   if (sections.length === 0 || navLinks.length === 0) {
-    console.warn('⚠️ Sezioni o link nav non trovati');
     return;
   }
   
@@ -147,8 +126,6 @@ function initActiveNavLink() {
     }
   });
   
-  console.log('🗺️ Section Map:', Object.keys(sectionMap));
-  
   // Intersection Observer for sections
   const sectionObserver = new IntersectionObserver(
     (entries) => {
@@ -159,8 +136,6 @@ function initActiveNavLink() {
         if (!link) return;
         
         if (entry.isIntersecting) {
-          console.log('✅ Sezione visibile:', sectionId);
-          
           // Rimuovi aria-current da tutti i link
           navLinks.forEach(l => {
             l.removeAttribute('aria-current');
@@ -182,8 +157,6 @@ function initActiveNavLink() {
   sections.forEach(section => {
     sectionObserver.observe(section);
   });
-  
-  console.log('✅ Intersection Observer per sezioni inizializzato');
 }
 
 // ============================================
@@ -209,7 +182,7 @@ function initDynamicConcentricCircles() {
     const height = rect.height;
     
     if (width === 0 || height === 0) {
-      setTimeout(generateCircles, 100);
+      requestAnimationFrame(generateCircles);
       return;
     }
     
@@ -244,15 +217,11 @@ function initDynamicConcentricCircles() {
     const fillColors = ['#8B3A3A', '#7A2F2F', '#6B2424', '#5A1A1A', '#4A1515', 
                         '#3A0F0F', '#2A0A0A', '#1a0505', '#0a0000'];
     
-    console.log('🎨 DEBUG PALETTE:', fillColors);
-    console.log('📐 r1 (interno):', r1, 'r9 (esterno):', r9, 'ratio:', ratio);
-    
     let circlesHtml = '';
     
     for (let i = 8; i >= 0; i--) {  // DISEGNA DALL'ESTERNO AL CENTRO così il centro (scuro) appare ON TOP
       const baseRadius = r1 * Math.pow(ratio, i);
       const assignedColor = fillColors[8-i];
-      console.log(`🔵 i=${i}: radius=${baseRadius.toFixed(0)}, color=${assignedColor}`);
       
       // fBm: accumula multiple ottave di rumore per frastagliamenti naturali
       const numPoints = 200;
@@ -302,9 +271,6 @@ function initDynamicConcentricCircles() {
     const vbHalf = Math.floor(vb / 2);
     const svgHtml = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${-vbHalf} ${-vbHalf} ${Math.ceil(vb)} ${Math.ceil(vb)}" width="${Math.ceil(vb)}" height="${Math.ceil(vb)}"><g>${circlesHtml}</g></svg>`;
     
-    console.log('📊 SVG GENERATED - Prima riga:', circlesHtml.substring(0, 120));
-    console.log('📊 SVG GENERATED - Ultima riga:', circlesHtml.substring(circlesHtml.length - 120));
-    
     // 6. IMPOSTA NEL CSS VIA VARIABILE
     const svgUrl = `url('data:image/svg+xml;utf8,${encodeURIComponent(svgHtml)}')`;
     
@@ -331,19 +297,13 @@ function initDynamicConcentricCircles() {
 }
 
 // Inizializza quando il DOM è pronto
-console.log('🔄 Script header-height.js caricato');
-console.log('📊 readyState:', document.readyState);
-
 if (document.readyState === 'loading') {
-  console.log('⏳ DOM in loading, attendo DOMContentLoaded...');
   document.addEventListener('DOMContentLoaded', () => {
-    console.log('✅ DOMContentLoaded event ricevuto');
     initHeaderTitleVisibility();
     initActiveNavLink();
     initDynamicConcentricCircles();
   });
 } else {
-  console.log('✅ DOM già caricato, inizializzo subito');
   initHeaderTitleVisibility();
   initActiveNavLink();
   initDynamicConcentricCircles();

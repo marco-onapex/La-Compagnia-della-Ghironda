@@ -12,6 +12,7 @@
   /* Palette Gitana Principale - Opaca e Autentica */
   --color-ocra-gold: #8B6F47;       /* Ocra terra caldo (NEW) */
   --color-gold: #9D7E1A;            /* Oro brunito gitano */
+  --color-accent-gold: #D4B896;     /* Accento oro chiaro (usato nell'HTML) */
   --color-gold-light: #D4B896;      /* Oro chiaro pergamena illuminata */
   --color-gipsy-red: #A73A3A;       /* Rosso cremisi vivo (intensificato) */
   --color-gipsy-green: #4A5F2F;     /* Verde oliva ricco (intensificato) */
@@ -31,9 +32,9 @@
   --color-text-muted: #927E6B;      /* Testo muted terra */
   
   /* Tipografia - Font Stack Medievale & Drammatico */
-  --font-serif: 'Cinzel', 'Crimson Text', 'Palatino Linotype', 'Garamond', 'Georgia', serif;
+  --font-serif: 'Cinzel', 'Crimson Text', serif;
   --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
-  --font-decorative: 'Cinzel Decorative', 'Palatino Linotype', 'Garamond', serif;
+  --font-decorative: 'Cinzel Decorative', serif;
   
   /* Font Sizes - Scala Modular 1.125 */
   --fs-xs: 0.75rem;
@@ -743,7 +744,12 @@ nav a:focus-visible {
     0 0 25px rgba(0, 0, 0, 0.3);
   position: relative;
   overflow: visible;
-  scroll-margin-top: 0;
+  scroll-margin-top: var(--header-height);
+}
+
+/* Main content spacing per skip link */
+main {
+  scroll-margin-top: var(--header-height);
 }
 
 /* Ornamenti corner stendardo */
@@ -1145,10 +1151,6 @@ footer a:focus-visible {
 
   .hero h1 {
     font-size: var(--fs-3xl);
-    letter-spacing: 1px;
-  }
-
-  .hero h1 {
     letter-spacing: 2px;
   }
 
@@ -1274,9 +1276,7 @@ footer a:focus-visible {
   color: var(--color-emerald);
 }
 
-.text-mystic {
-  color: var(--color-mystic-purple);
-}
+
 
 .text-ceremony {
   background: linear-gradient(135deg, var(--color-gold), var(--color-fire-orange), var(--color-crimson));
