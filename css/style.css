@@ -376,6 +376,7 @@ header {
   pointer-events: auto;
   white-space: nowrap;
   outline: none;
+  will-change: opacity, visibility;
 }
 
 /* Mostra titolo solo quando wrapper HA .visible */
@@ -528,6 +529,7 @@ nav a::after {
   height: 2px;
   background: linear-gradient(90deg, #EFC966, #C97A3A, #FF6B6B);
   transition: width 350ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: width;
 }
 
 nav a:hover,

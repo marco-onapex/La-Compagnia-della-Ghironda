@@ -17,8 +17,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     
-    <!-- Polyfill per IE11 e browser legacy -->
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=IntersectionObserver,requestAnimationFrame"></script>
+    <!-- Polyfill per IE11 e browser legacy (async per non bloccare page load) -->
+    <script async src="https://polyfill.io/v3/polyfill.min.js?features=IntersectionObserver,requestAnimationFrame"></script>
     <!-- Google Fonts: Cinzel, Crimson Text per estetica medievale -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -55,7 +55,7 @@
             <div class="hero-divider"></div>
             <p class="hero-tagline">Nel cuore dell'Arcipelago Perduto, dove la Libertà combatte l'Oscurità</p>
             <div class="ghironda-wrapper">
-                <img src="images/ghironda.png" alt="Ghironda - Strumento musicale gitano" class="ghironda-icon">
+                <img src="images/ghironda.png" alt="Ghironda - Strumento musicale gitano" class="ghironda-icon" loading="lazy" decoding="async">
             </div>
             <p class="hero-subtitle">Finché Gira, il Mondo Resta</p>
         </div>

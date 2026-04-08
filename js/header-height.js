@@ -83,7 +83,7 @@ const SVG_STROKE_OPACITY_STEP = 0.07;
 const SVG_VIEWBOX_FACTOR = 2.1;
 
 /** Timeout debounce per resize (ms) */
-const RESIZE_DEBOUNCE_MS = 500;
+const RESIZE_DEBOUNCE_MS = 300;
 
 // ============================================
 // IE11 Compatibility Shim
@@ -551,10 +551,27 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     initHeaderTitleVisibility();
     initActiveNavLink();
-    initDynamicConcentricCircles();
+    
+    // Defer non-critical SVG generation usando requestIdleCallback
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => {
+        initDynamicConcentricCircles();
+      });
+    } else {
+      // Fallback per browser senza requestIdleCallback
+      setTimeout(initDynamicConcentricCircles, 1000);
+    }
   });
 } else {
   initHeaderTitleVisibility();
   initActiveNavLink();
-  initDynamicConcentricCircles();
+  
+  // Defer non-critical SVG generation
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(() => {
+      initDynamicConcentricCircles();
+    });
+  } else {
+    setTimeout(initDynamicConcentricCircles, 1000);
+  }
 }
