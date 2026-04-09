@@ -17,7 +17,7 @@
 const RAF_FALLBACK_MS = 16;
 
 /** Timeout per attesa caricamento font in IE11 (ms) */
-const FONT_LOAD_TIMEOUT_MS = 1000;
+const FONT_LOAD_TIMEOUT_MS = 1500;
 
 /** Retry timeout per elementi DOM non ancora pronti (ms) */
 const DOM_RETRY_TIMEOUT_MS = 500;

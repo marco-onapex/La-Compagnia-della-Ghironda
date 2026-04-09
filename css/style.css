@@ -2,6 +2,12 @@
    LA COMPAGNIA DELLA GHIRONDA - STILE PRINCIPALE
    Estetica: Fantasy Épico, Gipsy, Demoniaco
    Ottimizzato: Tipografia, Accessibilità, Performance
+   
+   📄 FONT LOADING STRATEGY:
+   - Google Fonts con display=swap in HTML link tag
+   - Swap strategy: mostra fallback system fonts subito, swap quando custom font carica
+   - Previene FOIT (Flash of Invisible Text) e CLS (Cumulative Layout Shift)
+   - Preconnect + crossorigin per connessione parallela ottimizzata
    ============================================ */
 
 :root {
@@ -508,12 +514,6 @@ nav a {
   outline-offset: 2px;
   white-space: nowrap;
   flex-shrink: 0;
-}
-
-nav a:focus-visible {
-  outline: 2px solid var(--color-gold);
-  outline-offset: 4px;
-  border-radius: 2px;
 }
 
 nav a::before {

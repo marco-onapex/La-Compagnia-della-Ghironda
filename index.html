@@ -4,12 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="La Compagnia della Ghironda: una comunità di spiriti liberi che combatte l'Oscurità nell'Arcipelago Perduto. Scopri la loro storia, organizzazione e spirito combattivo.">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
     <meta name="theme-color" content="#0f0a1a">
     <meta name="author" content="La Compagnia della Ghironda">
     <meta property="og:title" content="La Compagnia della Ghironda - The Miracle Shard">
     <meta property="og:description" content="Una comunità di spiriti liberi che combatte l'Oscurità nell'Arcipelago Perduto.">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="it_IT">
+    <meta property="og:image" content="https://marco-onapex.github.io/La-Compagnia-della-Ghironda/images/ghironda.png">
+    <meta property="og:image:width" content="500">
+    <meta property="og:image:height" content="500">
+    <meta property="og:url" content="https://marco-onapex.github.io/La-Compagnia-della-Ghironda/">
+    <meta property="og:site_name" content="La Compagnia della Ghironda">
+    <!-- Twitter Card for social sharing -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="La Compagnia della Ghironda - The Miracle Shard">
+    <meta name="twitter:description" content="Una comunità di spiriti liberi che combatte l'Oscurità nell'Arcipelago Perduto. Scopri la storia della gilda.">
+    <meta name="twitter:image" content="https://marco-onapex.github.io/La-Compagnia-della-Ghironda/images/ghironda.png">
+    <!-- Canonical URL to prevent duplicate content -->
+    <link rel="canonical" href="https://marco-onapex.github.io/La-Compagnia-della-Ghironda/">
     <title>La Compagnia della Ghironda - The Miracle Shard</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75'>🎻</text></svg>">
     <!-- Security headers -->
@@ -18,12 +31,60 @@
     <meta name="referrer" content="strict-origin-when-cross-origin">
     
     <!-- Polyfill per IE11: IntersectionObserver (requestAnimationFrame ha fallback nativo nel JS) -->
-    <script async src="https://cdn.jsdelivr.net/npm/intersection-observer@0.12/intersection-observer.js"></script>
+    <script async defer src="https://cdn.jsdelivr.net/npm/intersection-observer@0.12/intersection-observer.js"></script>
     <!-- Google Fonts: Cinzel, Crimson Text per estetica medievale -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=Crimson+Text:ital@0;1&display=swap" rel="stylesheet" crossorigin>
     <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Schema.org Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "La Compagnia della Ghironda",
+      "url": "https://marco-onapex.github.io/La-Compagnia-della-Ghironda/",
+      "logo": "https://marco-onapex.github.io/La-Compagnia-della-Ghironda/images/ghironda.png",
+      "description": "Una comunità di spiriti liberi dedita alla ricerca, al commercio e alla lotta contro le entità demoniache di Ardania nel gioco Ultima Online su The Miracle Shard.",
+      "sameAs": [
+        "https://www.themiracleshard.com"
+      ]
+    }
+    </script>
+    <!-- BreadcrumbList Schema for navigation structure -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://marco-onapex.github.io/La-Compagnia-della-Ghironda/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Origine e Identità",
+          "item": "https://marco-onapex.github.io/La-Compagnia-della-Ghironda/#origine-identita"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Obiettivo e Organizzazione",
+          "item": "https://marco-onapex.github.io/La-Compagnia-della-Ghironda/#obiettivo-organizzazione"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "Usi e Costumi",
+          "item": "https://marco-onapex.github.io/La-Compagnia-della-Ghironda/#usi-costumi"
+        }
+      ]
+    }
+    </script>
 </head>
 <body>
     <!-- HEADER E NAVIGAZIONE (sticky a livello di body per tutta la pagina) -->
@@ -55,6 +116,13 @@
             <div class="hero-divider"></div>
             <p class="hero-tagline">Nel cuore dell'Arcipelago Perduto, dove la Libertà combatte l'Oscurità</p>
             <div class="ghironda-wrapper">
+                <!-- TO IMPROVE: Add WebP version for better compression
+                     <picture>
+                       <source srcset="images/ghironda.webp" type="image/webp">
+                       <img src="images/ghironda.png" alt="Ghironda..." class="ghironda-icon" loading="lazy" decoding="async">
+                     </picture>
+                     Expected savings: ~30% bandwidth (80KB PNG → 55KB WebP)
+                -->
                 <img src="images/ghironda.png" alt="Ghironda - Strumento musicale gitano" class="ghironda-icon" loading="lazy" decoding="async">
             </div>
             <p class="hero-subtitle">Finché Gira, il Mondo Resta</p>
