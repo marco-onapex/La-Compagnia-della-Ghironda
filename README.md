@@ -26,7 +26,7 @@ La-Compagnia-della-Ghironda/
 ├── css/
 │   └── style.css          # Stile (~1300 linee con documentazione)
 ├── js/
-│   └── header-height.js   # Dinamica header + SVG concentrici
+│   └── main.js            # Dinamica header + SVG concentrici
 ├── images/
 │   └── ghironda.png       # Strumento musicale (hero section)
 ├── robots.txt             # SEO sitemap
