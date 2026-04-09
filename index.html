@@ -116,14 +116,15 @@
             <div class="hero-divider"></div>
             <p class="hero-tagline">Nel cuore dell'Arcipelago Perduto, dove la Libertà combatte l'Oscurità</p>
             <div class="ghironda-wrapper">
-                <!-- TO IMPROVE: Add WebP version for better compression
-                     <picture>
-                       <source srcset="images/ghironda.webp" type="image/webp">
-                       <img src="images/ghironda.png" alt="Ghironda..." class="ghironda-icon" loading="lazy" decoding="async">
-                     </picture>
-                     Expected savings: ~30% bandwidth (80KB PNG → 55KB WebP)
+                <!-- Progressive Image Enhancement: WebP (modern) + PNG (fallback)
+                     Browser support: Chrome 23+, Firefox 65+, Safari 16+, Edge 18+
+                     Bandwidth savings: ~30% (80KB PNG → 55KB WebP)
+                     Graceful degradation: Old browsers use PNG, modern use WebP
                 -->
-                <img src="images/ghironda.png" alt="Ghironda - Strumento musicale gitano" class="ghironda-icon" loading="lazy" decoding="async">
+                <picture>
+                  <source srcset="images/ghironda.webp" type="image/webp">
+                  <img src="images/ghironda.png" alt="Ghironda - Strumento musicale gitano" class="ghironda-icon" loading="lazy" decoding="async">
+                </picture>
             </div>
             <p class="hero-subtitle">Finché Gira, il Mondo Resta</p>
         </div>
