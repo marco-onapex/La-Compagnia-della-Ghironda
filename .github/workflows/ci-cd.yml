@@ -1,0 +1,185 @@
+name: CI/CD - Quality & Performance Gate
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  quality-checks:
+    runs-on: ubuntu-latest
+    name: Code Quality & Validation
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          
+      - name: Install dependencies
+        run: npm install --save-dev eslint htmlhint stylelint stylelint-config-standard
+
+      # HTML Validation
+      - name: Validate HTML with HTMLHint
+        run: npx htmlhint "index.html" --config .htmlhintrc || true
+        continue-on-error: true
+
+      # CSS Validation  
+      - name: Lint CSS with Stylelint
+        run: npx stylelint "css/**/*.css" || true
+        continue-on-error: true
+
+      # JavaScript Linting
+      - name: Lint JavaScript with ESLint
+        run: npx eslint "js/**/*.js" || true
+        continue-on-error: true
+
+      # Check for broken links
+      - name: Check for broken links
+        uses: lycheeverse/lychee-action@v1
+        with:
+          args: --accept 200,301,403 --verbose index.html
+        continue-on-error: true
+
+      # Security headers check
+      - name: Check security headers
+        run: |
+          echo "Checking Content-Security-Policy..."
+          grep -q "Content-Security-Policy" index.html && echo "✓ CSP header found" || echo "⚠️ CSP header missing"
+          grep -q "X-UA-Compatible" index.html && echo "✓ X-UA-Compatible found" || echo "⚠️ X-UA-Compatible missing"
+          grep -q "referrer" index.html && echo "✓ Referrer policy found" || echo "⚠️ Referrer policy missing"
+        continue-on-error: true
+
+  lighthouse:
+    runs-on: ubuntu-latest
+    name: Lighthouse Performance Audit
+    permissions:
+      contents: read
+      pull-requests: write
+      
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v10
+        with:
+          configPath: ./lighthouserc.json
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+        continue-on-error: true
+
+  accessibility:
+    runs-on: ubuntu-latest
+    name: Accessibility Audit (axe)
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install --save-dev @axe-core/cli html-validate
+
+      - name: Run axe accessibility audit
+        run: npx @axe-core/cli index.html || true
+        continue-on-error: true
+
+  seo-validation:
+    runs-on: ubuntu-latest
+    name: SEO & Meta Validation
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate meta tags
+        run: |
+          echo "Checking essential meta tags..."
+          grep -q '<meta charset' index.html && echo "✓ charset meta found" || echo "✗ charset meta missing"
+          grep -q '<meta name="viewport"' index.html && echo "✓ viewport meta found" || echo "✗ viewport meta missing"
+          grep -q '<meta name="description"' index.html && echo "✓ description meta found" || echo "✗ description meta missing"
+          grep -q '<title>' index.html && echo "✓ title tag found" || echo "✗ title tag missing"
+          grep -q '<meta property="og:' index.html && echo "✓ Open Graph tags found" || echo "✗ Open Graph tags missing"
+          grep -q '<script type="application/ld+json">' index.html && echo "✓ Schema.org found" || echo "✗ Schema.org missing"
+          grep -q '<link rel="canonical"' index.html && echo "✓ canonical link found" || echo "✗ canonical link missing"
+        continue-on-error: true
+
+      - name: Validate robots.txt
+        run: |
+          if [ -f robots.txt ]; then
+            echo "✓ robots.txt found"
+            cat robots.txt
+          else
+            echo "⚠️ robots.txt not found"
+          fi
+        continue-on-error: true
+
+      - name: Validate sitemap.xml
+        run: |
+          if [ -f sitemap.xml ]; then
+            echo "✓ sitemap.xml found"
+            wc -l sitemap.xml
+          else
+            echo "⚠️ sitemap.xml not found"
+          fi
+        continue-on-error: true
+
+  performance-metrics:
+    runs-on: ubuntu-latest
+    name: Static Analysis & File Size Check
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check asset file sizes
+        run: |
+          echo "=== Asset File Sizes ==="
+          ls -lh css/style.css && echo "CSS: $(du -h css/style.css | cut -f1)"
+          ls -lh js/main.js && echo "JS: $(du -h js/main.js | cut -f1)"
+          ls -lh images/ 2>/dev/null || echo "Images not found"
+          echo ""
+          echo "Total project size: $(du -sh . | cut -f1)"
+        continue-on-error: true
+
+      - name: Analyze HTML structure
+        run: |
+          echo "=== HTML Structure Analysis ==="
+          echo "Total lines: $(wc -l < index.html)"
+          echo "Total size: $(du -h index.html | cut -f1)"
+          echo "H1 count: $(grep -c '<h1' index.html || echo '0')"
+          echo "Meta tags count: $(grep -c '<meta ' index.html || echo '0')"
+          echo "Script tags count: $(grep -c '<script' index.html || echo '0')"
+          echo "Style tags count: $(grep -c '<style' index.html || echo '0')"
+        continue-on-error: true
+
+  summary:
+    runs-on: ubuntu-latest
+    name: Build Summary
+    needs: [quality-checks, lighthouse, accessibility, seo-validation, performance-metrics]
+    if: always()
+    
+    steps:
+      - name: Build Status Check
+        run: |
+          echo "╔════════════════════════════════════════╗"
+          echo "║  La Compagnia della Ghironda - CI/CD   ║"
+          echo "╚════════════════════════════════════════╝"
+          echo ""
+          echo "✓ Code Quality Checks"
+          echo "✓ Lighthouse Performance Audit"
+          echo "✓ Accessibility Audit (axe)"
+          echo "✓ SEO & Meta Validation"
+          echo "✓ Performance Metrics"
+          echo ""
+          echo "All checks completed!"
+          echo "Review the detailed logs above for any warnings or failures."

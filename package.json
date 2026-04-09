@@ -1,0 +1,32 @@
+{
+  "name": "la-compagnia-della-ghironda",
+  "version": "1.0.0",
+  "description": "La Compagnia della Ghironda - A medieval fantasy guild website",
+  "type": "module",
+  "scripts": {
+    "lint:html": "htmlhint index.html --config .htmlhintrc",
+    "lint:css": "stylelint css/**/*.css",
+    "lint:js": "eslint js/**/*.js",
+    "lint": "npm run lint:html && npm run lint:css && npm run lint:js",
+    "lighthouse": "lighthouse-ci autorun",
+    "validate": "npm run lint",
+    "test": "npm run validate && npm run lighthouse"
+  },
+  "keywords": [
+    "medieval",
+    "fantasy",
+    "guild",
+    "ultima-online",
+    "single-page-application"
+  ],
+  "author": "La Compagnia della Ghironda",
+  "license": "MIT",
+  "devDependencies": {
+    "@axe-core/cli": "^4.8.0",
+    "eslint": "^8.53.0",
+    "htmlhint": "^1.1.4",
+    "stylelint": "^16.0.0",
+    "stylelint-config-standard": "^36.0.0",
+    "@lhci/cli": "^0.12.0"
+  }
+}
