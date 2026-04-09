@@ -11,6 +11,7 @@
     "build": "npm run build:css && npm run build:js",
     "build:css": "csso css/style.css -o dist/style.min.css",
     "build:js": "terser js/main.js -o dist/main.min.js",
+    "prebuild": "npm run test",
     "lighthouse": "lighthouse-ci autorun",
     "validate": "npm run lint",
     "test": "npm run validate"
