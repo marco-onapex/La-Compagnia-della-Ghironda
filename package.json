@@ -8,13 +8,18 @@
     "lint:css": "stylelint css/**/*.css",
     "lint:js": "eslint js/**/*.js",
     "lint": "npm run lint:html && npm run lint:css && npm run lint:js",
-    "build": "npm run build:css && npm run build:js",
+    "build": "npm run build:css && npm run build:js && npm run size-report",
     "build:css": "csso css/style.css -o dist/style.min.css",
-    "build:js": "terser js/main.js -o dist/main.min.js",
+    "build:js": "terser js/main.js -o dist/main.min.js --source-map",
     "prebuild": "npm run test",
+    "clean": "Remove-Item dist -Recurse -Force 2>$null ; $null",
+    "rebuild": "npm run clean && npm run build",
+    "size-report": "node -e \"const fs = require('fs'); const css = fs.statSync('dist/style.min.css').size / 1024; const js = fs.statSync('dist/main.min.js').size / 1024; console.log('\\n=== Bundle Size Report ==='); console.log('CSS: ' + css.toFixed(2) + ' KB'); console.log('JS: ' + js.toFixed(2) + ' KB'); console.log('Total: ' + (css + js).toFixed(2) + ' KB\\n');\"",
     "lighthouse": "lighthouse-ci autorun",
     "validate": "npm run lint",
-    "test": "npm run validate"
+    "test": "npm run validate",
+    "dev": "npm run clean && npm run test",
+    "prod": "npm run build"
   },
   "keywords": [
     "medieval",
