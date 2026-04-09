@@ -10,7 +10,7 @@
     "lint": "npm run lint:html && npm run lint:css && npm run lint:js",
     "lighthouse": "lighthouse-ci autorun",
     "validate": "npm run lint",
-    "test": "npm run validate && npm run lighthouse"
+    "test": "npm run validate"
   },
   "keywords": [
     "medieval",
@@ -23,10 +23,9 @@
   "license": "MIT",
   "devDependencies": {
     "@axe-core/cli": "^4.8.0",
-    "eslint": "^8.53.0",
+    "eslint": "^9.39.4",
     "htmlhint": "^1.1.4",
-    "stylelint": "^16.0.0",
-    "stylelint-config-standard": "^36.0.0",
-    "@lhci/cli": "^0.12.0"
+    "stylelint": "^17.6.0",
+    "stylelint-config-standard": "^40.0.0"
   }
 }

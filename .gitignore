@@ -9,7 +9,6 @@ Thumbs.db
 
 # Dependencies (se aggiungerai build tools in futuro)
 node_modules/
-package-lock.json
 yarn.lock
 
 # Build outputs

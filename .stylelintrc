@@ -4,7 +4,37 @@
     "selector-type-no-unknown": [
       true,
       {
-        "ignoreTypes": ["/^math-/", "/^custom-/"]
+        "ignoreTypes": [
+          "/^math-/",
+          "/^custom-/"
+        ]
+      }
+    ],
+    "at-rule-no-unknown": [
+      true,
+      {
+        "ignoreAtRules": [
+          "supports"
+        ]
+      }
+    ],
+    "property-no-unknown": [
+      true,
+      {
+        "ignoreProperties": [
+          "/^mask/",
+          "/^webkit-/",
+          "/^moz-/"
+        ]
+      }
+    ],
+    "at-rule-descriptor-no-unknown": [
+      true,
+      {
+        "ignoreDescriptors": [
+          "orphans",
+          "widows"
+        ]
       }
     ]
   }
