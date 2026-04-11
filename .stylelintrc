@@ -36,6 +36,14 @@
           "widows"
         ]
       }
-    ]
+    ],
+    "max-nesting-depth": [3, { "ignore": ["blockless-at-rules"] }],
+    "selector-max-compound-selectors": 4,
+    "selector-max-specificity": "0,3,2",
+    "declaration-property-value-no-unknown": true,
+    "color-no-hex": null,
+    "function-url-quotes": "always",
+    "font-weight-notation": "numeric",
+    "block-no-empty": true
   }
 }

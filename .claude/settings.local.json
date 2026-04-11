@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run:*)",
+      "Bash(xargs head:*)",
+      "Bash(wc -c dist/*.css dist/*.js)",
+      "Bash(node -e \"const fs=require\\('fs'\\);const zlib=require\\('zlib'\\);const css=zlib.gzipSync\\(fs.readFileSync\\('dist/style.min.css'\\)\\).length;const js=zlib.gzipSync\\(fs.readFileSync\\('dist/main.min.js'\\)\\).length;console.log\\('CSS gzip:',+\\(css/1024\\).toFixed\\(2\\),'KB'\\);console.log\\('JS gzip:',+\\(js/1024\\).toFixed\\(2\\),'KB'\\);console.log\\('Total gzip:',+\\(\\(css+js\\)/1024\\).toFixed\\(2\\),'KB'\\);\")",
+      "Bash(node scripts/performance-budget.js)",
+      "Bash(node scripts/security-audit.js)",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(where chrome:*)",
+      "Bash(where \"chrome.exe\")",
+      "Bash(reg query:*)",
+      "Bash(mkdir -p test-results)",
+      "Bash(npx lighthouse:*)",
+      "Bash(netstat -ano)",
+      "Bash(taskkill /PID 22616 /F)",
+      "Bash(taskkill /F /IM node.exe)",
+      "Bash(cmd //c \"taskkill /PID 22616 /F\")",
+      "Bash(cmd //c \"taskkill /F /IM node.exe\")",
+      "Bash(node scripts/validate-with-lighthouse.js)",
+      "Bash(cmd //c \"tasklist /FI \\\\\"IMAGENAME eq chrome.exe\\\\\" /FO CSV\")",
+      "Bash(cmd //c \"tasklist\")",
+      "Bash(grep -v \"^$\")",
+      "Bash(node -e ':*)",
+      "Bash(node -e \"const http=require\\('http'\\); const req=http.get\\('http://localhost:8000', r=>{ console.log\\('Server status:', r.statusCode\\); r.destroy\\(\\); }\\); req.on\\('error', e=>console.log\\('Server NOT running:', e.message\\)\\);\")",
+      "Bash(node -e \"const h=require\\('http'\\);h.get\\('http://localhost:8000',\\(r\\)=>{console.log\\('HTTP',r.statusCode\\);r.destroy\\(\\);}\\).on\\('error',e=>console.log\\('ERR',e.message\\)\\);\")",
+      "Bash(node -e \"import\\('lighthouse'\\).then\\(m => console.log\\(Object.keys\\(m\\)\\)\\).catch\\(e => console.error\\(e.message\\)\\)\")",
+      "Bash(node -e \"import\\('chrome-launcher'\\).then\\(m => console.log\\(Object.keys\\(m\\)\\)\\).catch\\(e => console.error\\(e.message\\)\\)\")"
+    ]
+  }
+}

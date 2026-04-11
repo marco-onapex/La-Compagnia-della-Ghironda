@@ -1,0 +1,201 @@
+/* ============================================
+   HERO SECTION
+   
+   Hero layout, ghironda image, animations
+   ============================================ */
+
+.header-hero-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: calc(100dvh - var(--header-height, 85px));
+  width: 100%;
+}
+
+.hero {
+  background-color: var(--color-night);
+  background-image: 
+    radial-gradient(circle at 30% 50%, rgb(139 58 58 / 05%) 0%, transparent 50%),
+    radial-gradient(circle at 70% 50%, rgb(85 107 47 / 05%) 0%, transparent 50%);
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  grid-row: auto;
+  flex: 1;
+  width: 100%;
+  text-align: center;
+  border-bottom: 1px solid rgb(157 126 26 / 25%);
+  box-shadow: 0 0 25px rgb(157 126 26 / 06%);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    conic-gradient(from 0deg at 50% 50%, 
+      rgb(157 126 26 / 03%) 0deg, 
+      rgb(201 122 58 / 03%) 90deg,
+      rgb(85 107 47 / 03%) 180deg,
+      rgb(157 126 26 / 03%) 270deg,
+      rgb(157 126 26 / 03%) 360deg);
+  z-index: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero::before {
+    animation: none;
+  }
+}
+
+.hero-content {
+  max-width: 900px;
+  padding: clamp(2rem, 4vh, 3rem) clamp(1rem, 4vw, 2rem);
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1rem, 2.5vh, 1.5rem);
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.hero h1 {
+  font-size: clamp(2.2rem, 8vw, 4rem);
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin: 0;
+  color: var(--color-gold-vivid);
+  line-height: 1.2;
+  word-spacing: 0.1em;
+  font-family: cinzel, serif;
+  text-transform: uppercase;
+  text-shadow: 0 2px 8px rgb(0 0 0 / 4%);
+}
+
+.hero-subtitle {
+  font-size: clamp(1.2rem, 2.8vw, 1.9rem);
+  color: var(--color-flame-red);
+  font-style: normal;
+  margin: 0;
+  letter-spacing: 1.5px;
+  line-height: 1.25;
+  font-weight: 700;
+  font-family: cinzel, serif;
+  text-transform: uppercase;
+  text-shadow: 0 1px 4px rgb(0 0 0 / 3%);
+}
+
+.hero-tagline {
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  color: #e8d9be;
+  font-style: italic;
+  margin: 0;
+  letter-spacing: 0.5px;
+  line-height: 1.5;
+  font-weight: 400;
+  font-family: "crimson text", serif;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 25%);
+}
+
+.hero-divider {
+  width: 140px;
+  height: 2.5px;
+  background: linear-gradient(90deg,
+    var(--color-gold-vivid) 0%,
+    #f94 25%,
+    var(--color-flame-red) 50%,
+    #f94 75%,
+    var(--color-gold-vivid) 100%);
+  margin: 0;
+  box-shadow: 0 0 12px rgb(239 201 102 / 35%);
+}
+
+/* Ghironda wrapper */
+.ghironda-wrapper {
+  position: relative;
+  display: inline-block;
+
+  /* Z-Index stratificazione: hero section layers
+     __z-hero-circles:    -1 (SVG topografia, dietro tutto)
+     __z-hero-content:     1 (titoli, tagline, divider)
+     __z-hero-image:       2 (immagine ghironda, sopra SVG)
+     
+     Struttura assicura che SVG è visibile ma dietro a tutti gli elementi hero.
+  */
+  --circle-size: 500px;
+
+  /* Fallback SVG - verrà sovrascritto dal JS con topografia dinamica fBm (9 cerchi concentrici) */
+  --ghironda-circles: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1400"><circle cx="700" cy="700" r="100" fill="%23FF8844" opacity="0.8"/><circle cx="700" cy="700" r="200" fill="%23F87733" opacity="0.7"/><circle cx="700" cy="700" r="300" fill="%23E85522" opacity="0.6"/><circle cx="700" cy="700" r="400" fill="%23D83311" opacity="0.5"/><circle cx="700" cy="700" r="500" fill="%23C80000" opacity="0.4"/><circle cx="700" cy="700" r="600" fill="%23A80000" opacity="0.3"/></svg>');
+
+  margin: var(--sp-md) 0;
+}
+
+.ghironda-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: var(--circle-size);
+  height: var(--circle-size);
+  background-image: var(--ghironda-circles);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  pointer-events: none;
+  z-index: -1;  /* Dietro TUTTI gli elementi hero (h1, subtitle, image) */
+  filter: drop-shadow(0 0 15px rgb(201 122 58 / 12%)) drop-shadow(0 0 8px rgb(167 58 58 / 08%));
+}
+
+.ghironda-icon {
+  max-width: clamp(280px, 55vw, 720px);
+  height: auto;
+  object-fit: contain;
+  animation: gentle-float 4s ease-in-out infinite;
+  margin: 0;
+  position: relative;
+  z-index: 2;
+  mask-image: 
+    radial-gradient(circle at center, 
+      black 0%, 
+      black 63%, 
+      rgb(0 0 0 / 40%) 90%, 
+      rgb(0 0 0 / 0%) 100%),
+    linear-gradient(to right, 
+      rgb(0 0 0 / 0%) 0%, 
+      rgb(0 0 0 / 30%) 3%,
+      black 7%,
+      black 93%,
+      rgb(0 0 0 / 30%) 97%,
+      rgb(0 0 0 / 0%) 100%),
+    linear-gradient(to bottom, 
+      rgb(0 0 0 / 0%) 0%, 
+      rgb(0 0 0 / 30%) 3%,
+      black 7%,
+      black 93%,
+      rgb(0 0 0 / 30%) 97%,
+      rgb(0 0 0 / 0%) 100%);
+  mask-composite: intersect;
+}
+
+@keyframes gentle-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(1deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ghironda-icon {
+    animation: none;
+  }
+}

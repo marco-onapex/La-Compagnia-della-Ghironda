@@ -8,6 +8,10 @@
   "id-unique": true,
   "src-not-empty": true,
   "attr-unsafe-chars": true,
-  "head-script-disabled": false,
-  "title-require": true
+  "head-script-disabled": true,
+  "title-require": true,
+  "alt-require": true,
+  "attr-no-duplication": true,
+  "style-disabled": true,
+  "img-alt-require": true
 }

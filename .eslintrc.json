@@ -1,0 +1,126 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "extends": [
+    "eslint:recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "globals": {
+    "describe": "readonly",
+    "it": "readonly",
+    "test": "readonly",
+    "beforeEach": "readonly",
+    "afterEach": "readonly",
+    "jest": "readonly",
+    "expect": "readonly"
+  },
+  "rules": {
+    "no-console": "error",
+    "no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_$",
+        "varsIgnorePattern": "^_$"
+      }
+    ],
+    "semi": [
+      "error",
+      "always"
+    ],
+    "quotes": [
+      "error",
+      "single",
+      {
+        "avoidEscape": true
+      }
+    ],
+    "indent": [
+      "error",
+      2
+    ],
+    "no-var": "error",
+    "prefer-const": "error",
+    "eqeqeq": ["error", "always", { "null": "ignore" }],
+    "max-depth": ["error", 4],
+    "complexity": ["error", 12],
+    "no-implicit-coercion": "error",
+    "no-unmodified-loop-condition": "error",
+    "arrow-body-style": ["error", "as-needed"],
+    "prefer-arrow-callback": "error",
+    "require-await": "error",
+    "no-debugger": "error",
+    "no-caller": "error",
+    "no-eval": "error",
+    "no-implied-eval": "error",
+    "no-new-func": "error",
+    "no-param-reassign": ["error", { "props": false }],
+    "object-shorthand": ["error", "always"]
+  },
+  "overrides": [
+    {
+      "files": [
+        "jest.config.cjs",
+        "babel.config.cjs",
+        "playwright.config.cjs"
+      ],
+      "parserOptions": {
+        "sourceType": "script"
+      }
+    },
+    {
+      "files": [
+        "tests/**/*.js"
+      ],
+      "env": {
+        "jest": true
+      },
+      "rules": {
+        "no-redeclare": "off"
+      }
+    },
+    {
+      "files": [
+        "build-css.js",
+        "build-js.js"
+      ],
+      "rules": {
+        "no-console": "off"
+      }
+    },
+    {
+      "files": [
+        "scripts/**/*.js"
+      ],
+      "rules": {
+        "no-console": "off"
+      }
+    },
+    {
+      "files": [
+        "tests/**/*.js",
+        "jest.setup.js"
+      ],
+      "rules": {
+        "no-console": "off"
+      }
+    },
+    {
+      "files": [
+        "tests/e2e/**/*.js"
+      ],
+      "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+      },
+      "rules": {
+        "arrow-body-style": "off"
+      }
+    }
+  ]
+}

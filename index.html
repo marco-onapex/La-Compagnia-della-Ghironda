@@ -26,16 +26,20 @@
     <title>La Compagnia della Ghironda - The Miracle Shard</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75'>🎻</text></svg>">
     <!-- Security headers -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-hashes' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:;">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     
-    <!-- Polyfill per IE11: IntersectionObserver (requestAnimationFrame ha fallback nativo nel JS) -->
-    <script async defer src="https://cdn.jsdelivr.net/npm/intersection-observer@0.12/intersection-observer.js"></script>
+    <!-- Resource Hints for Performance -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
     <!-- Google Fonts: Cinzel, Crimson Text per estetica medievale -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=Crimson+Text:ital@0;1&display=swap" rel="stylesheet" crossorigin>
+    <!-- Preload hero image for faster LCP (WebP only: browser fallback gestito da <picture>) -->
+    <link rel="preload" as="image" href="images/ghironda.webp" type="image/webp">
     <link rel="stylesheet" href="dist/style.min.css">
     
     <!-- Schema.org Structured Data for SEO -->
@@ -123,7 +127,7 @@
                 -->
                 <picture>
                   <source srcset="images/ghironda.webp" type="image/webp">
-                  <img src="images/ghironda.png" alt="Ghironda - Strumento musicale gitano" class="ghironda-icon" loading="lazy" decoding="async">
+                  <img src="images/ghironda.png" alt="Ghironda - Strumento musicale gitano" class="ghironda-icon" width="500" height="500" decoding="async" fetchpriority="high">
                 </picture>
             </div>
             <p class="hero-subtitle">Finché Gira, il Mondo Resta</p>
@@ -217,6 +221,9 @@
             </p>
         </div>
     </footer>
+    
+    <!-- Polyfill per IE11: IntersectionObserver (requestAnimationFrame ha fallback nativo nel JS) -->
+    <script async defer src="https://cdn.jsdelivr.net/npm/intersection-observer@0.12/intersection-observer.js"></script>
     
     <!-- JavaScript per misurare altezza reale dell'header -->
     <script src="dist/main.min.js"></script>

@@ -1,0 +1,9 @@
+node_modules/
+dist/
+coverage/
+test-results/
+docs/
+.github/
+.husky/
+.eslintcache
+tests/e2e/

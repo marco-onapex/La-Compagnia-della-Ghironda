@@ -1,0 +1,90 @@
+/* ============================================
+   LA COMPAGNIA DELLA GHIRONDA - DESIGN TOKENS
+   Estetica: Fantasy Épico, Gipsy, Demoniaco
+   
+   Questo file centralizza 70+ CSS Custom Properties
+   che vengono usate da tutti gli altri moduli CSS.
+   
+   STRATEGIE:
+   - Colori WCAG AAA compliant
+   - Tipografia con font stack fallback
+   - Spacing scale (7 livelli)
+   - Shadow presets + transition timing
+   ============================================ */
+
+:root {
+  /* Colori Gitani Autentici - Eracliani & Battaglia Demoniaca */
+  --color-night: #0f0a1a;           /* Sfondo scuro profondo */
+  --color-deep-earth: #1a1410;      /* Terra scura nomade */
+
+  /* Palette Gitana Principale - Opaca e Autentica */
+  --color-ocra-gold: #8b6f47;       /* Ocra terra caldo (reserve per future use) */
+  --color-gold: #9d7e1a;            /* Oro brunito gitano - PRIMARY HEADING COLOR */
+  --color-accent-gold: #d4b896;     /* Accento oro chiaro - USED: headers, accents */
+  --color-gold-light: #d4b896;      /* Oro chiaro pergamena illuminata - ALIAS for accent-gold */
+  --color-gipsy-red: #a73a3a;       /* Rosso cremisi vivo - USED: strong, nav active, decorations */
+  --color-gipsy-green: #4a5f2f;     /* Verde oliva ricco - USED: em text, accents */
+  --color-burnished-gold: #a37d1f;  /* Oro brunito gitano - reserve (similar to --color-gold) */
+  --color-rust-red: #963d34;        /* Terra rossa nomade - reserve per future themes */
+
+  /* Accenti Secondari - Ridotti e principalmente utilizzati */
+  --color-crimson: #a73a3a;         /* Cremisi vivo - ALIAS for gipsy-red, USED: borders */
+  --color-fire-orange: #c97a3a;     /* Arancione fuoco morbido - USED: hover states, fire effects */
+  --color-gold-vivid: #efc966;      /* Oro brillante gitano - USED: heading colors, focus outlines, gradients */
+  --color-flame-red: #ff6b6b;       /* Rosso fiamma vivo - USED: nav active, hero subtitle, skip link focus */
+  --color-emerald: #4a5f2f;         /* Verde oliva gitano - ALIAS for gipsy-green */
+
+  /* Background & Text - Primari */
+  --color-cream: #d4b896;           /* Pelle pergamena gitana - reserve (use accent-gold instead) */
+  --color-warm-beige: #b8956f;      /* Tessuti caravana - reserve per future use */
+  --color-text: #e8e0d4;            /* Bianco caldo pergamena - PRIMARY TEXT COLOR */
+  --color-text-secondary: #c4b5a0;  /* Testo secondario gitano - USED: card descriptions, footer */
+  --color-text-muted: #927e6b;      /* Testo muted terra - reserve per subtle text */
+
+  /* Tipografia - Font Stack Medievale & Drammatico */
+  --font-serif: cinzel, crimson text, serif;
+  --font-sans: -apple-system, blinkmacsystemfont, segoe ui, roboto, helvetica neue, sans-serif;
+  --font-decorative: cinzel decorative, serif;
+
+  /* Font Sizes - Scala Modular 1.125 */
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-base: 1rem;
+  --fs-lg: 1.125rem;
+  --fs-xl: 1.266rem;
+  --fs-2xl: 1.424rem;
+  --fs-3xl: 1.602rem;
+  --fs-4xl: 1.802rem;
+  --fs-5xl: 2.027rem;
+
+  /* Line Heights - Aumentate per leggibilità */
+  --lh-tight: 1.3;
+  --lh-normal: 1.6;
+  --lh-relaxed: 1.85;
+
+  /* Spacing Scale */
+  --sp-xs: 0.5rem;
+  --sp-sm: 0.75rem;
+  --sp-md: 1rem;
+  --sp-lg: 1.5rem;
+  --sp-xl: 2rem;
+  --sp-2xl: 3rem;
+  --sp-3xl: 4rem;
+
+  /* Shadows - Ridotti e morbidi */
+  --shadow-sm: 0 2px 4px rgb(0 0 0 / 15%);
+  --shadow-md: 0 4px 8px rgb(0 0 0 / 20%);
+  --shadow-lg: 0 8px 16px rgb(0 0 0 / 30%);
+  --shadow-gold: 0 0 20px rgb(157 126 26 / 10%);
+  --shadow-fire: 0 0 25px rgb(201 122 58 / 12%);
+  --shadow-magic: 0 0 30px rgb(85 107 47 / 10%);
+
+  /* Transition - Rallentate per comfort */
+  --transition-fast: 250ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --transition-normal: 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --transition-slow: 700ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --transition-layout: 350ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  /* Layout Dimensions */
+  --header-height: 85px;          /* Altezza stimata header + nav */
+}
