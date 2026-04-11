@@ -220,14 +220,13 @@ nav a:focus {
 
 nav a[aria-current="page"] {
   color: var(--color-flame-red);
-  border-bottom-color: var(--color-flame-red);
+  border-bottom: 3px solid var(--color-flame-red);
   font-weight: 700;
-  text-shadow: 0 0 8px rgb(255 107 107 / 4%);
+  text-shadow: 0 0 12px rgb(255 107 107 / 20%);
 }
 
 nav a[aria-current="page"]::after {
-  width: 100%;
-  background: var(--color-flame-red);
+  display: none;
 }
 
 nav a:hover::after,

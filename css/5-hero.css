@@ -130,7 +130,7 @@
      __z-hero-circles:    -1 (SVG topografia, dietro tutto)
      __z-hero-content:     1 (titoli, tagline, divider)
      __z-hero-image:       2 (immagine ghironda, sopra SVG)
-     
+
      Struttura assicura che SVG è visibile ma dietro a tutti gli elementi hero.
   */
   --circle-size: 500px;
@@ -139,6 +139,24 @@
   --ghironda-circles: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1400"><circle cx="700" cy="700" r="100" fill="%23FF8844" opacity="0.8"/><circle cx="700" cy="700" r="200" fill="%23F87733" opacity="0.7"/><circle cx="700" cy="700" r="300" fill="%23E85522" opacity="0.6"/><circle cx="700" cy="700" r="400" fill="%23D83311" opacity="0.5"/><circle cx="700" cy="700" r="500" fill="%23C80000" opacity="0.4"/><circle cx="700" cy="700" r="600" fill="%23A80000" opacity="0.3"/></svg>');
 
   margin: var(--sp-md) 0;
+}
+
+.ghironda-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 150%;
+  height: 150%;
+  background: radial-gradient(circle,
+    rgb(201 122 58 / 15%) 0%,
+    rgb(201 122 58 / 8%) 40%,
+    rgb(167 58 58 / 5%) 70%,
+    transparent 100%);
+  z-index: 0;
+  filter: blur(20px);
+  pointer-events: none;
 }
 
 .ghironda-wrapper::after {

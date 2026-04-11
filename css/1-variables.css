@@ -34,12 +34,17 @@
   --color-flame-red: #ff6b6b;       /* Rosso fiamma vivo - USED: nav active, hero subtitle, skip link focus */
   --color-emerald: #4a5f2f;         /* Verde oliva gitano - ALIAS for gipsy-green */
 
+  /* Hover & Light Variants */
+  --color-accent-gold-light: #e0d1b0;  /* Variante leggera per hover states */
+  --color-accent-gold-hover: #f0e4c8;  /* Variante hover più luminosa */
+  --color-fire-orange-light: #d4905a;  /* Variante leggera fuoco */
+
   /* Background & Text - Primari */
   --color-cream: #d4b896;           /* Pelle pergamena gitana - reserve (use accent-gold instead) */
   --color-warm-beige: #b8956f;      /* Tessuti caravana - reserve per future use */
   --color-text: #e8e0d4;            /* Bianco caldo pergamena - PRIMARY TEXT COLOR */
   --color-text-secondary: #c4b5a0;  /* Testo secondario gitano - USED: card descriptions, footer */
-  --color-text-muted: #927e6b;      /* Testo muted terra - reserve per subtle text */
+  --color-text-muted: #a0926a;      /* Testo muted terra - improved contrast */
 
   /* Tipografia - Font Stack Medievale & Drammatico */
   --font-serif: cinzel, crimson text, serif;

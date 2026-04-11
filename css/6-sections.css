@@ -8,12 +8,22 @@
   max-width: 1100px;
   margin: 0 auto var(--sp-3xl) auto;
   padding: clamp(2.5rem, 5vw, 4rem) var(--sp-xl);
-  border-left: 2px solid rgb(201 122 58 / 25%);
-  border-right: 2px solid rgb(239 201 102 / 15%);
-  background: 
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-image: linear-gradient(180deg,
+    var(--color-gold-vivid) 0%,
+    var(--color-gold-vivid) 20%,
+    var(--color-fire-orange) 35%,
+    var(--color-gipsy-red) 50%,
+    var(--color-fire-orange) 65%,
+    var(--color-gold-vivid) 85%,
+    var(--color-gold-vivid) 100%
+  ) 1;
+  background:
+    linear-gradient(135deg, rgb(15 10 26) 0%, rgb(20 15 30) 100%),
     url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="gipsy-ornament" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="30" fill="none" stroke="%239D7E1A" stroke-width="0.8" opacity="0.015"/><circle cx="50" cy="50" r="20" fill="none" stroke="%234A5F2F" stroke-width="0.6" opacity="0.012"/><path d="M35 50 Q50 35 65 50 Q50 65 35 50" fill="none" stroke="%23A73A3A" stroke-width="0.5" opacity="0.01"/><circle cx="50" cy="50" r="5" fill="%23C97A3A" opacity="0.08"/></pattern></defs><rect width="100" height="100" fill="%230f0a1a"/><rect width="100" height="100" fill="url(%23gipsy-ornament)"/></svg>');
-  box-shadow: 
-    inset 0 0 30px rgb(201 122 58 / 08%),
+  box-shadow:
+    inset 0 0 30px rgb(201 122 58 / 8%),
     0 0 25px rgb(0 0 0 / 3%);
   position: relative;
   overflow: visible;
@@ -32,16 +42,17 @@ main {
   opacity: 0.6;
   font-family: "cinzel decorative", serif;
   text-shadow: 0 0 8px rgb(239 201 102 / 2%);
+  letter-spacing: 0.8rem;
 }
 
 .section::before {
-  content: '❖';
+  content: '◈ ◆ ◈';
   top: 2rem;
   left: 2rem;
 }
 
 .section::after {
-  content: '❖';
+  content: '◈ ◆ ◈';
   top: 2rem;
   right: 2rem;
 }
@@ -88,11 +99,15 @@ main {
 
 .card:hover,
 .card:focus-within {
-  transform: translateY(-8px);
-  box-shadow: 0 0 30px rgb(201 122 58 / 25%), 0 12px 32px rgb(0 0 0 / 4%), inset 0 0 15px rgb(239 201 102 / 1%);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow:
+    0 0 30px rgb(201 122 58 / 25%),
+    0 12px 32px rgb(0 0 0 / 4%),
+    inset 0 0 15px rgb(239 201 102 / 1%),
+    0 0 20px rgb(201 122 58 / 15%);
   border-color: rgb(239 201 102 / 5%);
-  background: linear-gradient(135deg, 
-    rgb(50 38 50 / 99%) 0%, 
+  background: linear-gradient(135deg,
+    rgb(50 38 50 / 99%) 0%,
     rgb(68 40 45 / 98%) 50%,
     rgb(48 35 50 / 99%) 100%);
 }
@@ -138,14 +153,14 @@ footer {
 
 footer::before,
 footer::after {
-  content: '❖ ❖ ❖';
+  content: '◈ ◆ ◈';
   position: absolute;
   top: -2rem;
   font-size: 1rem;
   color: var(--color-gold);
-  opacity: 0.3;
+  opacity: 0.4;
   font-family: "cinzel decorative", serif;
-  letter-spacing: 1rem;
+  letter-spacing: 0.8rem;
 }
 
 footer::before {

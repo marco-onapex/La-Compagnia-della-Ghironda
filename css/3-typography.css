@@ -26,6 +26,13 @@ footer strong {
   word-spacing: 0.05em;
 }
 
+@media (width > 1000px) {
+  .section p {
+    line-height: 1.75;
+    max-width: 75ch;
+  }
+}
+
 .section p::first-letter {
   font-size: inherit;
   font-weight: inherit;
