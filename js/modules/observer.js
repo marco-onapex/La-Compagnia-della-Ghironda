@@ -136,6 +136,11 @@ export function setupObserver() {
 
                   // Aggiungi aria-current al link attivo
                   link.setAttribute('aria-current', 'page');
+                } else {
+                  // Quando una sezione esce dal viewport, rimuovi aria-current
+                  if (link.getAttribute('aria-current') === 'page') {
+                    link.removeAttribute('aria-current');
+                  }
                 }
               });
             } catch (error) {

@@ -162,6 +162,32 @@ describe('Observer Module', () => {
       expect(link1.hasAttribute('aria-current')).toBe(false);
       expect(link2.getAttribute('aria-current')).toBe('page');
     });
+
+    test('should remove aria-current when section exits viewport (isIntersecting: false)', () => {
+      setupObserver();
+      const link1 = document.querySelector('a[href="#sec1"]');
+
+      // Section enters
+      mockSectionObserver.callback([{ isIntersecting: true, target: document.querySelector('#sec1') }]);
+      expect(link1.getAttribute('aria-current')).toBe('page');
+
+      // Section exits
+      mockSectionObserver.callback([{ isIntersecting: false, target: document.querySelector('#sec1') }]);
+      expect(link1.hasAttribute('aria-current')).toBe(false);
+    });
+
+    test('should have no active nav links when user is in hero (no sections intersecting)', () => {
+      setupObserver();
+      const link1 = document.querySelector('a[href="#sec1"]');
+      const link2 = document.querySelector('a[href="#sec2"]');
+
+      // Simulate hero: all sections exit viewport
+      mockSectionObserver.callback([{ isIntersecting: false, target: document.querySelector('#sec1') }]);
+      mockSectionObserver.callback([{ isIntersecting: false, target: document.querySelector('#sec2') }]);
+
+      expect(link1.hasAttribute('aria-current')).toBe(false);
+      expect(link2.hasAttribute('aria-current')).toBe(false);
+    });
   });
 
   // ─── rootMargin from --header-height ──────────────────────────────────────
