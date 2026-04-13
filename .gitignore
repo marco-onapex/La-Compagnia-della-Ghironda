@@ -13,8 +13,8 @@ yarn.lock
 
 # Build outputs
 build/
-dist/
 .cache/
+# dist/ is intentionally tracked (GitHub Pages deployment)
 
 # Logs
 *.log

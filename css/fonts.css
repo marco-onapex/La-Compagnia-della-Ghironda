@@ -1,0 +1,25 @@
+/* ============================================
+   LOCAL FONTS
+   Cinzel hosted locally to eliminate FOUT and CLS
+   ============================================ */
+
+@font-face {
+  font-family: Cinzel;
+  src: url('../fonts/cinzel-400.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Cinzel;
+  src: url('../fonts/cinzel-600.ttf') format('truetype');
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: Cinzel;
+  src: url('../fonts/cinzel-700.ttf') format('truetype');
+  font-weight: 700;
+  font-display: swap;
+}

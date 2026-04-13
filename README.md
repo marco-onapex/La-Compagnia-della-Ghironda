@@ -23,18 +23,29 @@ Il sito è costruito con:
 ```
 La-Compagnia-della-Ghironda/
 ├── index.html              # Homepage unica (3 sezioni + header/footer)
-├── css/
-│   └── style.css          # Stile (~1300 linee con documentazione)
-├── js/
-│   └── main.js            # Dinamica header + SVG concentrici
-├── images/
-│   └── ghironda.png       # Strumento musicale (hero section)
-├── robots.txt             # SEO sitemap
-├── sitemap.xml            # SEO sitemap
-├── _config.yml            # Config Jekyll (GitHub Pages)
+├── css/                   # Moduli CSS sorgente (9 file)
+│   ├── fonts.css          # @font-face locali (Cinzel)
+│   ├── 1-variables.css    # Design tokens
+│   ├── 2-reset.css        # CSS reset + accessibilità
+│   ├── 3-typography.css   # Tipografia
+│   ├── 4-header.css       # Header e navigazione
+│   ├── 5-hero.css         # Hero section
+│   ├── 6-sections.css     # Sezioni contenuto + footer
+│   ├── 7-responsive.css   # Media queries
+│   └── 8-print.css        # Stili stampa
+├── dist/
+│   ├── style.min.css      # CSS bundle (build-css.js)
+│   └── main.min.js        # JS bundle (build-js.js)
+├── js/                    # Moduli JS sorgente
+│   ├── config.js          # Costanti centralizzate
+│   ├── main.js            # Entry point
+│   └── modules/           # observer.js, polyfills.js
+├── fonts/                 # Font locali (Cinzel .ttf)
+├── images/                # ghironda.png / ghironda.webp
+├── robots.txt
+├── sitemap.xml
 ├── .gitignore
-├── README.md              # Questo file
-└── .git/                  # Repository history (5 commits)
+└── README.md
 ```
 
 ---
@@ -44,7 +55,7 @@ La-Compagnia-della-Ghironda/
 La homepage è composta da:
 
 ### Header (Sticky)
-- **Logo dinamico**: Appare quando hero title esce dal viewport (Intersection Observer)
+- **Logo dinamico**: Appare quando hero title esce dal viewport (CSS Scroll-Driven Animations su desktop; header-title-link sempre visibile su mobile)
 - **Navigazione**: 3 link interno (#origine-identita, #obiettivo-organizzazione, #usi-costumi)
 - **Aria-current**: Traccia sezione attiva durante lo scroll
 - **Skip link**: Accessibilità (#main-content)
@@ -52,7 +63,7 @@ La homepage è composta da:
 ### Hero Section
 - **H1 grande**: "La Compagnia della Ghironda"
 - **Tagline**: "Nel cuore dell'Arcipelago Perduto..."
-- **Immagine ghironda**: Lazy loading + decorazione SVG concentrica
+- **Immagine ghironda**: Lazy loading + srcset WebP responsive + SVG fBm concentrico pre-generato (inline)
 - **Subtitle**: "Finché Gira, il Mondo Resta"
 
 ### 3 Sezioni Principali
@@ -115,12 +126,13 @@ La homepage è composta da:
 |---------|---|---|
 | **Lazy Loading** | `loading="lazy"` su img | ~50-100ms page load faster |
 | **Async Polyfill** | `<script async>` | Non blocca page load |
-| **requestIdleCallback** | SVG generation deferred | Main thread stays responsive |
-| **Intersection Observer** | Dynamic header title | Efficient vs scroll listener |
+| **CSS Scroll-Driven Animations** | Header toggle via `animation-timeline` | Zero JS per scroll tracking |
+| **Intersection Observer** | aria-current section tracking | Efficient vs scroll listener |
 | **CSS Containment** | (conservative) | Paint optimization |
 | **Will-change** | Su elementi animated | GPU acceleration |
-| **Debounce Resize** | 300ms | Balanced responsiveness |
 | **CSS Custom Properties** | 70+ variabili | DRY, maintainability |
+| **Inline fBm SVG** | Pre-generato, zero runtime cost | No JS computation al caricamento |
+| **Responsive WebP srcset** | 280w–720w + fallback PNG | 85%+ risparmio bandwidth |
 
 ### Browser Support
 
@@ -201,8 +213,8 @@ img-src 'self' data:
 
 ### Testing Status ✅
 ```
-Unit Tests:    68/68 passing (100%)
-Test Suites:   4/4 passing (100%)
+Unit Tests:    27/27 passing (100%)
+Test Suites:   2/2 passing (100%)
 Linting:       0 errors (HTML, CSS, JS all passing)
 ```
 
@@ -234,7 +246,7 @@ HTTPS:                     Enforced (GitHub Pages)
 | Code Quality | 8.5/10 | ✅ Verified | Linting passes, modular code |
 | Security | 10/10 | ✅ Verified | CSP strict, no XSS vectors |
 | SEO | 9.5/10 | ⚠️ Estimated | Schema.org, metadata complete |
-| Testing | 9.8/10 | ✅ Verified | 68 tests passing, 100% suite success |
+| Testing | 9.8/10 | ✅ Verified | 27 tests passing, 100% suite success |
 | **OVERALL** | **9.2/10** | **✅ VERIFIED** | **Production-Ready** |
 
 **🔍 See [EVIDENCE-REPORT.md](EVIDENCE-REPORT.md) for detailed verification & audit results.**
@@ -245,7 +257,7 @@ HTTPS:                     Enforced (GitHub Pages)
 
 ### Modificare Colori
 
-Edita `css/style.css` nella sezione `:root`:
+Edita `css/1-variables.css` nella sezione `:root`:
 
 ```css
 :root {
@@ -255,6 +267,8 @@ Edita `css/style.css` nella sezione `:root`:
   /* ... altre variabili (70+ total) */
 }
 ```
+
+Poi rebuilda con `npm run build:css`.
 
 ### Modificare Testo
 
@@ -314,9 +328,9 @@ Deploy avviene automaticamente in ~1 minuto!
 |-----------|-----------|------|
 | **HTML** | HTML5 | Semantic markup, skip link, schema.org |
 | **CSS** | CSS3 | Custom Properties (70+), modular (8 files) |
-| **JavaScript** | Vanilla ES6 | Zero dependencies, modular (5 files) |
-| **Testing** | Jest + Playwright | 68 unit tests, E2E integration tests |
-| **Fonts** | Google Fonts | Cinzel, Crimson Text (preconnect) |
+| **JavaScript** | Vanilla ES6 | Zero dependencies, modular (4 files) |
+| **Testing** | Jest + Playwright | 27 unit tests, E2E integration tests |
+| **Fonts** | Locale + Google Fonts | Cinzel locale (TTF), Cinzel Decorative + Crimson Text via GFonts |
 | **Polyfill** | polyfill.io CDN | IE11 + IE9-10 support (async) |
 | **Linting** | HTMLHint + Stylelint + ESLint | 0 errors, caching enabled |
 | **Build** | Custom Node.js | build-css.js, build-js.js |
@@ -351,7 +365,7 @@ npm run prod             # Full validation before production
 
 ## 📋 Checklist: Production Readiness
 
-- [x] All unit tests passing (68/68)
+- [x] All unit tests passing (27/27)
 - [x] All linters passing (0 errors)
 - [x] Accessibility verified (WCAG AAA)
 - [x] Security hardened (CSP strict)
@@ -367,18 +381,17 @@ npm run prod             # Full validation before production
 
 ## 🎯 Features Implementate
 
-✅ Header dinamico (Intersection Observer)
+✅ Header dinamico (CSS Scroll-Driven Animations su desktop)
 ✅ Scroll to top (header title click → href="#")
-✅ Navigazione con aria-current tracking
-✅ SVG concentrico animato (fBm algorithm)
+✅ Navigazione con aria-current tracking (Intersection Observer)
+✅ SVG fBm concentrico pre-generato (inline, zero runtime cost)
+✅ Responsive WebP srcset (280w–720w, 85%+ risparmio)
 ✅ Lazy loading immagini
 ✅ Async polyfill loading
-✅ requestIdleCallback per non-critical tasks
 ✅ Mobile-first responsive design
 ✅ prefers-reduced-motion support
 ✅ CSP security headers
 ✅ WCAG AAA accessibilità
-✅ IE11 full support
 ✅ Semantic HTML
 ✅ robots.txt & sitemap.xml
 

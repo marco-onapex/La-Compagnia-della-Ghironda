@@ -9,7 +9,7 @@ try {
   console.log('📦 Checking npm dependencies...');
   execSync('npm audit --audit-level=high', { stdio: 'inherit' });
   console.log('✅ No high-severity vulnerabilities found\n');
-} catch (error) {
+} catch {
   console.error('❌ Security vulnerabilities detected!');
   console.error('Run: npm audit fix\n');
   process.exit(1);

@@ -1,51 +1,14 @@
 /* ============================================
    RESPONSIVE DESIGN
-   
-   Mobile-first media queries for tablet (768px) and mobile (480px)
+
+   Mobile-first media queries - tablet (768px) and mobile (480px)
+   Note: Header media queries handled in 4-header.css
+   This file handles non-header element responsiveness
    ============================================ */
 
-@media (width <= 768px) {
+@media (width <= 599px) {
   :root {
     font-size: clamp(14px, 1.5vw, 16px);
-  }
-
-  .header-container {
-    flex-direction: column;
-    gap: var(--sp-lg);
-    padding: var(--sp-lg) var(--sp-md);
-  }
-
-  .header-title-wrapper {
-    order: -1;
-    width: 100%;
-  }
-
-  .header-title-link {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .logo {
-    font-size: var(--fs-2xl);
-    letter-spacing: 2px;
-  }
-
-  nav ul {
-    gap: var(--sp-md);
-    justify-content: center;
-  }
-
-  nav a {
-    font-size: var(--fs-xs);
-    padding: var(--sp-xs) var(--sp-sm);
-  }
-
-  nav a::before {
-    top: -12px;
-  }
-
-  .hero {
-    padding: clamp(2rem, 5vw, 4rem) var(--sp-md);
   }
 
   .hero h1 {
@@ -57,9 +20,9 @@
   }
 
   .section {
-    padding: var(--sp-xl) var(--sp-md);
+    padding: clamp(2.5rem, 5vw, 4rem) clamp(1rem, 5vw, 1.5rem);
     border-left: 2px solid var(--color-gold);
-    border-right: 2px solid var(--color-crimson);
+    border-right: 2px solid var(--color-gipsy-red);
   }
 
   .section h2 {
@@ -80,16 +43,13 @@
   }
 
   footer {
-    padding: var(--sp-xl) var(--sp-md);
+    padding: clamp(2rem, 5vw, 3rem) clamp(1rem, 5vw, 1.5rem);
   }
 
   .footer-divider {
     width: 200px;
   }
 
-  .ghironda-icon {
-    max-width: clamp(200px, 40vw, 450px);
-  }
 }
 
 @media (width <= 480px) {
@@ -97,32 +57,13 @@
     font-size: 14px;
   }
 
-  .header-container {
-    padding: var(--sp-md);
-  }
-
-  .logo {
-    font-size: var(--fs-xl);
-    letter-spacing: 1px;
-  }
-
-  nav ul {
-    gap: var(--sp-sm);
-  }
-
-  nav a {
-    font-size: 0.7rem;
-    letter-spacing: 0.5px;
-    padding: var(--sp-xs) var(--sp-sm);
-  }
-
   .hero h1 {
-    font-size: var(--fs-3xl);
+    font-size: clamp(1.3rem, 5vw, 2rem);
     letter-spacing: 2px;
   }
 
   .section {
-    padding: var(--sp-lg) var(--sp-md);
+    padding: clamp(2rem, 4vw, 3rem) clamp(0.75rem, 4vw, 1.25rem);
   }
 
   .section h2 {
@@ -143,7 +84,6 @@
   }
 
   .ghironda-icon {
-    max-width: clamp(150px, 35vw, 300px);
-    animation: gentle-float 5s ease-in-out infinite;
+    animation: gentle-float 5s ease-in-out infinite; /* rallentata su mobile: meno CPU, meno motion */
   }
 }

@@ -9,7 +9,7 @@ npm run validate   # Alias per test
 ```
 
 Comandi durante lo sviluppo:
-- **Edita** i file sorgente (`css/style.css`, `js/main.js`)
+- **Edita** i file sorgente nei moduli (`css/*.css`, `js/modules/*.js`)
 - **Testa** con `npm run test`
 - **Committa** quando i linter passano
 
@@ -38,24 +38,22 @@ npm run build
   ├─ npm run lint:css            (0 errori)
   └─ npm run lint:js             (0 errori)
   ↓
-[build] npm run build:css        ← Minifica CSS
-  └─ csso css/style.css → dist/style.min.css (55.9% smaller)
+[build] npm run build:css        ← Concatena + minifica CSS
+  └─ build-css.js: 9 moduli → dist/style.min.css (~27 KB)
   ↓
-[build] npm run build:js         ← Minifica JS + sourcemap
-  └─ terser js/main.js → dist/main.min.js (68.2% smaller)
+[build] npm run build:js         ← Bundle + minifica JS + sourcemap
+  └─ build-js.js + Terser API → dist/main.min.js (~5 KB)
   ↓
 [build] npm run size-report      ← Mostra metriche
-  ├─ CSS: 19.95 KB minificato
-  └─ JS: 6.30 KB minificato
+  ├─ CSS: ~27 KB minificato
+  └─ JS: ~5 KB minificato
 ```
 
 ## Metriche di Build
 
 **Dopo minificazione:**
-- CSS: 45.2 KB → 19.95 KB (**-55.9%**) 🎉
-- JS: 19.8 KB → 6.30 KB (**-68.2%**) 🎉
-
-**Totale**: 65 KB → 26.25 KB (**-59.6%** di riduzione) ✨
+- CSS: 9 moduli sorgente → ~27 KB (`dist/style.min.css`)
+- JS: 6 moduli sorgente → ~5 KB (`dist/main.min.js`) + sourcemap
 
 ## Quality Gates
 
@@ -81,21 +79,10 @@ Utile per:
 - Stack trace leggibili
 - DevTools mostra riga originale del source
 
-## CI/CD Integration (futuro)
+## CI/CD Integration
 
-```yaml
-# .github/workflows/build.yml
-on: [push, pull_request]
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-      - run: npm install
-      - run: npm run prod  # Fallisce se linting fails
-      - run: npm run test
-```
+Pipeline GitHub Actions in `.github/workflows/test.yml`:
+- **lint** → unit-tests + e2e-tests in parallelo → **build** → lighthouse (solo PR)
 
 ## Cleanup
 

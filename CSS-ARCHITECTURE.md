@@ -11,7 +11,15 @@ Sistema CSS **modularizzato**, **scalabile** e **accessibile** basato su:
 
 ---
 
-## 📦 File Structure (Ordine di Importazione)
+## 📦 File Structure (Ordine di Build)
+
+### 0. **Fonts** (`fonts.css`)
+**Font locali**: `@font-face` per Cinzel 400/600/700
+- Elimina la dipendenza da Google Fonts per il font primario
+- `font-display: swap` per evitare FOUT
+- Path relativo: `../fonts/cinzel-*.ttf` risolto correttamente da `dist/`
+
+---
 
 ### 1. **Variables** (`1-variables.css`)
 **Fondazione**: 70+ CSS Custom Properties
@@ -110,13 +118,6 @@ Sistema CSS **modularizzato**, **scalabile** e **accessibile** basato su:
 
 ---
 
-### 9. **Aggregator** (`style.css`)
-**Entry Point**: Single `<link>` in index.html
-- Importa tutti i files in ordine
-- Commenti sul cascade strategy
-
----
-
 ## 🎯 Design System Tokens
 
 ### Color Palette
@@ -182,12 +183,11 @@ shadow-fire: 0 0 25px rgb(201 122 58 / 12%)
 
 ---
 
-### Transitions (Rallentate per Comfort)
+### Transitions
 ```
-transition-fast:   150ms
-transition-normal: 300ms
-transition-slow:   500ms
-Easing: ease-out (snappier)
+transition-fast:   250ms cubic-bezier(0.25, 0.46, 0.45, 0.94)
+transition-normal: 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94)
+transition-layout: 350ms cubic-bezier(0.25, 0.46, 0.45, 0.94)
 ```
 
 ---
@@ -306,20 +306,14 @@ z-index: -1    → .ghironda-wrapper::after (SVG topografia)
 }
 ```
 
+Then add `'9-my-component.css'` to `CSS_MODULES` in `build-css.js`.
+
 ---
 
 ## 📊 Bundle Information
 
-**Current Sizes:**
-- Variables: 4.2 KB
-- Reset: 6.8 KB
-- Typography: 2.1 KB
-- Header: 3.4 KB
-- Hero: 2.9 KB
-- Sections: 4.2 KB
-- Responsive: 2.1 KB
-- Print: 0.8 KB
-- **Total (minified): 18.28 KB** (55.9% compression)
+`build-css.js` concatena 9 moduli e produce `dist/style.min.css`:
+- **Total (minified): ~27 KB** — nessuna dipendenza da @import a runtime
 
 ---
 

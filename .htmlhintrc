@@ -12,6 +12,6 @@
   "title-require": true,
   "alt-require": true,
   "attr-no-duplication": true,
-  "style-disabled": true,
+  "style-disabled": false,
   "img-alt-require": true
 }

@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 /**
  * Playwright Config
  * E2E and accessibility testing configuration

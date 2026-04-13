@@ -1,4 +1,3 @@
-/* global describe, test, beforeEach, afterEach, jest, expect */
 import { installRequestAnimationFramePolyfill } from '../../js/modules/polyfills.js';
 
 describe('Polyfills Module', () => {

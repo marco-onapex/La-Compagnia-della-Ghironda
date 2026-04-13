@@ -1,22 +1,21 @@
 /**
- * Build CSS Script
- * 
+ * Build CSS Script with Custom Minification
+ *
  * Concatena moduli CSS in ordine, rimuove @import statements,
- * poi minifica con csso. Permette modularità mentre produce
- * bundle minificato unico.
- * 
+ * poi minifica mantenendo media queries (CSSO le rimuoveva).
+ *
  * Utilizzo: node build-css.js
  */
 
 import fs from 'fs';
 import path from 'path';
-import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const CSS_MODULES = [
+  'fonts.css',
   '1-variables.css',
   '2-reset.css',
   '3-typography.css',
@@ -28,8 +27,38 @@ const CSS_MODULES = [
 ];
 
 const CSS_DIR = path.join(__dirname, 'css');
-const TEMP_FILE = path.join(CSS_DIR, '.style-temp.css');
 const OUTPUT_FILE = path.join(__dirname, 'dist', 'style.min.css');
+
+/**
+ * Simple CSS minifier that preserves media queries
+ * (doesn't do dead code elimination like CSSO)
+ */
+function minifyCSS(css) {
+  return css
+    // Remove comments
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    // Remove tabs
+    .replace(/\t/g, '')
+    // Remove leading/trailing whitespace from lines
+    .split('\n')
+    .map(line => line.trim())
+    .filter(line => line.length > 0)
+    .join('')
+    // Add minimal spacing around braces
+    .replace(/\s*{\s*/g, '{')
+    .replace(/\s*}\s*/g, '}')
+    .replace(/\s*;\s*/g, ';')
+    .replace(/\s*,\s*/g, ',')
+    .replace(/\s*:\s*/g, ':')
+    .replace(/\s*>\s*/g, '>')
+    .replace(/\s*\+\s*/g, '+')
+    .replace(/\s*~\s*/g, '~')
+    // Preserve space after keywords (important for valid CSS)
+    .replace(/(\w)@media/g, '$1 @media')
+    // Clean up any double spaces
+    .replace(/\s+/g, ' ')
+    .trim();
+}
 
 // 1. Concatena moduli
 console.log('📦 Concatenating CSS modules...');
@@ -45,34 +74,34 @@ CSS_MODULES.forEach((module) => {
   concatenated += content + '\n\n';
 });
 
-// 2. Scrivi temp file
-fs.writeFileSync(TEMP_FILE, concatenated);
 console.log(`✅ Concatenated ${CSS_MODULES.length} modules`);
 
-// 3. Minifica con csso
-console.log('🔨 Minifying CSS...');
+// 2. Minifica con custom function
+console.log('🔨 Minifying CSS (custom minifier, preserves media queries)...');
+let minified;
 try {
-  execSync(`csso "${TEMP_FILE}" -o "${OUTPUT_FILE}"`, { stdio: 'inherit' });
+  minified = minifyCSS(concatenated);
+  fs.writeFileSync(OUTPUT_FILE, minified);
   console.log(`✅ Minified to ${OUTPUT_FILE}`);
 } catch (error) {
   console.error('❌ Error minifying CSS:', error.message);
   process.exit(1);
 }
 
-// 4. Verify output
-if (!fs.existsSync(OUTPUT_FILE) || fs.statSync(OUTPUT_FILE).size === 0) {
+// 3. Verify output
+if (!minified || minified.length === 0) {
   console.error('[ERROR] Minification produced empty output');
   process.exit(1);
 }
 
-// 5. Cleanup
-try {
-  fs.unlinkSync(TEMP_FILE);
-} catch (_e) {
-  // Non-critical: temp file cleanup
+// 4. Verify media queries are preserved
+const hasMediaQueries = /@media/.test(minified);
+if (!hasMediaQueries) {
+  console.warn('⚠️  WARNING: No @media queries found in minified output');
 }
 
 // 5. Report size
 const stats = fs.statSync(OUTPUT_FILE);
 const sizeKB = (stats.size / 1024).toFixed(2);
-console.log(`Final size: ${sizeKB} KB`);
+console.log(`✅ Final size: ${sizeKB} KB`);
+console.log(`✅ Media queries preserved: ${hasMediaQueries ? 'YES' : 'NO'}`);

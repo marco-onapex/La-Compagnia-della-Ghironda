@@ -7,7 +7,7 @@
 .section {
   max-width: 1100px;
   margin: 0 auto var(--sp-3xl) auto;
-  padding: clamp(2.5rem, 5vw, 4rem) var(--sp-xl);
+  padding: clamp(2.5rem, 5vw, 4rem) clamp(1.5rem, 2.5vw, 2rem);
   border-left: 3px solid transparent;
   border-right: 3px solid transparent;
   border-image: linear-gradient(180deg,
@@ -28,6 +28,7 @@
   position: relative;
   overflow: visible;
   scroll-margin-top: var(--header-height);
+  box-sizing: border-box;
 }
 
 main {
@@ -40,7 +41,7 @@ main {
   font-size: var(--fs-2xl);
   color: var(--color-gold-vivid);
   opacity: 0.6;
-  font-family: "cinzel decorative", serif;
+  font-family: var(--font-decorative);
   text-shadow: 0 0 8px rgb(239 201 102 / 2%);
   letter-spacing: 0.8rem;
 }
@@ -75,7 +76,7 @@ main {
   padding: var(--sp-xl);
   position: relative;
   transition: all var(--transition-normal);
-  box-shadow: 0 0 20px rgb(201 122 58 / 1%), inset 0 0 20px rgb(157 126 26 / 03%);
+  box-shadow: 0 0 20px rgb(201 122 58 / 1%), inset 0 0 20px var(--color-border-gold) / 03%;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -119,7 +120,7 @@ main {
   text-transform: uppercase;
   letter-spacing: 2px;
   font-weight: 700;
-  font-family: cinzel, serif;
+  font-family: var(--font-serif);
   position: relative;
   z-index: 2;
   line-height: var(--lh-tight);
@@ -159,7 +160,7 @@ footer::after {
   font-size: 1rem;
   color: var(--color-gold);
   opacity: 0.4;
-  font-family: "cinzel decorative", serif;
+  font-family: var(--font-decorative);
   letter-spacing: 0.8rem;
 }
 
@@ -184,7 +185,7 @@ footer::after {
     transparent 0%,
     var(--color-gold) 15%,
     var(--color-fire-orange) 35%,
-    var(--color-crimson) 50%,
+    var(--color-gipsy-red) 50%,
     var(--color-fire-orange) 65%,
     var(--color-gold) 85%,
     transparent 100%);

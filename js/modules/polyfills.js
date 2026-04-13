@@ -20,13 +20,6 @@
  */
 export function installRequestAnimationFramePolyfill() {
   try {
-    // ⚠️ Line 25: window check NOT TESTED
-    // REASON: window always exists in test environment
-    // Validazione: window deve essere disponibile
-    if (!window) {
-      return;
-    }
-
     // requestAnimationFrame polyfill
     // ⚠️ Lines 34, 44-48: IE11 polyfill fallback paths NOT TESTED
     // REASON: Tests mock window.requestAnimationFrame as real function

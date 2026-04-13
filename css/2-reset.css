@@ -41,6 +41,7 @@ html {
   scroll-behavior: smooth;
   font-size: clamp(15px, 1vw, 18px);
   height: 100%;
+  overflow-y: scroll;
 }
 
 body {
@@ -48,8 +49,8 @@ body {
   flex-direction: column;
   min-height: 100dvh;
   background-color: var(--color-night);
-  background-image: 
-    repeating-linear-gradient(45deg, transparent, transparent 12px, rgb(157 126 26 / 1.2%) 12px, rgb(157 126 26 / 1.2%) 24px),
+  background-image:
+    repeating-linear-gradient(45deg, transparent, transparent 12px, var(--color-border-gold) / 1.2% 12px, var(--color-border-gold) / 1.2% 24px),
     repeating-linear-gradient(-45deg, transparent, transparent 12px, rgb(139 58 58 / 0.8%) 12px, rgb(139 58 58 / 0.8%) 24px),
     radial-gradient(circle at 20% 30%, rgb(201 122 58 / 3%) 0%, transparent 50%),
     radial-gradient(circle at 80% 70%, rgb(85 107 47 / 3%) 0%, transparent 50%);
@@ -179,7 +180,7 @@ hr {
   margin: var(--sp-2xl) 0;
   padding: 0;
   border: none;
-  border-top: 1px solid rgb(157 126 26 / 25%);
+  border-top: 1px solid var(--color-border-gold) / 25%;
 }
 
 /* ============================================
@@ -276,7 +277,7 @@ td {
   padding: var(--sp-md);
   text-align: left;
   vertical-align: middle;
-  border-bottom: 1px solid rgb(157 126 26 / 15%);
+  border-bottom: 1px solid var(--color-border-gold) / 15%;
 }
 
 th {
@@ -498,7 +499,7 @@ summary::-webkit-details-marker {
   font-size: clamp(0.8rem, 1.2vw, 0.95rem);
   font-weight: 700;
   border-radius: 0 0 6px;
-  font-family: cinzel, serif;
+  font-family: var(--font-serif);
   text-transform: uppercase;
   letter-spacing: 0.8px;
   text-shadow: 0 2px 4px rgb(0 0 0 / 3%);

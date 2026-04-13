@@ -1,39 +1,19 @@
 {
   "extends": "stylelint-config-standard",
   "rules": {
-    "selector-type-no-unknown": [
-      true,
-      {
-        "ignoreTypes": [
-          "/^math-/",
-          "/^custom-/"
-        ]
-      }
-    ],
+    "selector-type-no-unknown": true,
     "at-rule-no-unknown": [
       true,
       {
-        "ignoreAtRules": [
-          "supports"
-        ]
+        "ignoreAtRules": ["supports"]
       }
     ],
     "property-no-unknown": [
       true,
       {
         "ignoreProperties": [
-          "/^mask/",
-          "/^webkit-/",
-          "/^moz-/"
-        ]
-      }
-    ],
-    "at-rule-descriptor-no-unknown": [
-      true,
-      {
-        "ignoreDescriptors": [
-          "orphans",
-          "widows"
+          "/^-webkit-/",
+          "/^-moz-/"
         ]
       }
     ],
@@ -41,9 +21,11 @@
     "selector-max-compound-selectors": 4,
     "selector-max-specificity": "0,3,2",
     "declaration-property-value-no-unknown": true,
-    "color-no-hex": null,
     "function-url-quotes": "always",
     "font-weight-notation": "numeric",
-    "block-no-empty": true
+    "block-no-empty": true,
+    "property-no-vendor-prefix": [true, {
+      "ignoreProperties": ["-webkit-mask-composite"]
+    }]
   }
 }

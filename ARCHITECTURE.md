@@ -12,21 +12,21 @@
 
 ```
 ├── css/
+│   ├── fonts.css            # Local @font-face declarations (Cinzel)
 │   ├── 1-variables.css      # Design tokens (colors, spacing, fonts, shadows)
 │   ├── 2-reset.css          # CSS reset + base elements
 │   ├── 3-typography.css     # Typography system (headings, body, scale)
 │   ├── 4-header.css         # Header + navigation styling
 │   ├── 5-hero.css           # Hero section layout + effects
-│   ├── 6-sections.css       # Main content sections + cards
-│   ├── 7-footer.css         # Footer layout
-│   ├── 8-responsive.css     # Media queries + mobile-first (600px, 900px)
-│   └── style.css            # Aggregator (imports all modules via @import)
+│   ├── 6-sections.css       # Main content sections + cards + footer
+│   ├── 7-responsive.css     # Media queries (599px, 480px breakpoints)
+│   └── 8-print.css          # Print-specific styles
 │
 ├── js/
 │   ├── config.js            # Centralized configuration (constants, thresholds)
 │   ├── modules/
-│   │   ├── header.js        # Header height measurement + CSS var update
-│   │   └── observer.js      # Intersection Observer + dynamic title visibility
+│   │   ├── observer.js      # Intersection Observer (aria-current section tracking)
+│   │   └── polyfills.js     # requestAnimationFrame polyfill (IE11)
 │   └── main.js              # Entry point (imports modules via ES6)
 │
 ├── index.html               # Single HTML file, semantic structure
@@ -72,16 +72,17 @@
 
 ### Modular Layers
 
-| File | Purpose | Scale | Dependencies |
-|------|---------|-------|--------------|
-| 1-variables | Design tokens | 80 lines | None |
-| 2-reset | Minimalist CSS reset | 150 lines | 1-variables |
-| 3-typography | Font system + heading hierarchy | 120 lines | 1-variables, 2-reset |
-| 4-header | Header + nav styling | 100 lines | 1-variables |
-| 5-hero | Hero section + animations | 90 lines | 1-variables |
-| 6-sections | Main content sections | 200 lines | 1-variables |
-| 7-footer | Footer + links | 60 lines | 1-variables |
-| 8-responsive | Media queries + mobile-first | 250 lines | All |
+| File | Purpose | Dependencies |
+|------|---------|--------------|
+| fonts.css | Local @font-face (Cinzel 400/600/700) | None |
+| 1-variables | Design tokens | None |
+| 2-reset | Minimalist CSS reset + accessibility | 1-variables |
+| 3-typography | Font system + heading hierarchy | 1-variables |
+| 4-header | Header + nav styling | 1-variables |
+| 5-hero | Hero section + animations | 1-variables |
+| 6-sections | Main content sections + footer | 1-variables |
+| 7-responsive | Media queries (599px, 480px) | All |
+| 8-print | Print-specific styles | None |
 
 ### Specificity Strategy
 
@@ -104,28 +105,22 @@
    .hero-subtitle (element)
 ```
 
-### Aggregation Strategy
+### Build Strategy
 
-**css/style.css** is modern import aggregator:
+`build-css.js` concatena i moduli in ordine e li minifica con un minifier custom (preserva media queries):
 
-```css
-@import 'normalize.css';      /* Browser resets */
-@import '1-variables.css';    /* Design tokens first */
-@import '2-reset.css';        /* Custom reset */
-@import '3-typography.css';   /* Type system */
-@import '4-header.css';       /* Components */
-@import '5-hero.css';
-@import '6-sections.css';
-@import '7-footer.css';
-@import '8-responsive.css';   /* Responsive last (highest specificity) */
+```
+fonts.css → 1-variables.css → 2-reset.css → 3-typography.css
+→ 4-header.css → 5-hero.css → 6-sections.css → 7-responsive.css
+→ 8-print.css  →  dist/style.min.css
 ```
 
 ### Benefits
 
-1. **Scalability**: Adding new component = new file
+1. **Scalability**: Adding new component = new file + entry in CSS_MODULES
 2. **Maintainability**: Single responsibility per file
 3. **Reusability**: Tokens available to all modules
-4. **Performance**: Modern @import is tree-shaken by bundlers
+4. **Performance**: Single minified bundle (~27 KB), no @import overhead
 5. **Documentation**: File names explain purpose
 
 ---
@@ -139,12 +134,7 @@
 ```javascript
 export const CONFIG = {
   OBSERVER_THRESHOLD: [0, 0.2],
-  RAF_FALLBACK_MS: 16,
-  FONT_LOAD_TIMEOUT_MS: 1500,
-  BREAKPOINTS: {
-    mobile: 600,
-    tablet: 900,
-  },
+  SELECTORS: { header: 'header' },
 };
 ```
 
@@ -152,48 +142,27 @@ export const CONFIG = {
 
 | Module | Responsibility | Dependencies | Exports |
 |--------|-----------------|--------------|---------|
-| observer | Intersection Observer API | Native browser support |
-| header | Height measurement | config | updateHeaderHeight() |
-| observer | Dynamic visibility | config | setupObserver() |
-| main | Orchestration | All 3 modules | Runner |
-
-### Module Example: header.js
-
-```javascript
-import { CONFIG } from '../config.js';
-
-export function updateHeaderHeight() {
-  const header = document.querySelector('header');
-  if (header) {
-    const height = header.offsetHeight;
-    document.documentElement.style.setProperty('--header-height', `${height}px`);
-  }
-}
-
-export function initHeaderListener() {
-  updateHeaderHeight();
-  window.addEventListener('resize', updateHeaderHeight);
-  
-  if (document.fonts?.ready) {
-    document.fonts.ready.then(updateHeaderHeight);
-  } else {
-    setTimeout(updateHeaderHeight, CONFIG.FONT_LOAD_TIMEOUT_MS);
-  }
-}
-```
+| observer | Intersection Observer (aria-current) | config | setupObserver() |
+| polyfills | requestAnimationFrame shim | None | (side-effect) |
+| main | Orchestration | observer | Runner |
 
 ### Entry Point: main.js
 
 ```javascript
-import { requestAnimationFramePolyfill } from './modules/polyfills.js';
-import { initHeaderListener } from './modules/header.js';
 import { setupObserver } from './modules/observer.js';
 
-// Bootstrap
-requestAnimationFramePolyfill();
-initHeaderListener();
-setupObserver();
+document.addEventListener('DOMContentLoaded', () => {
+  setupObserver();
+});
 ```
+
+### Layout & Hero: CSS-only
+
+Header height is no longer measured by JS. Instead `body { display: flex; flex-direction: column; min-height: 100dvh }` and `.header-hero-wrapper { flex: 1 }` handle the layout.
+
+The scroll-driven toggle (skip-link ↔ title-link) uses CSS Scroll-Driven Animations (`animation-timeline: --hero-h1`) inside `@supports (animation-timeline: scroll())` in `css/4-header.css`.
+
+The fBm ring SVG is pre-generated (see `scripts/generate-rings.js`) and embedded statically in `index.html` as `.ghironda-rings`.
 
 ### Benefits
 
@@ -309,7 +278,7 @@ npm run build
 
 ### If Project Grows
 
-1. **Add new CSS module**: Create `css/9-cards.css`, add `@import` to style.css
+1. **Add new CSS module**: Create `css/9-cards.css`, add entry to `CSS_MODULES` in `build-css.js`
 2. **Add new JS feature**: Create `js/modules/cards.js`, import in main.js
 3. **Add HTML section**: New `<section>` in index.html with semantic structure
 4. **Add new page**: Create `pages/about.html` (if moving to multi-page)
@@ -328,7 +297,7 @@ npm run build
 ### Critical Path
 
 1. **HTML parsing** (252 lines) → Fast
-2. **CSS parsing** (aggregated via @import) → ~20 KB minified
+2. **CSS parsing** (`dist/style.min.css`, single file) → ~27 KB minified
 3. **Font loading** (Google Fonts, display=swap) → No FOIT/CLS
 4. **JS parsing** (6.3 KB minified) → No blocking
 5. **DOM ready** → Intersection Observer activates
@@ -373,8 +342,8 @@ npm run build
 
 Before changing any file:
 
-- [ ] **CSS change**: Edit module file, check @import order in style.css
-- [ ] **JS change**: Place in appropriate module (header.js, observer.js, etc.)
+- [ ] **CSS change**: Edit module file, verify order in `CSS_MODULES` array (`build-css.js`)
+- [ ] **JS change**: Place in appropriate module (observer.js, polyfills.js, etc.)
 - [ ] **Config change**: Update js/config.js, not hardcoded values
 - [ ] **New feature**: Create new module, add to main.js imports
 - [ ] **Lint check**: `npm run test` passes
