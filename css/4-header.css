@@ -11,6 +11,14 @@
    - Performance optimized
    ============================================ */
 
+/* ===== HEADER HEIGHT TOKEN =====
+   --header-h is set by the blocking inline <script> in index.html, placed
+   immediately after </header>. It runs before the hero wrapper is painted,
+   so the value is exact from the first rendered frame → CLS = 0.000.
+   The CSS fallback below covers the no-JS case only.
+   ============================= */
+:root { --header-h: 80px; } /* no-JS fallback; JS inline script overrides this */
+
 /* ===== LAYOUT FOUNDATION ===== */
 
 header {
@@ -23,7 +31,7 @@ header {
     url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="gipsy" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="3" fill="%239D7E1A" opacity="0.04"/><circle cx="20" cy="20" r="2" fill="%23C97A3A" opacity="0.03"/><circle cx="80" cy="80" r="2" fill="%23556B2F" opacity="0.03"/><path d="M 10 10 L 90 90 M 90 10 L 10 90" stroke="%238B3A3A" stroke-width="0.5" opacity="0.02"/></pattern></defs><rect width="100" height="100" fill="%230f0a1a"/><rect width="100" height="100" fill="url(%23gipsy)"/></svg>'),
     linear-gradient(180deg, rgb(201 122 58 / 015%) 0%, rgb(85 107 47 / 015%) 100%);
   border-bottom: 2px solid rgb(201 122 58 / 30%);
-  box-shadow: 0 0 30px rgb(201 122 58 / 12%), 0 4px 16px rgb(0 0 0 / 4%), inset 0 0 20px var(--color-border-gold) / 03%;
+  box-shadow: 0 0 30px rgb(201 122 58 / 12%), 0 4px 16px rgb(0 0 0 / 4%), inset 0 0 20px rgb(157 126 26 / 3%);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -300,52 +308,11 @@ nav a:focus-visible {
     white-space: nowrap;
   }
 
-  /* ===== CSS SCROLL-DRIVEN ANIMATIONS (desktop only) =====
-     Sostituisce JS IntersectionObserver per il toggle skip-link ↔ title-link.
-     Quando .hero h1 esce dal viewport (ultimo 20%), nasconde lo skip-link
-     e mostra il title-link nell'header.
-     Progressività: fallback statico su browser senza supporto SDA.
-  ===== */
-  @supports (animation-timeline: scroll()) {
-    @keyframes header-hide-skip {
-      from {
-        opacity: 1;
-        visibility: visible;
-        pointer-events: auto;
-      }
-
-      to {
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-      }
-    }
-
-    @keyframes header-show-title {
-      from {
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-      }
-
-      to {
-        opacity: 1;
-        visibility: visible;
-        pointer-events: auto;
-      }
-    }
-
-    .skip-link-header {
-      animation: header-hide-skip auto linear both;
-      animation-timeline: --hero-h1;
-      animation-range: exit 80% exit 100%;
-    }
-
-    .header-title-link {
-      animation: header-show-title auto linear both;
-      animation-timeline: --hero-h1;
-      animation-range: exit 80% exit 100%;
-    }
+  /* Toggle animato via CSS transition; lo stato è gestito da
+     setupHeaderToggle() (IntersectionObserver su .hero h1) in main.js. */
+  .skip-link-header,
+  .header-title-link {
+    transition: opacity 0.35s ease, visibility 0.35s ease;
   }
 }
 

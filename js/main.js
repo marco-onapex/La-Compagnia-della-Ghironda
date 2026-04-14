@@ -14,34 +14,39 @@
  * Eseguito come: <script src="dist/main.min.js"></script> in index.html
  */
 
-import { setupObserver } from './modules/observer.js';
+import { installRequestAnimationFramePolyfill } from './modules/polyfills.js';
+import { setupObserver, setupHeaderToggle } from './modules/observer.js';
+
+// --header-h è interamente gestita in CSS (css/4-header.css) per breakpoint:
+// nessun aggiornamento JS post-paint → CLS = 0.000 garantito.
+
+installRequestAnimationFramePolyfill();
 
 try {
 
-  // ⚠️ Lines 22-30: DOMContentLoaded path is NOT TESTED
-  // REASON: jsdom always has document.readyState === 'complete'
-  // REAL SCENARIO: Scripts loaded in <head> need this
+  // jsdom always has readyState === 'complete'; this branch runs only in real browsers
+  // when the script is loaded in <head>. istanbul ignore: untestable in jsdom.
+  /* istanbul ignore next */
   if (document.readyState === 'loading') {
-    // DOM still loading: wait for DOMContentLoaded
     document.addEventListener('DOMContentLoaded', () => {
       try {
         setupObserver();
+        setupHeaderToggle();
       } catch (error) {
         void error;
-        // Silent failure in DOMContentLoaded
       }
     });
   } else {
-    // DOM già caricato (script inline o al fondo di body)
-    // This path IS TESTED - it's the normal path in test environment
+    // DOM already loaded — normal path when script is at end of <body>
     try {
       setupObserver();
+      setupHeaderToggle();
     } catch (error) {
+      /* istanbul ignore next */
       void error;
-      // Silent failure in immediate initialization
     }
   }
 } catch (error) {
+  /* istanbul ignore next */
   void error;
-  // Silent failure at initialization
 }

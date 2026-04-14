@@ -117,6 +117,24 @@ async function runLighthouse(url, formFactor) {
   }
 }
 
+const LIGHTHOUSE_THRESHOLDS = {
+  performance:      80,
+  accessibility:    95,
+  'best-practices': 90,
+  seo:              90,
+};
+
+function checkLighthouseThresholds(label, report) {
+  const failures = [];
+  for (const [cat, min] of Object.entries(LIGHTHOUSE_THRESHOLDS)) {
+    const score = Math.round(report.categories[cat].score * 100);
+    if (score < min) failures.push(`    ${cat}: ${score} < ${min} (required)`);
+  }
+  if (failures.length > 0) {
+    throw new Error(`${label} Lighthouse below thresholds:\n${failures.join('\n')}`);
+  }
+}
+
 function printLighthouseScores(label, report) {
   const s = report.categories;
   const a = report.audits;
@@ -179,7 +197,7 @@ async function main() {
   let mobileReport, desktopReport;
 
   try {
-    const url = `http://localhost:${PORT}`;
+    const url = `http://127.0.0.1:${PORT}`;
 
     console.log('  Running mobile audit...');
     mobileReport = await runLighthouse(url, 'mobile');
@@ -201,6 +219,9 @@ async function main() {
   printLighthouseScores('Mobile', mobileReport);
   printLighthouseScores('Desktop', desktopReport);
   console.log('\n  Reports saved to test-results/');
+
+  checkLighthouseThresholds('Mobile', mobileReport);
+  checkLighthouseThresholds('Desktop', desktopReport);
 
   printSummary(true);
 }

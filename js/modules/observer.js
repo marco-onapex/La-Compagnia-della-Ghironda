@@ -5,15 +5,16 @@
  * → Traccia quale sezione è visibile nel viewport
  * → Aggiorna aria-current="page" sul link di navigazione corrispondente
  *
- * Note: Il toggle header title (skip-link ↔ title-link) è ora gestito
- * tramite CSS Scroll-Driven Animations (css/4-header.css).
- *
- * Features:
- * - Error handling completo
- * - Fallback se IntersectionObserver non disponibile
+ * setupHeaderToggle: toggle skip-link ↔ title-link nell'header.
+ * → CSS Scroll-Driven Animations gestiscono la transizione fluida nei browser supportati
+ *   (timeline-scope: --hero-h1 su body rende il named timeline visibile all'header).
+ * → Questo IntersectionObserver aggiunge/rimuove .scrolled come fallback universale
+ *   e mantiene il comportamento corretto anche senza CSS SDA.
+ * → Solo opacity/visibility cambiano → zero CLS garantito.
  *
  * @module observer
  * @function setupObserver - Setup Intersection Observer per sezioni
+ * @function setupHeaderToggle - Toggle skip-link ↔ title-link al scroll
  * @returns {void}
  */
 
@@ -37,80 +38,81 @@ export function setupObserver() {
       return;
     }
 
-    // Observer per sezioni attive (aria-current)
     const sections = document.querySelectorAll('section[id]');
     const navLinks = document.querySelectorAll('nav a[href^="#"]');
 
-    if (sections.length > 0 && navLinks.length > 0) {
-      try {
-        // Mapper tra ID sezione e href link
-        const sectionMap = {};
-        navLinks.forEach(link => {
-          const href = link.getAttribute('href');
-          if (href && href.startsWith('#')) {
-            const sectionId = href.slice(1);
-            sectionMap[sectionId] = link;
-          }
-        });
-
-        // Leggi altezza header direttamente dal DOM
-        // Fallback a 85px se header non disponibile
-        const header = document.querySelector(CONFIG.SELECTORS.header);
-        const headerHeightPx = (header && header.offsetHeight) || 85;
-
-        const sectionObserver = new IntersectionObserver(
-          (entries) => {
-            try {
-              entries.forEach((entry) => {
-                const sectionId = entry.target.id;
-                const link = sectionMap[sectionId];
-
-                if (!link) {
-                  return;
-                }
-
-                if (entry.isIntersecting) {
-                  // Rimuovi aria-current da tutti i link
-                  navLinks.forEach(l => {
-                    l.removeAttribute('aria-current');
-                  });
-
-                  // Aggiungi aria-current al link attivo
-                  link.setAttribute('aria-current', 'page');
-                } else {
-                  // Quando una sezione esce dal viewport, rimuovi aria-current
-                  if (link.getAttribute('aria-current') === 'page') {
-                    link.removeAttribute('aria-current');
-                  }
-                }
-              });
-            } catch (error) {
-              void error;
-              // Silent error handling
-            }
-          },
-          {
-            // Trigger quando la sezione entra nel viewport (con offset della header height reale)
-            rootMargin: `-${headerHeightPx}px 0px -66% 0px`,
-            threshold: [0, 0.5]
-          }
-        );
-
-        sections.forEach(section => {
-          try {
-            sectionObserver.observe(section);
-          } catch (error) {
-            void error;
-            // Silent error handling
-          }
-        });
-      } catch (error) {
-        void error;
-        // Silent error handling
-      }
+    if (sections.length === 0 || navLinks.length === 0) {
+      return;
     }
+
+    // Mapper tra ID sezione e href link
+    const sectionMap = {};
+    navLinks.forEach(link => {
+      const href = link.getAttribute('href');
+      if (href && href.startsWith('#')) {
+        sectionMap[href.slice(1)] = link;
+      }
+    });
+
+    // Leggi altezza header direttamente dal DOM; fallback a 85px
+    const header = document.querySelector(CONFIG.SELECTORS.header);
+    const headerHeightPx = (header && header.offsetHeight) || 85;
+
+    const sectionObserver = new IntersectionObserver(
+      (entries) => {
+        try {
+          entries.forEach((entry) => {
+            const link = sectionMap[entry.target.id];
+            if (!link) return;
+
+            if (entry.isIntersecting) {
+              navLinks.forEach(l => l.removeAttribute('aria-current'));
+              link.setAttribute('aria-current', 'page');
+            } else if (link.getAttribute('aria-current') === 'page') {
+              link.removeAttribute('aria-current');
+            }
+          });
+        } catch (error) {
+          void error;
+        }
+      },
+      {
+        rootMargin: `-${headerHeightPx}px 0px -66% 0px`,
+        threshold: CONFIG.OBSERVER_THRESHOLD,
+      }
+    );
+
+    sections.forEach(section => sectionObserver.observe(section));
   } catch (error) {
     void error;
-    // Silent error handling
+  }
+}
+
+/**
+ * Toggle skip-link ↔ title-link when .hero h1 exits/enters the viewport.
+ *
+ * CSS Scroll-Driven Animations (css/4-header.css) provide a smooth animated
+ * transition in supporting browsers; this function adds the .scrolled class
+ * as a universal fallback and keeps state in sync everywhere.
+ * Only opacity/visibility change → zero CLS.
+ *
+ * @function setupHeaderToggle
+ * @returns {void}
+ */
+export function setupHeaderToggle() {
+  try {
+    const h1      = document.querySelector('.hero h1');
+    const wrapper = document.querySelector('.header-title-wrapper');
+    if (!h1 || !wrapper || !window.IntersectionObserver) return;
+
+    const header  = document.querySelector('header');
+    const headerH = (header && header.offsetHeight) || 80;
+
+    new IntersectionObserver(
+      ([entry]) => wrapper.classList.toggle('scrolled', !entry.isIntersecting),
+      { rootMargin: `-${headerH}px 0px 0px 0px`, threshold: 0 }
+    ).observe(h1);
+  } catch (error) {
+    void error;
   }
 }

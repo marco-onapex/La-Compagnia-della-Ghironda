@@ -8,24 +8,31 @@
  */
 
 const PALETTE = ['#8B3A3A','#7A2F2F','#6B2424','#5A1A1A','#4A1515','#3A0F0F','#2A0A0A','#1a0505','#0a0000'];
-const NUM_POINTS  = 80;   // punti per cerchio (200 = originale, 80 = buon compromesso)
+const NUM_POINTS  = 80;
 const FBM_OCTAVES = 3;
 
-// Dimensioni immagine: 55vw a ~1090px ≈ 600px, aspect-ratio 280:153
-const imgW = 600;
-const imgH = Math.round(600 * 153 / 280); // 327
+// imgW = dimensione massima della wrapper CSS (clamp cap = 720px).
+// L'invariante del 282%: vb = 2.82 × imgW garantisce che r1_screen = image_half_diagonal
+// per qualsiasi wrapper size, senza bisogno di conoscere il viewport.
+const imgW = 720;
+const imgH = Math.round(imgW * 153 / 280); // 393
 
-// Centro e bordi hero tipico desktop 1440×900
-const heroW = 1440, heroH = 900;
-const cx = heroW / 2, cy = heroH / 2;
+// r1: cerchio interno che inscrive la bounding-box dell'immagine
+const r1 = Math.sqrt(imgW ** 2 + imgH ** 2) / 2; // ≈ 410
 
-const r1 = Math.sqrt(imgW ** 2 + imgH ** 2) / 2;
-const r9 = Math.max(
-  Math.sqrt(cx ** 2 + cy ** 2),
-  Math.sqrt((heroW - cx) ** 2 + cy ** 2),
-  Math.sqrt(cx ** 2 + (heroH - cy) ** 2),
-  Math.sqrt((heroW - cx) ** 2 + (heroH - cy) ** 2)
-) * 0.95;
+// viewBox derivato da r1 (NON da r9) per mantenere l'invariante del 282%.
+// vb = 2.82 × imgW → scale = CSS_width/vb = 2.82×wrapper/2.82×imgW = wrapper/imgW
+// → r1_screen = r1 × wrapper/imgW = image_half_diagonal per qualsiasi wrapper. ✓
+const vb   = Math.round(2.82 * imgW); // 2030
+const half = Math.floor(vb / 2);      // 1015
+
+// r9: cerchio esterno, indipendente dal viewBox.
+// Dimensionato per coprire la semidiagonale di un viewport 4K (3840×2160)
+// alla scala massima (scale ≈ 1.0 quando wrapper=720px).
+// hero_half_diagonal(3840×2080) = sqrt(1920²+1040²) ≈ 2185px → r9 = 2300 con margine.
+// I cerchi oltre vb_half (1015) renderizzano via overflow:visible dell'SVG
+// e vengono clippati da overflow:hidden del .hero.
+const r9 = 2300;
 
 const ratio = Math.pow(r9 / r1, 1 / 8);
 let paths = '';
@@ -57,10 +64,7 @@ for (let i = 8; i >= 0; i--) {
   paths += `<path d="${d}" fill="none" stroke="${sc}" stroke-width="${sw}" opacity="${so}" stroke-linecap="round" stroke-linejoin="round"/>`;
 }
 
-const vb   = Math.ceil(r9 * 2.1);
-const half = Math.floor(vb / 2);
-
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${-half} ${-half} ${vb} ${vb}" class="ghironda-rings" aria-hidden="true" focusable="false"><g>${paths}</g></svg>`;
 
-process.stderr.write(`fBm SVG generato: vb=${vb}px, r1=${r1.toFixed(0)}px, r9=${r9.toFixed(0)}px, chars=${svg.length}\n`);
+process.stderr.write(`fBm SVG: vb=${vb} half=${half}, r1=${r1.toFixed(0)} r9=${r9} ratio=${ratio.toFixed(3)}, chars=${svg.length}\n`);
 process.stdout.write(svg);

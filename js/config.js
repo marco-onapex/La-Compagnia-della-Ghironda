@@ -8,8 +8,8 @@
  */
 
 export const CONFIG = {
-  // Intersection Observer thresholds - quando mostrare header title
-  OBSERVER_THRESHOLD: [0, 0.2],
+  // Intersection Observer thresholds - per sezioni aria-current
+  OBSERVER_THRESHOLD: [0, 0.5],
 
   // Selettori DOM
   SELECTORS: {

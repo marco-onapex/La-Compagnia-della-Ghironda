@@ -78,6 +78,8 @@ console.log(`✅ Concatenated ${CSS_MODULES.length} modules`);
 
 // 2. Minifica con custom function
 console.log('🔨 Minifying CSS (custom minifier, preserves media queries)...');
+fs.mkdirSync(path.join(__dirname, 'dist'), { recursive: true });
+
 let minified;
 try {
   minified = minifyCSS(concatenated);

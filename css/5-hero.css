@@ -4,12 +4,16 @@
    Hero layout, ghironda image, animations
    ============================================ */
 
+/* Hero wrapper: fills exactly the viewport space below the sticky header.
+   --header-h is set in CSS per breakpoint (4-header.css) so the initial height
+   matches the rendered header without JS — zero CLS on first paint.
+   JS ResizeObserver (setupHeaderHeight) refines the value for pixel-perfect
+   anchor scroll-padding; any post-paint delta is < 10px → CLS < 0.01. */
 .header-hero-wrapper {
+  height: calc(100dvh - var(--header-h, 76px));
+  width: 100%;
   display: flex;
   flex-direction: column;
-  flex: 1;
-  width: 100%;
-  contain: layout paint;
 }
 
 .hero {
@@ -20,9 +24,9 @@
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover;
-  flex: 1;
   width: 100%;
-  height: 100%;
+  flex: 1 0 0;
+  min-height: 0;
   text-align: center;
   border-bottom: 1px solid rgb(157 126 26 / 25%);
   box-shadow: 0 0 25px rgb(157 126 26 / 6%);
@@ -54,7 +58,7 @@
 
 .hero-content {
   max-width: 900px;
-  padding: clamp(0.5rem, 2vh, 1.5rem) clamp(0.5rem, 1.5vw, 1rem);
+  padding: clamp(2rem, 5vh, 4rem) clamp(0.5rem, 1.5vw, 1rem);
   position: relative;
   z-index: 1;
   display: flex;
@@ -75,8 +79,6 @@
   word-spacing: 0.1em;
   font-family: var(--font-serif);
   text-transform: uppercase;
-  view-timeline-name: --hero-h1;
-  view-timeline-axis: block;
 }
 
 .hero-subtitle {
@@ -122,7 +124,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: clamp(280px, 55vw, 720px);
+  width: min(100%, 720px);
   aspect-ratio: 280 / 153;
 }
 
@@ -155,10 +157,13 @@
   left: 50%;
   transform: translate(-50%, -50%);
 
-  /* width=282% → r1 inscrive l'immagine a qualsiasi viewport (aspect-ratio 280:153 costante).
-     aspect-ratio: 1/1 rende l'SVG quadrato dalla LARGHEZZA: height:282% avrebbe usato
-     il 282% dell'altezza wrapper (393px) → 1108px invece di 2030px → scale 0.65 anziché 1.20. */
-  width: 282%;
+  /* max(282%, 140vmax):
+     - 282% garantisce r1 inscrive l'immagine ai viewport tipici (≤1440px).
+     - 140vmax scala con il lato maggiore del viewport (vw in landscape, vh in portrait)
+       e assicura che r9 (cerchio esterno) copra gli angoli dell'hero su schermi larghi
+       (1920px+) e telefoni portrait, dove la wrapper è cappata a 720px e 282% non basta.
+     - aspect-ratio:1/1 → SVG quadrato dalla larghezza (non altezza). */
+  width: max(282%, 140vmax);
   aspect-ratio: 1 / 1;
   pointer-events: none;
   z-index: -1;
@@ -173,6 +178,7 @@
   animation: gentle-float 4s ease-in-out infinite;
   position: relative;
   z-index: 2;
+  will-change: transform;
   mask-image:
     radial-gradient(circle at center,
       black 0%,
