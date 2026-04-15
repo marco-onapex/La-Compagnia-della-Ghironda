@@ -1,0 +1,220 @@
+/* ============================================
+   HERO SECTION - Best Practices strict
+
+   Hero layout, ghironda image, animations
+   ============================================ */
+
+/* Hero wrapper: fills exactly the viewport space below the sticky header.
+   --header-h is set in CSS per breakpoint (4-header.css) so the initial height
+   matches the rendered header without JS — zero CLS on first paint.
+   JS ResizeObserver (setupHeaderHeight) refines the value for pixel-perfect
+   anchor scroll-padding; any post-paint delta is < 10px → CLS < 0.01. */
+.header-hero-wrapper {
+  height: calc(100dvh - var(--header-h, 76px));
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.hero {
+  background-color: var(--color-night);
+  background-image:
+    radial-gradient(circle at 30% 50%, rgb(139 58 58 / 05%) 0%, transparent 50%),
+    radial-gradient(circle at 70% 50%, rgb(85 107 47 / 05%) 0%, transparent 50%);
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  width: 100%;
+  flex: 1 0 0;
+  min-height: 0;
+  text-align: center;
+  border-bottom: 1px solid rgb(157 126 26 / 25%);
+  box-shadow: 0 0 25px rgb(157 126 26 / 6%);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  contain: paint;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:
+    conic-gradient(from 0deg at 50% 50%,
+      rgb(157 126 26 / 3%) 0deg,
+      rgb(201 122 58 / 3%) 90deg,
+      rgb(85 107 47 / 3%) 180deg,
+      rgb(157 126 26 / 3%) 270deg,
+      rgb(157 126 26 / 3%) 360deg);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.hero-content {
+  max-width: 900px;
+  padding: clamp(2rem, 5vh, 4rem) clamp(0.5rem, 1.5vw, 1rem);
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.5rem, 1.5vh, 1.25rem);
+  width: 100%;
+  flex: 0 1 auto;
+  min-height: 0;
+}
+
+.hero h1 {
+  font-size: clamp(2.2rem, 8vw, 4rem);
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin: 0;
+  color: var(--color-gold-vivid);
+  line-height: 1.2;
+  word-spacing: 0.1em;
+  font-family: var(--font-serif);
+  text-transform: uppercase;
+}
+
+.hero-subtitle {
+  font-size: clamp(1.2rem, 2.8vw, 1.9rem);
+  color: var(--color-flame-red);
+  font-style: normal;
+  margin: 0;
+  letter-spacing: 1.5px;
+  line-height: 1.25;
+  font-weight: 700;
+  font-family: var(--font-serif);
+  text-transform: uppercase;
+}
+
+.hero-tagline {
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  color: #e8d9be;
+  font-style: italic;
+  margin: 0;
+  letter-spacing: 0.5px;
+  line-height: 1.5;
+  font-weight: 400;
+  font-family: "crimson text", serif;
+  text-shadow: 0 1px 3px rgb(0 0 0 / 25%);
+}
+
+.hero-divider {
+  width: 140px;
+  height: 2.5px;
+  background: linear-gradient(90deg,
+    var(--color-gold-vivid) 0%,
+    #f94 25%,
+    var(--color-flame-red) 50%,
+    #f94 75%,
+    var(--color-gold-vivid) 100%);
+  margin: 0;
+  box-shadow: 0 0 12px rgb(239 201 102 / 35%);
+}
+
+/* Ghironda wrapper - centered image container */
+.ghironda-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(100%, 720px);
+  aspect-ratio: 280 / 153;
+  min-height: 0;
+}
+
+.ghironda-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 150%;
+  height: 150%;
+  background: radial-gradient(circle,
+    rgb(201 122 58 / 15%) 0%,
+    rgb(201 122 58 / 8%) 40%,
+    rgb(167 58 58 / 5%) 70%,
+    transparent 100%);
+  z-index: 0;
+  filter: blur(20px);
+  pointer-events: none;
+}
+
+/* 282% = fattore matematico che garantisce il cerchio interno inscriva sempre
+   l'immagine ghironda a qualsiasi viewport, grazie all'aspect-ratio costante 280:153.
+   r1_screen / wrapper_px = cost. indipendente dal breakpoint.
+   z-index: -1 → dipinto prima di tutti gli elementi z=auto nell'SC di .hero-content (z=1),
+   quindi testi e immagine rimangono sopra l'SVG. */
+.ghironda-rings {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  /* max(282%, 140vmax):
+     - 282% garantisce r1 inscrive l'immagine ai viewport tipici (≤1440px).
+     - 140vmax scala con il lato maggiore del viewport (vw in landscape, vh in portrait)
+       e assicura che r9 (cerchio esterno) copra gli angoli dell'hero su schermi larghi
+       (1920px+) e telefoni portrait, dove la wrapper è cappata a 720px e 282% non basta.
+     - aspect-ratio:1/1 → SVG quadrato dalla larghezza (non altezza). */
+  width: max(282%, 140vmax);
+  aspect-ratio: 1 / 1;
+  pointer-events: none;
+  z-index: -1;
+  overflow: visible;
+  filter: drop-shadow(0 0 15px rgb(201 122 58 / 12%)) drop-shadow(0 0 8px rgb(167 58 58 / 8%));
+}
+
+.ghironda-icon {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  animation: gentle-float 4s ease-in-out infinite;
+  position: relative;
+  z-index: 2;
+  will-change: transform;
+  mask-image:
+    radial-gradient(circle at center,
+      black 0%,
+      black 63%,
+      rgb(0 0 0 / 40%) 90%,
+      rgb(0 0 0 / 0%) 100%),
+    linear-gradient(to right,
+      rgb(0 0 0 / 0%) 0%,
+      rgb(0 0 0 / 30%) 3%,
+      black 7%,
+      black 93%,
+      rgb(0 0 0 / 30%) 97%,
+      rgb(0 0 0 / 0%) 100%),
+    linear-gradient(to bottom,
+      rgb(0 0 0 / 0%) 0%,
+      rgb(0 0 0 / 30%) 3%,
+      black 7%,
+      black 93%,
+      rgb(0 0 0 / 30%) 97%,
+      rgb(0 0 0 / 0%) 100%);
+  mask-composite: intersect;
+  -webkit-mask-composite: source-in;
+}
+
+@keyframes gentle-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(1deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ghironda-icon {
+    animation: none;
+  }
+}
+

@@ -1,0 +1,7 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Run full unit test suite before push (not just fast mode)
+# This catches any issues that staged-only checks might miss.
+# Skip with: git push --no-verify
+npm run test:unit:ci

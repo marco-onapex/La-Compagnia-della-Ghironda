@@ -1,0 +1,76 @@
+/* ============================================
+   PRINT STYLES
+   
+   Optimized layout for printing
+   ============================================ */
+
+@media print {
+  /* Hide interactive elements */
+  header, nav, .skip-link, .skip-link-header,
+  footer a, button, [role="button"] {
+    display: none !important;
+  }
+
+  /* Optimize body for print */
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 12pt;
+    line-height: 1.5;
+  }
+
+  /* Prevent page breaks */
+  .section, .hero, main {
+    break-inside: avoid;
+  }
+
+  /* Remove excessive spacing for print */
+  .section {
+    margin-bottom: 1cm;
+    box-shadow: none;
+    border: none;
+    padding: 1cm;
+  }
+
+  /* Optimize headings */
+  h1, h2, h3, h4, h5, h6 {
+    break-after: avoid;
+    color: black !important;
+  }
+
+  .section h2 {
+    break-after: avoid;
+    margin-bottom: 0.5cm;
+  }
+
+  /* Links: show URL in print */
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666;
+  }
+
+  /* Hide decorative elements */
+  .ghironda-wrapper::after, .hero::before,
+  .section::before, .section::after,
+  footer::before, footer::after {
+    display: none !important;
+  }
+
+  /* Remove shadows and effects */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Optimize images */
+  img {
+    max-width: 100% !important;
+    break-inside: avoid;
+  }
+
+  /* Set page margins */
+  @page {
+    margin: 0.5in 0.75in;
+  }
+}

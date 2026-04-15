@@ -14,15 +14,31 @@ yarn.lock
 # Build outputs
 build/
 .cache/
+# dist/ is intentionally tracked (GitHub Pages deployment)
 
 # Logs
 *.log
 npm-debug.log*
+test_output.log
+
+# Cache
+.eslintcache
 
 # Temp files
 .temp/
 tmp/
 *.tmp
+
+# NPM artifacts
+false/
+_logs/
+
+# Test Results & Coverage
+test-results/
+playwright-report/
+coverage/
+.nyc_output/
+*.lcov
 
 # OS
 .DS_Store

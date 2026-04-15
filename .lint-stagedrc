@@ -1,0 +1,18 @@
+{
+  "js/**/*.js": [
+    "eslint --fix --max-warnings=0",
+    "jest --bail --findRelatedTests"
+  ],
+  "tests/**/*.js": [
+    "eslint --fix --max-warnings=0"
+  ],
+  "*.{js,cjs,mjs}": [
+    "eslint --fix --max-warnings=0"
+  ],
+  "css/**/*.css": [
+    "stylelint --fix --max-warnings=0"
+  ],
+  "*.html": [
+    "htmlhint"
+  ]
+}

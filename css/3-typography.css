@@ -1,0 +1,111 @@
+/* ============================================
+   TYPOGRAPHY SYSTEM
+   
+   Font scales, heading hierarchy, text colors
+   ============================================ */
+
+footer p {
+  color: var(--color-text-secondary);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-normal);
+  margin: var(--sp-sm) 0;
+  letter-spacing: 0.3px;
+}
+
+footer strong {
+  color: var(--color-gold);
+  font-weight: 700;
+}
+
+.section p {
+  font-size: var(--fs-base);
+  line-height: var(--lh-relaxed);
+  margin-bottom: var(--sp-lg);
+  color: var(--color-text);
+  text-align: left;
+  word-spacing: 0.05em;
+}
+
+@media (width > 1000px) {
+  .section p {
+    line-height: 1.75;
+    max-width: 75ch;
+  }
+}
+
+.section p::first-letter {
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+  float: none;
+  line-height: inherit;
+  padding-right: 0;
+  font-family: inherit;
+  text-shadow: none;
+}
+
+.section h2 {
+  font-size: clamp(1.8rem, 5vw, 2.5rem);
+  color: var(--color-gold-vivid);
+  margin-bottom: var(--sp-xl);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-weight: 700;
+  font-family: var(--font-serif);
+  position: relative;
+  padding-bottom: var(--sp-lg);
+  line-height: var(--lh-tight);
+  text-shadow: 0 2px 8px rgb(239 201 102 / 2%);
+}
+
+.section h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 3px;
+  background: linear-gradient(90deg,
+    var(--color-gold-vivid) 0%,
+    var(--color-fire-orange) 25%,
+    var(--color-gipsy-red) 50%,
+    var(--color-fire-orange) 75%,
+    var(--color-gold-vivid) 100%);
+  box-shadow: 0 0 12px rgb(239 201 102 / 35%), 0 0 25px rgb(201 122 58 / 15%);
+}
+
+.section h3 {
+  font-size: var(--fs-xl);
+  color: var(--color-gold-vivid);
+  margin-top: var(--sp-2xl);
+  margin-bottom: var(--sp-lg);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 700;
+  font-family: var(--font-serif);
+  line-height: var(--lh-normal);
+  font-variant: small-caps;
+  text-shadow: 0 2px 6px rgb(239 201 102 / 15%);
+}
+
+.section strong {
+  color: var(--color-gipsy-red);
+  font-weight: 700;
+}
+
+.section em {
+  color: var(--color-gipsy-green);
+  font-style: italic;
+  font-weight: 500;
+}
+
+.quote-liberty {
+  font-style: italic;
+  color: var(--color-accent-gold);
+  text-align: center;
+  margin: var(--sp-2xl) 0;
+  font-size: var(--fs-lg);
+  letter-spacing: 0.05em;
+}

@@ -122,7 +122,7 @@ Aggiungi questo a README.md per mostrare lo stato della build:
 - Vanilla JS senza dipendenze ✓
 - Intersection Observer per lazy loading ✓
 - requestIdleCallback per non-critical code ✓
-- IE11 compatibility shims ✓
+- Modern browser support ✓
 
 ### 4. Performance
 - Image optimization (WebP + PNG fallback) ✓

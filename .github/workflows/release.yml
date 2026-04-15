@@ -1,0 +1,103 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (semver: major.minor.patch)'
+        required: true
+        type: string
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  validate-version:
+    name: Validate semver input
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check semver format
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          if ! echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "FAIL: '$VERSION' is not a valid semver (expected: major.minor.patch)"
+            exit 1
+          fi
+          echo "  ok  version $VERSION"
+
+  validate:
+    name: Validate & Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: validate-version
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npm run test:unit:ci
+
+      - name: Lint
+        run: npm run lint:parallel
+
+      - name: Security audit
+        run: npm run audit:security
+
+  build-release:
+    name: Build Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: validate
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build production assets
+        run: npm run build:css && npm run build:js
+
+      - name: Verify bundle integrity
+        run: |
+          test -f dist/style.min.css || { echo "FAIL: CSS bundle missing"; exit 1; }
+          test -f dist/main.min.js   || { echo "FAIL: JS bundle missing";  exit 1; }
+
+      - name: Performance budget check
+        run: node scripts/performance-budget.js
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.event.inputs.version }}
+          name: Release v${{ github.event.inputs.version }}
+          body: |
+            ## La Compagnia della Ghironda — v${{ github.event.inputs.version }}
+
+            - All tests passing
+            - Security audit passed (high severity)
+            - Performance budget met
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-v${{ github.event.inputs.version }}
+          path: dist/
+          retention-days: 90

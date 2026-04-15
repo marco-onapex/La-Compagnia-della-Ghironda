@@ -1,0 +1,515 @@
+/* ============================================
+   CSS RESET + ACCESSIBILITY
+   
+   Minimalist reset approach for modern browsers
+   ============================================ */
+
+/* stylelint-disable no-descending-specificity */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ============================================
+   INPUT FOCUS ACCESSIBILITY
+   Assicura che tutti gli elementi focusabili
+   hanno una visibile focus indicator.
+   ============================================ */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--color-accent-gold);
+  outline-offset: 2px;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: clamp(15px, 1vw, 18px);
+  height: 100%;
+  overflow-y: scroll;
+  scroll-padding-top: var(--header-h, 76px); /* always set by 4-header.css; fallback for safety */
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background-color: var(--color-night);
+  background-image:
+    repeating-linear-gradient(45deg, transparent, transparent 12px, rgb(157 126 26 / 1.2%) 12px, rgb(157 126 26 / 1.2%) 24px),
+    repeating-linear-gradient(-45deg, transparent, transparent 12px, rgb(139 58 58 / 0.8%) 12px, rgb(139 58 58 / 0.8%) 24px),
+    radial-gradient(circle at 20% 30%, rgb(201 122 58 / 3%) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgb(85 107 47 / 3%) 0%, transparent 50%);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+  color: var(--color-text);
+  font-family: var(--font-serif);
+  font-size: var(--fs-base);
+  line-height: var(--lh-normal);
+  font-weight: 400;
+  letter-spacing: 0.3px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   FORM ELEMENTS RESET
+   Input, button, textarea, select - baseline
+   ============================================ */
+button,
+input,
+textarea,
+select,
+optgroup,
+option {
+  margin: 0;
+  padding: 0;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid currentcolor;
+  cursor: pointer;
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--color-accent-gold);
+  outline-offset: 2px;
+}
+
+/* Input/Textarea specifici */
+input,
+textarea,
+select {
+  cursor: text;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  cursor: pointer;
+}
+
+input:disabled,
+textarea:disabled,
+select:disabled,
+button:disabled,
+optgroup:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+textarea {
+  resize: vertical;
+  vertical-align: top;
+  overflow-wrap: break-word;
+}
+
+select {
+  appearance: none;
+  padding-right: 1em;
+}
+
+/* Placeholder styling */
+::placeholder {
+  color: currentcolor;
+  opacity: 0.6;
+}
+
+/* ============================================
+   SEMANTIC ELEMENTS RESET
+   Code, pre, blockquote, hr, list
+   ============================================ */
+code,
+kbd,
+samp,
+pre {
+  font-family: monospace;
+  font-size: 0.875em;
+}
+
+pre {
+  overflow: auto;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+  background: rgb(0 0 0 / 20%);
+  padding: var(--sp-md);
+  border-radius: 2px;
+  margin: var(--sp-lg) 0;
+}
+
+code {
+  background: rgb(0 0 0 / 15%);
+  padding: 0.2em 0.4em;
+  border-radius: 2px;
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+blockquote {
+  margin: var(--sp-lg) 0;
+  padding-left: var(--sp-lg);
+  border-left: 3px solid var(--color-accent-gold);
+  font-style: italic;
+  opacity: 0.9;
+}
+
+hr {
+  margin: var(--sp-2xl) 0;
+  padding: 0;
+  border: none;
+  border-top: 1px solid rgb(157 126 26 / 25%);
+}
+
+/* ============================================
+   LIST RESET
+   ul, ol, li, dl, dd, dt
+   ============================================ */
+ul,
+ol {
+  margin: var(--sp-lg) 0;
+  padding-left: var(--sp-2xl);
+}
+
+li {
+  margin: var(--sp-sm) 0;
+}
+
+dl {
+  margin: var(--sp-lg) 0;
+}
+
+dt {
+  font-weight: 700;
+  margin-top: var(--sp-md);
+}
+
+dd {
+  margin-left: var(--sp-lg);
+  margin-bottom: var(--sp-md);
+}
+
+/* ============================================
+   LINK STYLING (Global Base)
+   Anchor styling fondamentale
+   ============================================ */
+a {
+  color: var(--color-accent-gold);
+  text-decoration: none;
+  transition: color var(--transition-normal);
+  position: relative;
+}
+
+a:hover {
+  color: var(--color-fire-orange);
+}
+
+a:active {
+  opacity: 0.8;
+}
+
+a:focus-visible {
+  outline: 2px solid var(--color-accent-gold);
+  outline-offset: 2px;
+}
+
+a[href^="http"]:not([href*="url-del-sito"]) {
+  /* Esterno - può avere indicatore visuale se desiderato */
+}
+
+/* ============================================
+   DATA ATTRIBUTES STYLING
+   [disabled], [hidden], [aria-*] states
+   ============================================ */
+[hidden] {
+  display: none !important;
+}
+
+[disabled] {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+[aria-busy="true"] {
+  opacity: 0.6;
+}
+
+[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* ============================================
+   TABLE RESET
+   Per future use con dati tabulari
+   ============================================ */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  margin: var(--sp-lg) 0;
+}
+
+th,
+td {
+  padding: var(--sp-md);
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px solid rgb(157 126 26 / 15%);
+}
+
+th {
+  font-weight: 700;
+  background: rgb(0 0 0 / 15%);
+}
+
+/* ============================================
+   MEDIA ELEMENT RESET
+   img, video, audio, picture, svg
+   ============================================ */
+img,
+video,
+picture,
+iframe {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: var(--sp-lg) 0;
+}
+
+svg {
+  overflow: visible;
+}
+
+/* ============================================
+   DETAIL / SUMMARY  (collapsible content)
+   ============================================ */
+details {
+  margin: var(--sp-lg) 0;
+}
+
+summary {
+  cursor: pointer;
+  font-weight: 700;
+  padding: var(--sp-md) 0;
+  user-select: none;
+}
+
+summary:hover {
+  color: var(--color-fire-orange);
+}
+
+summary::-webkit-details-marker {
+  color: var(--color-accent-gold);
+}
+
+/* ============================================
+   UTILITY CLASSES (Minimal, Atomic)
+   Single-purpose classes per casi comuni
+   ============================================ */
+
+/* Screen Reader Only - hide visually but keep in AT tree */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.sr-only-focusable:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  clip-path: none;
+  white-space: normal;
+}
+
+/* Display Utilities */
+.hidden {
+  display: none !important;
+}
+
+.block {
+  display: block;
+}
+
+.inline {
+  display: inline;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.grid {
+  display: grid;
+}
+
+/* Text Utilities */
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-justify {
+  text-align: justify;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Visibility Utilities */
+.invisible {
+  visibility: hidden;
+}
+
+.transparent {
+  opacity: 0;
+}
+
+.opacity-50 {
+  opacity: 0.5;
+}
+
+/* Spacing Utilities (margin/padding) */
+.m-0 {
+  margin: 0;
+}
+
+.m-auto {
+  margin: auto;
+}
+
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.no-underline {
+  text-decoration: none;
+}
+
+.underline {
+  text-decoration: underline;
+}
+
+/* ============================================
+   CSS STANDARD PROPERTIES
+   ============================================ */
+@supports not (--css: variables) {
+  body {
+    background-color: #0f0a1a;
+    color: #e8e0d4;
+  }
+  
+  header {
+    background: linear-gradient(180deg, 
+      rgb(32 25 42 / 98%) 0%, 
+      rgb(15 10 26 / 95%) 100%);
+  }
+  
+  .section h2 {
+    color: var(--color-gold-vivid);
+  }
+
+  .section h3 {
+    color: var(--color-gold-vivid);
+  }
+
+  .hero h1 {
+    color: var(--color-gold-vivid);
+  }
+
+  .hero-subtitle {
+    color: var(--color-flame-red);
+  }
+  
+  footer {
+    background: linear-gradient(180deg, 
+      rgb(32 25 42 / 98%) 0%, 
+      rgb(15 10 26 / 99%) 100%);
+  }
+}
+
+/* ACCESSIBILITY: Skip Link */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: linear-gradient(135deg, var(--color-gold-vivid) 0%, #f94 100%);
+  color: #0f0a1a;
+  padding: clamp(0.5rem, 1vh, 0.75rem) clamp(0.75rem, 2vw, 1.25rem);
+  text-decoration: none;
+  z-index: 200;
+  font-size: clamp(0.8rem, 1.2vw, 0.95rem);
+  font-weight: 700;
+  border-radius: 0 0 6px;
+  font-family: var(--font-serif);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  text-shadow: 0 2px 4px rgb(0 0 0 / 3%);
+  box-shadow: 0 4px 12px rgb(239 201 102 / 2%);
+  transition: all var(--transition-normal);
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 2px solid var(--color-flame-red);
+  outline-offset: 2px;
+  box-shadow: 0 4px 16px rgb(255 107 107 / 3%);
+}
