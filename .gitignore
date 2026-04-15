@@ -35,6 +35,7 @@ _logs/
 
 # Test Results & Coverage
 test-results/
+playwright-report/
 coverage/
 .nyc_output/
 *.lcov

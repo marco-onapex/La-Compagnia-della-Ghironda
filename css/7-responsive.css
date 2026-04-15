@@ -52,6 +52,21 @@
 
 }
 
+/* ── Height-constrained viewports (e.g. iPhone SE 375×667) ───────────────────
+   When the header stacks into column layout, it occupies ~290px, leaving too
+   little room for the full-size hero-content. Compress padding, gap and the
+   ghironda image so the content fits without clipping. */
+@media (height <= 680px) {
+  .hero-content {
+    padding-block: 0.5rem;
+    gap: 0.125rem;
+  }
+
+  .ghironda-wrapper {
+    width: min(100%, 260px);
+  }
+}
+
 @media (width <= 480px) {
   :root {
     font-size: 14px;

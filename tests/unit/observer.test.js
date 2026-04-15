@@ -1,4 +1,4 @@
-import { setupObserver } from '../../js/modules/observer.js';
+import { setupObserver, setupNavToggle, setupHeaderHeight } from '../../js/modules/observer.js';
 
 describe('Observer Module', () => {
   let mockSectionObserver;
@@ -156,5 +156,124 @@ describe('Observer Module', () => {
       expect(document.querySelector('a[href="#sec1"]').hasAttribute('aria-current')).toBe(false);
       expect(document.querySelector('a[href="#sec2"]').hasAttribute('aria-current')).toBe(false);
     });
+  });
+});
+
+// ─── setupNavToggle ───────────────────────────────────────────────────────────
+
+describe('setupNavToggle()', () => {
+  let header, toggle, nav;
+
+  beforeEach(() => {
+    jest.useFakeTimers();
+    document.body.innerHTML = `
+      <header>
+        <div class="header-title-wrapper">
+          <button class="nav-toggle" aria-expanded="false" aria-controls="main-nav">
+            <span class="nav-toggle-bar"></span>
+            <span class="nav-toggle-bar"></span>
+            <span class="nav-toggle-bar"></span>
+          </button>
+        </div>
+        <nav id="main-nav">
+          <ul>
+            <li><a href="#sec1">Section 1</a></li>
+          </ul>
+        </nav>
+      </header>
+    `;
+    header = document.querySelector('header');
+    toggle = document.querySelector('.nav-toggle');
+    nav    = document.getElementById('main-nav');
+  });
+
+  afterEach(() => {
+    document.body.innerHTML = '';
+    jest.useRealTimers();
+    jest.clearAllMocks();
+  });
+
+  test('clicking toggle sets aria-expanded="true" and adds nav-open to header', () => {
+    setupNavToggle();
+    toggle.click();
+    expect(toggle.getAttribute('aria-expanded')).toBe('true');
+    expect(header.classList.contains('nav-open')).toBe(true);
+  });
+
+  test('clicking toggle again collapses: aria-expanded="false", nav-open removed', () => {
+    setupNavToggle();
+    toggle.click();
+    toggle.click();
+    expect(toggle.getAttribute('aria-expanded')).toBe('false');
+    expect(header.classList.contains('nav-open')).toBe(false);
+  });
+
+  test('clicking a nav link collapses the nav', () => {
+    setupNavToggle();
+    toggle.click(); // open
+    nav.querySelector('a').click();
+    expect(toggle.getAttribute('aria-expanded')).toBe('false');
+    expect(header.classList.contains('nav-open')).toBe(false);
+  });
+
+  test('resize to desktop collapses nav if it was open', () => {
+    setupNavToggle();
+    toggle.click(); // open
+    // jsdom default innerWidth is 1024 — simulate resize event
+    window.dispatchEvent(new Event('resize'));
+    expect(header.classList.contains('nav-open')).toBe(false);
+    expect(toggle.getAttribute('aria-expanded')).toBe('false');
+  });
+
+  test('returns early without throwing when toggle is missing', () => {
+    toggle.remove();
+    expect(() => setupNavToggle()).not.toThrow();
+  });
+
+  test('returns early without throwing when nav is missing', () => {
+    nav.remove();
+    expect(() => setupNavToggle()).not.toThrow();
+  });
+});
+
+// ─── setupHeaderHeight ────────────────────────────────────────────────────────
+
+describe('setupHeaderHeight()', () => {
+  let mockResizeObserver, mockObserverInstance;
+
+  beforeEach(() => {
+    document.body.innerHTML = '<header></header>';
+    mockObserverInstance = { observe: jest.fn() };
+    mockResizeObserver = jest.fn(() => mockObserverInstance);
+    window.ResizeObserver = mockResizeObserver;
+  });
+
+  afterEach(() => {
+    document.body.innerHTML = '';
+    delete window.ResizeObserver;
+    jest.clearAllMocks();
+    document.documentElement.style.removeProperty('--header-h');
+  });
+
+  test('creates a ResizeObserver and observes the header', () => {
+    setupHeaderHeight();
+    expect(mockResizeObserver).toHaveBeenCalledTimes(1);
+    expect(mockObserverInstance.observe).toHaveBeenCalledWith(document.querySelector('header'));
+  });
+
+  test('ResizeObserver callback updates --header-h on root element', () => {
+    let capturedCb;
+    window.ResizeObserver = jest.fn((cb) => { capturedCb = cb; return mockObserverInstance; });
+    Object.defineProperty(document.querySelector('header'), 'offsetHeight', {
+      configurable: true, get() { return 76; },
+    });
+    setupHeaderHeight();
+    capturedCb();
+    expect(document.documentElement.style.getPropertyValue('--header-h')).toBe('76px');
+  });
+
+  test('returns early without throwing when ResizeObserver is unavailable', () => {
+    delete window.ResizeObserver;
+    expect(() => setupHeaderHeight()).not.toThrow();
   });
 });

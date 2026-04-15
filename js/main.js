@@ -15,10 +15,11 @@
  */
 
 import { installRequestAnimationFramePolyfill } from './modules/polyfills.js';
-import { setupObserver, setupHeaderToggle } from './modules/observer.js';
+import { setupObserver, setupHeaderToggle, setupNavToggle, setupHeaderHeight } from './modules/observer.js';
 
-// --header-h è interamente gestita in CSS (css/4-header.css) per breakpoint:
-// nessun aggiornamento JS post-paint → CLS = 0.000 garantito.
+// --header-h: valore iniziale impostato dall'inline script dopo </header>.
+// setupHeaderHeight() mantiene il valore aggiornato via ResizeObserver quando
+// il nav expand/collassa o il viewport cambia dimensione.
 
 installRequestAnimationFramePolyfill();
 
@@ -32,6 +33,8 @@ try {
       try {
         setupObserver();
         setupHeaderToggle();
+        setupNavToggle();
+        setupHeaderHeight();
       } catch (error) {
         void error;
       }
@@ -41,6 +44,8 @@ try {
     try {
       setupObserver();
       setupHeaderToggle();
+      setupNavToggle();
+      setupHeaderHeight();
     } catch (error) {
       /* istanbul ignore next */
       void error;

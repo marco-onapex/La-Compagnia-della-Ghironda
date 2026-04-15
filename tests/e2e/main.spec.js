@@ -28,19 +28,13 @@ test.describe('Page Loading and Rendering', () => {
     await expect(page.locator('footer')).toBeVisible();
   });
 
-  test('should generate and apply SVG topography circles', async ({ page }) => {
+  test('should render the SVG topography rings inside the ghironda wrapper', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
-    const circlesValue = await page.evaluate(() => {
-      const wrapper = document.querySelector('.ghironda-wrapper');
-      return wrapper
-        ? getComputedStyle(wrapper).getPropertyValue('--ghironda-circles')
-        : '';
-    });
-
-    // WebKit wraps the url() value with double-quotes; other browsers use single-quotes
-    expect(circlesValue).toMatch(/^url\(['"]data:image\/svg\+xml;utf8,/);
+    // I cerchi topografici sono ora SVG statico inline nell'HTML (non più generati via JS
+    // e applicati come CSS custom property --ghironda-circles).
+    await expect(page.locator('.ghironda-wrapper .ghironda-rings')).toBeVisible();
   });
 });
 
@@ -73,8 +67,14 @@ test.describe('Navigation and Scrolling', () => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
-    await page.locator('section').first().scrollIntoViewIfNeeded();
-    await page.waitForTimeout(600);
+    // Scorre alla prima sezione con id (l'hero non ha id, non è mappata dall'observer)
+    await page.locator('section[id]').first().scrollIntoViewIfNeeded();
+
+    // Attende che l'IntersectionObserver aggiorni aria-current (fino a 2s)
+    await page.waitForFunction(
+      () => document.querySelectorAll('a[aria-current="page"]').length >= 1,
+      { timeout: 2000 }
+    );
 
     const currentLinks = await page.locator('a[aria-current="page"]').count();
     expect(currentLinks).toBeGreaterThanOrEqual(1);
@@ -85,11 +85,22 @@ test.describe('Navigation and Scrolling', () => {
 
 test.describe('Keyboard Navigation', () => {
   test('should focus the skip link on first Tab from page load', async ({ page, browserName }) => {
-    // WebKit requires "Full Keyboard Access" in system prefs to Tab to links
-    test.skip(browserName === 'webkit', 'WebKit does not Tab to links without Full Keyboard Access');
     await page.goto('/');
-    await page.keyboard.press('Tab');
 
+    if (browserName === 'webkit') {
+      // WebKit requires system-level "Full Keyboard Access" to Tab to links.
+      // Verify the skip link exists and can receive focus via JS instead.
+      const skipLink = page.locator('a[href="#main-content"]').first();
+      await expect(skipLink).toBeAttached();
+      await skipLink.focus();
+      const isFocused = await page.evaluate(() =>
+        document.activeElement?.getAttribute('href') === '#main-content'
+      );
+      expect(isFocused).toBe(true);
+      return;
+    }
+
+    await page.keyboard.press('Tab');
     const isSkipLinkFocused = await page.evaluate(() =>
       document.activeElement?.getAttribute('href') === '#main-content',
     );
@@ -97,9 +108,17 @@ test.describe('Keyboard Navigation', () => {
   });
 
   test('should move focus through multiple interactive elements with Tab', async ({ page, browserName }) => {
-    // WebKit requires "Full Keyboard Access" in system prefs to Tab to links
-    test.skip(browserName === 'webkit', 'WebKit does not Tab to links without Full Keyboard Access');
     await page.goto('/');
+
+    if (browserName === 'webkit') {
+      // WebKit requires system-level "Full Keyboard Access" to Tab to links.
+      // Verify multiple focusable elements exist in the page instead.
+      const focusable = await page.evaluate(() =>
+        document.querySelectorAll('a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])').length
+      );
+      expect(focusable).toBeGreaterThanOrEqual(2);
+      return;
+    }
 
     const focused = new Set();
     for (let i = 0; i < 5; i++) {
@@ -165,15 +184,16 @@ test.describe('Responsive Design', () => {
 // ─── CSS and Styling ──────────────────────────────────────────────────────────
 
 test.describe('CSS and Styling', () => {
-  test('should set --header-height to a pixel value', async ({ page }) => {
+  test('should set --header-h to a pixel value', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
+    // Il CSS custom property è --header-h (non --header-height)
     const value = await page.evaluate(() =>
-      getComputedStyle(document.documentElement).getPropertyValue('--header-height').trim(),
+      getComputedStyle(document.documentElement).getPropertyValue('--header-h').trim(),
     );
 
-    // Must be a non-zero pixel value like "85px"
+    // Must be a non-zero pixel value like "76px"
     expect(value).toMatch(/^\d+px$/);
     expect(parseInt(value)).toBeGreaterThan(0);
   });

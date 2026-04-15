@@ -6,15 +6,22 @@
  * → Aggiorna aria-current="page" sul link di navigazione corrispondente
  *
  * setupHeaderToggle: toggle skip-link ↔ title-link nell'header.
- * → CSS Scroll-Driven Animations gestiscono la transizione fluida nei browser supportati
- *   (timeline-scope: --hero-h1 su body rende il named timeline visibile all'header).
- * → Questo IntersectionObserver aggiunge/rimuove .scrolled come fallback universale
- *   e mantiene il comportamento corretto anche senza CSS SDA.
+ * → CSS Scroll-Driven Animations gestiscono la transizione fluida nei browser supportati.
+ * → Questo IntersectionObserver aggiunge/rimuove .scrolled come fallback universale.
  * → Solo opacity/visibility cambiano → zero CLS garantito.
  *
+ * setupNavToggle: hamburger menu su mobile.
+ * → Toggling header.nav-open espande/collassa il nav.
+ * → Aggiorna --header-h dopo ogni transizione per mantenere corretto scroll-padding e hero height.
+ *
+ * setupHeaderHeight: ResizeObserver sul header.
+ * → Aggiorna --header-h in tempo reale ogni volta che il header cambia altezza.
+ *
  * @module observer
- * @function setupObserver - Setup Intersection Observer per sezioni
- * @function setupHeaderToggle - Toggle skip-link ↔ title-link al scroll
+ * @function setupObserver       - Intersection Observer per sezioni aria-current
+ * @function setupHeaderToggle   - Toggle skip-link ↔ title-link al scroll
+ * @function setupNavToggle      - Hamburger menu expand/collapse
+ * @function setupHeaderHeight   - ResizeObserver per --header-h dinamico
  * @returns {void}
  */
 
@@ -112,6 +119,111 @@ export function setupHeaderToggle() {
       ([entry]) => wrapper.classList.toggle('scrolled', !entry.isIntersecting),
       { rootMargin: `-${headerH}px 0px 0px 0px`, threshold: 0 }
     ).observe(h1);
+  } catch (error) {
+    void error;
+  }
+}
+
+/* ─── Shared helper: aggiorna --header-h sul root ────────────────────────── */
+function applyHeaderH(header) {
+  if (header) {
+    document.documentElement.style.setProperty('--header-h', header.offsetHeight + 'px');
+  }
+}
+
+/**
+ * Hamburger menu expand/collapse for mobile.
+ *
+ * Toggles header.nav-open — CSS animates the nav via grid-template-rows 0fr→1fr.
+ * After each animation, --header-h is updated so scroll-padding and the hero
+ * viewport height remain correct.
+ * Clicking a nav link while the menu is open also collapses it automatically.
+ *
+ * @function setupNavToggle
+ * @returns {void}
+ */
+export function setupNavToggle() {
+  try {
+    const toggle = document.querySelector('.nav-toggle');
+    const nav    = document.getElementById('main-nav');
+    const header = document.querySelector('header');
+    if (!toggle || !nav || !header) return;
+
+    const NAV_ANIM_MS = 300; // matches CSS transition duration (0.28s + buffer)
+
+    toggle.addEventListener('click', () => {
+      const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', String(!isOpen));
+      header.classList.toggle('nav-open', !isOpen);
+      // Update after animation so the final header height is captured
+      setTimeout(() => applyHeaderH(header), NAV_ANIM_MS);
+    });
+
+    // Collapse nav when a link is clicked (user navigates to a section).
+    // When the nav is open on mobile, --header-h reflects the expanded header (title
+    // + nav rows). If the browser scrolls immediately it uses that inflated value for
+    // scroll-padding-top, then the nav closes and the header shrinks → section ends
+    // up hidden under the shrunken header.
+    // Fix: intercept anchor clicks while the nav is open → close nav first → wait for
+    // the animation to finish → read the collapsed header height → manually scroll to
+    // (section's absolute page position) - (collapsed header height).
+    // window.scrollTo avoids any dependency on scroll-padding / scroll-margin CSS.
+    nav.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', (e) => {
+        const href = link.getAttribute('href');
+        const isAnchor = href && href.startsWith('#') && href.length > 1;
+
+        if (isAnchor && header.classList.contains('nav-open')) {
+          // Prevent the browser from scrolling with the stale (open) header height.
+          e.preventDefault();
+          toggle.setAttribute('aria-expanded', 'false');
+          header.classList.remove('nav-open');
+          // After animation: header is at its final collapsed height. getBoundingClientRect()
+          // forces a layout flush so we read positions after the hero has resized too.
+          setTimeout(() => {
+            applyHeaderH(header);
+            const target = document.getElementById(href.slice(1));
+            if (target) {
+              // target's absolute position in the page - collapsed header height
+              const top = target.getBoundingClientRect().top + window.scrollY - header.offsetHeight;
+              window.scrollTo({ top, behavior: 'smooth' });
+              if (window.history?.pushState) window.history.pushState(null, '', href);
+            }
+          }, NAV_ANIM_MS);
+        } else {
+          toggle.setAttribute('aria-expanded', 'false');
+          header.classList.remove('nav-open');
+          setTimeout(() => applyHeaderH(header), NAV_ANIM_MS);
+        }
+      });
+    });
+
+    // Collapse nav on resize to desktop so it's always clean if user resizes
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 769 && header.classList.contains('nav-open')) {
+        toggle.setAttribute('aria-expanded', 'false');
+        header.classList.remove('nav-open');
+        applyHeaderH(header);
+      }
+    }, { passive: true });
+  } catch (error) {
+    void error;
+  }
+}
+
+/**
+ * ResizeObserver on the header: keeps --header-h accurate whenever the header
+ * changes height (font load, nav expand/collapse, viewport resize).
+ *
+ * @function setupHeaderHeight
+ * @returns {void}
+ */
+export function setupHeaderHeight() {
+  try {
+    const header = document.querySelector('header');
+    if (!header || !window.ResizeObserver) return;
+
+    new ResizeObserver(() => applyHeaderH(header)).observe(header);
   } catch (error) {
     void error;
   }
