@@ -198,13 +198,20 @@ export function setupNavToggle() {
       });
     });
 
-    // Collapse nav on resize to desktop so it's always clean if user resizes
+    // Collapse nav on resize to desktop so it's always clean if user resizes.
+    // Debounced at 150ms: resize fires on every pixel during drag/rotation —
+    // without debouncing it causes repeated layout reads (offsetHeight) and
+    // classList mutations at up to 60fps.
+    let resizeTimer = 0;
     window.addEventListener('resize', () => {
-      if (window.innerWidth >= 769 && header.classList.contains('nav-open')) {
-        toggle.setAttribute('aria-expanded', 'false');
-        header.classList.remove('nav-open');
-        applyHeaderH(header);
-      }
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        if (window.innerWidth >= 769 && header.classList.contains('nav-open')) {
+          toggle.setAttribute('aria-expanded', 'false');
+          header.classList.remove('nav-open');
+          applyHeaderH(header);
+        }
+      }, 150);
     }, { passive: true });
   } catch (error) {
     void error;

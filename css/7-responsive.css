@@ -201,9 +201,9 @@
 }
 
 @media (width <= 480px) {
-  :root {
-    font-size: 14px;
-  }
+  /* :root font-size not needed: @media (width <= 599px) already sets
+     clamp(14px, 1.5vw, 16px) which evaluates to 14px at ≤ 480px
+     (1.5vw = 7.2px < the 14px minimum). */
 
   .hero h1 {
     font-size: clamp(1.6rem, 6vw, 2.2rem);

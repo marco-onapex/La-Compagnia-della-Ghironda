@@ -217,10 +217,13 @@ describe('setupNavToggle()', () => {
   });
 
   test('resize to desktop collapses nav if it was open', () => {
+    jest.useFakeTimers();
     setupNavToggle();
     toggle.click(); // open
     // jsdom default innerWidth is 1024 — simulate resize event
     window.dispatchEvent(new Event('resize'));
+    // The handler is debounced at 150ms — advance past the threshold
+    jest.advanceTimersByTime(200);
     expect(header.classList.contains('nav-open')).toBe(false);
     expect(toggle.getAttribute('aria-expanded')).toBe('false');
   });
