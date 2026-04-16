@@ -4,13 +4,15 @@
    Hero layout, ghironda image, animations
    ============================================ */
 
-/* Hero wrapper: fills exactly the viewport space below the sticky header.
-   --header-h is set in CSS per breakpoint (4-header.css) so the initial height
-   matches the rendered header without JS — zero CLS on first paint.
-   JS ResizeObserver (setupHeaderHeight) refines the value for pixel-perfect
-   anchor scroll-padding; any post-paint delta is < 10px → CLS < 0.01. */
+/* Hero wrapper: fills exactly the viewport space below the sticky header,
+   but only when the viewport is tall enough to give both header and hero
+   sufficient room (height >= 500px).
+   --header-h is set by the blocking inline <script> in index.html so the
+   initial height matches the rendered header without JS — CLS = 0.000.
+   On short viewports (landscape phones, small windows) the height lock is
+   lifted and the hero renders at its natural content height instead.
+   See 7-responsive.css for the conditional media queries. */
 .header-hero-wrapper {
-  height: calc(100dvh - var(--header-h, 76px));
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -150,27 +152,20 @@
   pointer-events: none;
 }
 
-/* 282% = fattore matematico che garantisce il cerchio interno inscriva sempre
-   l'immagine ghironda a qualsiasi viewport, grazie all'aspect-ratio costante 280:153.
-   r1_screen / wrapper_px = cost. indipendente dal breakpoint.
-   z-index: -1 → dipinto prima di tutti gli elementi z=auto nell'SC di .hero-content (z=1),
-   quindi testi e immagine rimangono sopra l'SVG. */
+/* Rings anchor directly on .hero (position: relative; contain: paint → stacking context).
+   140vmax scales with the viewport's longer side, guaranteeing the outermost ring always
+   covers the hero corners at every viewport size and orientation.
+   z-index: 0 → above .hero::before (conic overlay, z=0, DOM-earlier) and below
+   .hero-content (z=1), so all text and the image remain on top. */
 .ghironda-rings {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-
-  /* max(282%, 140vmax):
-     - 282% garantisce r1 inscrive l'immagine ai viewport tipici (≤1440px).
-     - 140vmax scala con il lato maggiore del viewport (vw in landscape, vh in portrait)
-       e assicura che r9 (cerchio esterno) copra gli angoli dell'hero su schermi larghi
-       (1920px+) e telefoni portrait, dove la wrapper è cappata a 720px e 282% non basta.
-     - aspect-ratio:1/1 → SVG quadrato dalla larghezza (non altezza). */
-  width: max(282%, 140vmax);
+  width: 140vmax;
   aspect-ratio: 1 / 1;
   pointer-events: none;
-  z-index: -1;
+  z-index: 0;
   overflow: visible;
   filter: drop-shadow(0 0 15px rgb(201 122 58 / 12%)) drop-shadow(0 0 8px rgb(167 58 58 / 8%));
 }

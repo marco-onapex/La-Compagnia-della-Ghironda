@@ -7,7 +7,7 @@
 .section {
   max-width: 1100px;
   margin: 0 auto var(--sp-3xl) auto;
-  padding: clamp(2.5rem, 5vw, 4rem) clamp(1.5rem, 2.5vw, 2rem);
+  padding: clamp(4.5rem, 6vw, 5.5rem) clamp(1.5rem, 2.5vw, 2rem) clamp(2.5rem, 5vw, 4rem);
   border-left: 3px solid transparent;
   border-right: 3px solid transparent;
   border-image: linear-gradient(180deg,
@@ -39,6 +39,8 @@
   font-family: var(--font-decorative);
   text-shadow: 0 0 8px rgb(239 201 102 / 2%);
   letter-spacing: 0.8rem;
+  pointer-events: none;
+  line-height: 1;
 }
 
 .section::before {
