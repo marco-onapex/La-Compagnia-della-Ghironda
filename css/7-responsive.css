@@ -16,7 +16,7 @@
   }
 
   .hero-subtitle {
-    font-size: var(--fs-base);
+    font-size: clamp(1rem, 3.5vw, 1.25rem);
   }
 
   .section {
@@ -162,13 +162,29 @@
   }
 }
 
+/* ── Mobile portrait — fill hero height and distribute items evenly ──────────
+   Phones 321–480px wide in portrait (height ≥ 500px, image visible): stretch
+   hero-content to fill the full available hero height so the five items
+   (h1, divider, tagline, image, subtitle) are distributed with equal spacing
+   between and around them, eliminating dead dark space above and below.
+   gap: 0 gives space-evenly sole control. Overrides height ≤ 680px values. */
+@media (width >= 321px) and (width <= 480px) and (height >= 500px) {
+  .hero-content {
+    flex: 1;
+    justify-content: space-evenly;
+    gap: 0;
+    padding-block: clamp(0.75rem, 2vh, 1.25rem);
+    padding-inline: clamp(1rem, 4vw, 1.5rem);
+  }
+}
+
 @media (width <= 480px) {
   :root {
     font-size: 14px;
   }
 
   .hero h1 {
-    font-size: clamp(1.3rem, 5vw, 2rem);
+    font-size: clamp(1.6rem, 6vw, 2.2rem);
     letter-spacing: 2px;
   }
 
