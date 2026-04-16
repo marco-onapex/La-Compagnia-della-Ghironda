@@ -28,13 +28,14 @@ test.describe('Page Loading and Rendering', () => {
     await expect(page.locator('footer')).toBeVisible();
   });
 
-  test('should render the SVG topography rings inside the ghironda wrapper', async ({ page }) => {
+  test('should render the SVG topography rings inside the hero section', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
-    // I cerchi topografici sono ora SVG statico inline nell'HTML (non più generati via JS
-    // e applicati come CSS custom property --ghironda-circles).
-    await expect(page.locator('.ghironda-wrapper .ghironda-rings')).toBeVisible();
+    // I cerchi topografici sono SVG statico inline, figlio diretto di .hero (non di
+    // .ghironda-wrapper) in modo da essere sempre centrati sull'hero indipendentemente
+    // dalla visibilità dell'immagine.
+    await expect(page.locator('.hero > .ghironda-rings')).toBeVisible();
   });
 });
 

@@ -36,6 +36,17 @@ test.describe('Accessibility Compliance', () => {
   test('should have zero color-contrast violations', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
+    // Wait for web fonts to finish painting before evaluating contrast.
+    // networkidle guarantees requests are done but not that fonts have been
+    // applied to the render tree — Firefox is especially sensitive to this race.
+    // document.fonts.ready resolves when font data is loaded; the two rAF calls
+    // ensure the browser has completed layout and paint with the loaded fonts
+    // before axe-core evaluates colour contrast.
+    await page.evaluate(() =>
+      document.fonts.ready.then(
+        () => new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r))),
+      ),
+    );
     await injectAxe(page);
 
     const violations = await page.evaluate(() =>
