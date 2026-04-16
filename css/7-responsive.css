@@ -120,13 +120,15 @@
 }
 
 /* ── Ghironda photograph — hidden on small/short viewports ───────────────────
-   (width <= 480px)  Portrait phones — the photo clutters the narrow layout.
+   (width <= 320px)  Very narrow devices only — modern phones (375px+) show the
+                     image filling ~100% of the hero width via the height-
+                     proportional formula in the height <= 680px block above.
    (height < 500px)  Landscape/short — no vertical room for the photo.
 
    The entire wrapper (image + glow) is hidden. The SVG rings are a direct
    child of .hero — not inside the wrapper — so they remain visible and
    perfectly centred on the hero at all times, independent of image presence. */
-@media (width <= 480px), (height < 500px) {
+@media (width <= 320px), (height < 500px) {
   .ghironda-wrapper {
     display: none;
   }
@@ -147,12 +149,12 @@
   }
 }
 
-/* ── Portrait phones — text-only hero layout ─────────────────────────────────
-   With the photograph absent and the hero filling the full portrait viewport
-   (100dvh lock active, height ≥ 500px), the four text items have generous
-   vertical space. Override the compressed values set by height ≤ 680px so
-   the hero breathes instead of cramming the text. */
-@media (width <= 480px) and (height >= 500px) {
+/* ── Very narrow phones — text-only hero layout ──────────────────────────────
+   Only applies at ≤ 320px where the photograph is hidden (see above).
+   Gives the four text items generous spacing to breathe in the tall hero.
+   On wider phones (321px+) the image is visible and the height-based rules
+   in the height ≤ 680px block handle spacing correctly — no override needed. */
+@media (width <= 320px) and (height >= 500px) {
   .hero-content {
     gap: clamp(1rem, 2.5vh, 2rem);
     padding-block: clamp(1.5rem, 4vh, 3rem);

@@ -441,8 +441,11 @@ nav a:focus-visible {
 
 @media (width <= 480px) {
   .header-container {
+    /* No gap override: base gap is 0. With max-height:0 on nav, a CSS Grid
+       gap would still add space below the title row even when nav is collapsed,
+       making the header taller than the title-wrapper alone. Nav-open spacing
+       is handled by padding-top on nav ul. */
     padding: clamp(0.9rem, 2vh, 1.1rem) clamp(0.8rem, 3vw, 1.3rem);
-    gap: clamp(0.8rem, 2vh, 1.2rem);
   }
 
   .header-title-wrapper {
