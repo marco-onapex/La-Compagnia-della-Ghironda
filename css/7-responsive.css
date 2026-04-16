@@ -162,19 +162,41 @@
   }
 }
 
-/* ── Mobile portrait — fill hero height and distribute items evenly ──────────
-   Phones 321–480px wide in portrait (height ≥ 500px, image visible): stretch
-   hero-content to fill the full available hero height so the five items
-   (h1, divider, tagline, image, subtitle) are distributed with equal spacing
-   between and around them, eliminating dead dark space above and below.
-   gap: 0 gives space-evenly sole control. Overrides height ≤ 680px values. */
+/* ── Mobile portrait — image pinned to hero centre, text above/below ──────────
+   Phones 321–480px wide in portrait (height ≥ 500px, image visible).
+
+   .ghironda-wrapper is taken out of flex flow (position: absolute) and centred
+   at 50 % of .hero-content, which fills the full hero (flex: 1) — so the photo
+   centre aligns exactly with the SVG topographic rings centre.
+
+   Text items stack from the top with a small gap; .hero-subtitle is pushed to
+   the bottom by margin-top: auto.  No text overlaps the image zone:
+   • h1 + divider + tagline sit above the image (image top ≈ 50 % – half height)
+   • .hero-subtitle sits below the image (image bottom ≈ 50 % + half height)
+
+   z-index: 0 on wrapper keeps it behind text (hero-content z-index: 1 context).
+   pointer-events: none prevents the absolutely-positioned wrapper from
+   intercepting taps on the visible text. */
 @media (width >= 321px) and (width <= 480px) and (height >= 500px) {
   .hero-content {
     flex: 1;
-    justify-content: space-evenly;
-    gap: 0;
-    padding-block: clamp(0.75rem, 2vh, 1.25rem);
+    justify-content: flex-start;
+    gap: clamp(0.5rem, 1.5vh, 1rem);
+    padding-block: clamp(1rem, 2.5vh, 2rem);
     padding-inline: clamp(1rem, 4vw, 1.5rem);
+  }
+
+  .ghironda-wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .hero-subtitle {
+    margin-top: auto;
   }
 }
 
