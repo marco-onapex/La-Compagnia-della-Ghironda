@@ -63,7 +63,7 @@
     "*.{js,mjs}": "eslint --max-warnings=0 --no-warn-ignored"
   },
   "devDependencies": {
-    "@axe-core/cli": "^4.8.0",
+    "@axe-core/cli": "^4.11.2",
     "@babel/preset-env": "^7.24.0",
     "@commitlint/config-conventional": "~20.5.0",
     "@playwright/test": "~1.59.1",
