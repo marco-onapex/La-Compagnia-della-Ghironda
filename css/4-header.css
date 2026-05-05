@@ -488,7 +488,17 @@ nav a {
   font-family: var(--font-serif);
   line-height: 1.4;
   position: relative;
-  border-bottom: 2px solid transparent;
+
+  /* No `border-bottom` reservation. Earlier rounds carried
+     `border-bottom: 2px solid transparent` to keep height stable
+     while the active-section animation animated `border-bottom-color`,
+     but the active-state look has converged on a colour-only swap
+     (no underline) — keeping the transparent border just put a
+     visible 2px underline on Chromium when the animation engine
+     leaked a colour onto it. Removing the reservation drops 2px
+     from each nav link's box: acceptable because every nav link
+     uses the same rule, so they all shrink uniformly with no layout
+     shift between active and inactive states. */
   outline-offset: 2px;
   transition: color 400ms, text-shadow 400ms;
   white-space: nowrap;
@@ -574,32 +584,21 @@ nav a:focus-visible {
      the full animation range. While in-range, the link gets the active
      styling; out-of-range, it reverts to default.
 
-     Round-23 cross-browser tweak: the active highlight uses
-     `--color-accent-gold` (the same warm gold used by `nav a:hover`
-     and `nav a:focus`) rather than `--color-flame-red`. The earlier
-     red was visually jarring against the gold-warm header palette
-     and inconsistent with the hover affordance. The whole-design now
-     reads "the active section is the one in gold".
-
-     Round-23 cross-browser fix #2: the keyframe does NOT touch
-     `border-bottom-width`. The base rule `nav a { border-bottom:
-     2px solid transparent; }` declares the shorthand ONCE — width,
-     style, colour all set together. If the keyframe also sets
-     `border-bottom-width: 3px`, Chromium's animation engine claims
-     ownership of that longhand, and on scroll-driven timelines it
-     leaves a residual value behind when scrolling out of the
-     `cover 30% 70%` range — a permanent 3px underline visible on
-     every nav link, regardless of which section is centred (the
-     bug the user reported as "border-bottom fissi" on Chromium
-     while Firefox stayed clean — Firefox doesn't run the keyframe
-     at all under Playwright's bundled build). Animating only
-     `border-bottom-color` keeps the layout intact (width stays at
-     the base 2px) and lets the engine release the property cleanly
-     when the section leaves the range. */
+     Round-23 final shape: the active highlight is COLOUR ONLY
+     (plus font-weight). Earlier iterations animated
+     `border-bottom-color` on top of a `border-bottom: 2px solid
+     transparent` base, but on Chromium the scroll-driven animation
+     engine was leaking a 2px gold underline onto the active link
+     that Firefox — without animation-timeline support — never
+     showed. The user wanted the Firefox affordance ("just the
+     hover-style colour swap, no underline") to be uniform across
+     every engine. Animating `color` alone produces exactly that:
+     a hover-feeling cross-fade onto `--color-accent-gold` (the
+     same gold `nav a:hover` and `nav a:focus` use), no border, no
+     layout-affecting longhand for Chromium to claim. */
   from,
   to {
     color: var(--color-accent-gold);
-    border-bottom-color: var(--color-accent-gold);
     font-weight: 700;
   }
 }

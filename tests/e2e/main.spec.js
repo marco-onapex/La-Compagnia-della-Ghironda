@@ -245,22 +245,21 @@ test.describe('Navigation and Scrolling', () => {
       ),
     );
     expect(inactiveStates.every((s) => s.color === FALLBACK)).toBe(true);
-    /* Round-23 fix #2 regression guard: the keyframe used to set
-       `border-bottom-width: 3px`, which Chromium's scroll-driven
-       animation engine claimed and never released — leaving every
-       link with a permanent 3px underline. The fix removed the
-       width animation; we pin both halves of the contract here.
-       (a) Inactive links must keep the base transparent border
-       (no leaked colour from the animation). (b) Width must equal
-       the base 2px on every link (not the historical 3px). */
-    expect(inactiveStates.every((s) => s.borderBottomColor === 'rgba(0, 0, 0, 0)')).toBe(true);
-    expect(inactiveStates.every((s) => s.borderBottomWidth === '2px')).toBe(true);
-    /* The active link's width is also 2px now — confirms the fix
-       did not just hide the 3px somewhere else. */
+    /* Round-23 final regression guard: the active-section affordance
+       is COLOUR ONLY — no border-bottom in any state, on any engine.
+       Earlier iterations used a `border-bottom: 2px solid transparent`
+       base + animated `border-bottom-color`; Chromium leaked a
+       persistent 2px gold underline that Firefox never showed,
+       breaking visual parity. Pin "no underline anywhere":
+       (a) every inactive link must report `borderBottomWidth: '0px'`
+       (the base reservation has been removed)
+       (b) the active link must also report `borderBottomWidth: '0px'`
+       (the fix didn't move the underline elsewhere). */
+    expect(inactiveStates.every((s) => s.borderBottomWidth === '0px')).toBe(true);
     const activeBorderWidth = await navLink.evaluate(
       (el) => getComputedStyle(el).borderBottomWidth,
     );
-    expect(activeBorderWidth).toBe('2px');
+    expect(activeBorderWidth).toBe('0px');
     /* Per-browser expected value — see matrix in the test docstring.
        Encoded as a lookup table (NOT a ternary) so
        playwright/no-conditional-in-test stays satisfied: there is no

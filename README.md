@@ -499,7 +499,7 @@ npm run prod             # Full validation before production
 - [x] Type-checking passing (tsc --strict over JS via JSDoc)
 - [x] Accessibility verified (WCAG AAA, axe color-contrast-enhanced, no violations)
 - [x] Security hardened (strict CSP — SHA-256 hashes, no unsafe-inline)
-- [x] Performance under budget (~<!-- AUTO:TOTAL_RAW -->24.6<!-- /AUTO --> KB uncompressed, ~<!-- AUTO:TOTAL_GZIP -->7.1<!-- /AUTO --> KB gzip)
+- [x] Performance under budget (~<!-- AUTO:TOTAL_RAW -->24.5<!-- /AUTO --> KB uncompressed, ~<!-- AUTO:TOTAL_GZIP -->7.1<!-- /AUTO --> KB gzip)
 - [x] Browser compatibility confirmed (Chrome / Firefox / Safari / Edge via Playwright)
 - [x] Documentation complete + LICENSE + SECURITY.md + CONTRIBUTING.md + CODE_OF_CONDUCT.md
 - [x] Service worker hardened (NetworkFirst HTML, content-type validation)
