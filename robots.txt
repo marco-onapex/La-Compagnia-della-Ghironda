@@ -1,17 +1,9 @@
 # robots.txt - La Compagnia della Ghironda
-# Guida i crawler di Google, Bing e altri motori di ricerca
+# Sito statico single-page; tutto è indicizzabile.
+# Crawl-delay rimosso: Google lo ignora e Bing/Yandex rallenterebbero
+# inutilmente un sito di una sola pagina.
 
 User-agent: *
 Allow: /
-Disallow: 
 
-# Sitemap
 Sitemap: https://marco-onapex.github.io/La-Compagnia-della-Ghironda/sitemap.xml
-
-# Crawl delay (secondi tra richieste)
-Crawl-delay: 1
-
-# Regole specifiche per Google
-User-agent: Googlebot
-Allow: /
-Crawl-delay: 0

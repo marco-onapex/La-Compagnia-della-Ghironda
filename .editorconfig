@@ -1,35 +1,18 @@
-# EditorConfig is awesome: https://EditorConfig.org
-
-# top-most EditorConfig file
 root = true
 
-# All files
 [*]
 charset = utf-8
 end_of_line = lf
-insert_final_newline = true
+indent_style = space
+indent_size = 2
 trim_trailing_whitespace = true
+insert_final_newline = true
 
-# HTML, CSS, JS files
-[*.{html,css,js,md}]
-indent_style = space
-indent_size = 2
-
-# JSON files
-[*.json]
-indent_style = space
-indent_size = 2
-
-# YAML files
-[*.{yml,yaml}]
-indent_style = space
-indent_size = 2
-
-# Markdown files
 [*.md]
 trim_trailing_whitespace = false
 
-# GitHub specific
-[.github/**]
-indent_style = space
+[*.{json,yml,yaml}]
 indent_size = 2
+
+[Makefile]
+indent_style = tab

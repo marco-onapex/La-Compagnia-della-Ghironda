@@ -1,0 +1,34 @@
+{
+  "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "_comment": "Mutation testing config. Mutates each operator/literal/conditional in js/ and re-runs jest to verify the suite catches each mutation. A surviving mutant means the tests cover the line but not the behaviour. Run: npm run test:mutation",
+  "packageManager": "npm",
+  "reporters": ["html", "clear-text", "progress-append-only", "json"],
+  "jsonReporter": { "fileName": "reports/mutation/mutation.json" },
+  "testRunner": "jest",
+  "jest": {
+    "projectType": "custom",
+    "configFile": "jest.config.cjs"
+  },
+  "coverageAnalysis": "off",
+  "_comment_mutate": "sw.js exposes a setup(self, env) function via dual-mode CJS bootstrap so tests can require() it through the standard Jest transform pipeline — Stryker's instrumentation propagates correctly. js/main.js is included: the istanbul-ignore annotations were removed in the Apr 2026 follow-up, and tests/unit/main.test.js now exercises the readyState branches, link.onload/onerror handlers, ?vitals URL-param activation, and SW registration success/failure/absent paths — every mutant in main.js is killed by the suite. scripts/docs-lint.js is intentionally excluded: a 6-minute experimental Stryker run (Apr 2026 follow-up #4) showed 156 surviving mutants, ~73% of which are intrinsically equivalent under behavioural testing (Regex tweaks on the FORBIDDEN_REFERENCES / FORBIDDEN_PROSE patterns that match the same inputs, StringLiteral mutations on `reason:` informational text and console output messages, ArrayDeclaration on the patterns array). The 90 tests in tests/unit/docs-lint.test.js — covering pure helpers + I/O wrappers (via the DI seam) + the main() pipeline (via console spies) — already pin every behavioural branch; mutation testing here would surface noise rather than gaps. Production runtime (js/, sw.js) stays mutation-gated; build tooling (scripts/) stays integration-tested via `npm run lint:docs` in CI.",
+  "mutate": ["js/**/*.js", "sw.js"],
+  "ignorePatterns": [
+    "dist",
+    ".deploy",
+    "coverage",
+    "test-results",
+    "playwright-report",
+    ".stryker-tmp",
+    "reports"
+  ],
+  "thresholds": {
+    "high": 100,
+    "low": 100,
+    "break": 100
+  },
+  "tempDirName": "stryker-tmp",
+  "timeoutMS": 30000,
+  "concurrency": 2,
+  "logLevel": "info",
+  "disableTypeChecks": false
+}

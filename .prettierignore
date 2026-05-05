@@ -1,0 +1,22 @@
+node_modules/
+dist/
+.deploy/
+coverage/
+playwright-report/
+test-results/
+reports/
+.eslintcache
+package-lock.json
+tests/e2e/visual.spec.js-snapshots/
+
+# Source-of-truth files modified by build pipeline (do not auto-format)
+index.html
+sw.js
+sitemap.xml
+.well-known/
+fonts/
+images/
+
+# CSS files are managed via stylelint --fix (run separately).
+# Prettier whitespace rules conflict with stylelint property-order.
+css/

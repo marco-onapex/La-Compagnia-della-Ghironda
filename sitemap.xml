@@ -1,27 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  changefreq + priority intentionally OMITTED:
+  Google has officially ignored both since 2023, and Bing only weights them
+  marginally. Keeping them was a no-op at best and a confusion vector at
+  worst (declaring "monthly" on a site that ships multiple times per week).
+-->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://marco-onapex.github.io/La-Compagnia-della-Ghironda/</loc>
-    <lastmod>2026-04-08</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://marco-onapex.github.io/La-Compagnia-della-Ghironda/#origine-identita</loc>
-    <lastmod>2026-04-08</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://marco-onapex.github.io/La-Compagnia-della-Ghironda/#obiettivo-organizzazione</loc>
-    <lastmod>2026-04-08</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://marco-onapex.github.io/La-Compagnia-della-Ghironda/#usi-costumi</loc>
-    <lastmod>2026-04-08</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <lastmod>2026-04-16</lastmod>
   </url>
 </urlset>

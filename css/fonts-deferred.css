@@ -1,0 +1,38 @@
+/* ============================================
+   DEFERRED @font-face declarations.
+   This file ships in dist/style-deferred.min.css, applied on the
+   `load` event from main.js — strictly AFTER LCP detection. Fonts
+   declared here are fetched on first encounter of the matching DOM
+   element, but the @font-face declaration itself is parsed only after
+   the deferred sheet arrives, so the browser can't speculatively
+   schedule these fetches during the critical path.
+
+   Result: the LCP image and the Cinzel LCP subset (declared in
+   critical fonts.css) own the bandwidth budget on Slow-4G simulated.
+   The full Cinzel-700 face arrives later for section h2 / footer
+   text, with `font-display: optional` allowing a fallback-serif
+   render if it doesn't beat the 100 ms blocking window — which on
+   first visit it won't, by design.
+   ============================================ */
+
+@font-face {
+  font-family: Cinzel;
+  src: url('../fonts/cinzel-600.woff2') format('woff2');
+  font-weight: 600;
+  font-display: optional;
+}
+
+@font-face {
+  font-family: Cinzel;
+  src: url('../fonts/cinzel-700.woff2') format('woff2');
+  font-weight: 700;
+  font-display: optional;
+}
+
+@font-face {
+  font-family: 'Crimson Text';
+  src: url('../fonts/crimson-text-400-italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: optional;
+}

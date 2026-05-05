@@ -1,13 +1,34 @@
 /* ============================================
-   TYPOGRAPHY SYSTEM
-   
-   Font scales, heading hierarchy, text colors
+   SECTION & FOOTER TYPOGRAPHY
+
+   Body text, heading styles, and footer text
+   for .section and footer components.
    ============================================ */
+
+/* Font deployment for the section/body region:
+
+   - cinzel-400 IS shipped, declared in `fonts.css` (critical, preloaded)
+     since the Apr 2026 follow-up — see that file's @font-face block and
+     the README font architecture table for the rationale. The body
+     subset is text-targeted to the actual glyphs the page renders.
+   - cinzel-decorative-400 is intentionally NOT declared anywhere; the
+     woff2 ships in `fonts/` for posterity but no @font-face references
+     it. Body section headings use cinzel-700 (full set, deferred via
+     `fonts-deferred.css`).
+
+   Section h2 / h3 inherit `font-family: var(--font-serif)` (= cinzel,
+   serif) at weight 700. cinzel-700 is in `fonts-deferred.css` (loaded
+   post-LCP by main.js) so first-visit Slow-4G users see fallback serif
+   headings during the optional-font block window; returning visitors
+   get cinzel-700 from the SW cache. Trade-off accepted to keep the LCP
+   path uncontended. */
+
+
 
 footer p {
   color: var(--color-text-secondary);
   font-size: var(--fs-sm);
-  line-height: var(--lh-normal);
+  line-height: 1.5rem;
   margin: var(--sp-sm) 0;
   letter-spacing: 0.3px;
 }
@@ -15,6 +36,11 @@ footer p {
 footer strong {
   color: var(--color-gold);
   font-weight: 700;
+
+  /* Explicit font-family — body is `serif` (see 2-reset.css), so
+     without this declaration `<strong>` would inherit `serif` and
+     miss the Cinzel-700 visual emphasis the design wants. */
+  font-family: var(--font-serif);
 }
 
 .section p {
@@ -33,17 +59,6 @@ footer strong {
   }
 }
 
-.section p::first-letter {
-  font-size: inherit;
-  font-weight: inherit;
-  color: inherit;
-  float: none;
-  line-height: inherit;
-  padding-right: 0;
-  font-family: inherit;
-  text-shadow: none;
-}
-
 .section h2 {
   font-size: clamp(1.8rem, 5vw, 2.5rem);
   color: var(--color-gold-vivid);
@@ -56,6 +71,10 @@ footer strong {
   position: relative;
   padding-bottom: var(--sp-lg);
   line-height: var(--lh-tight);
+
+  /* Sub-perceptual gold halo (2% alpha). The audit flagged this as
+     "noise" but visual regression baselines depend on its presence;
+     removing or bumping it is a design change, not a fix. Kept as-is. */
   text-shadow: 0 2px 8px rgb(239 201 102 / 2%);
 }
 
@@ -91,17 +110,24 @@ footer strong {
 }
 
 .section strong {
-  color: var(--color-gipsy-red);
+  /* Use the text-safe red variant: original --color-gipsy-red is 3.8:1
+     against --color-night (fails WCAG AA for normal text). The text-safe
+     #d56060 hits ≥ 7:1 (AAA-compliant). */
+  color: var(--color-gipsy-red-text);
   font-weight: 700;
-}
 
-.section em {
-  color: var(--color-gipsy-green);
-  font-style: italic;
-  font-weight: 500;
+  /* Explicit font-family — see footer strong rationale above. */
+  font-family: var(--font-serif);
 }
 
 .quote-liberty {
+  /* Crimson Text italic è dichiarata in fonts-deferred.css (l'@font-face
+     vive nel deferred bundle insieme a questa regola, quindi font e
+     selettore arrivano insieme dopo l'LCP). Usata qui invece di lasciare
+     il fallback Cinzel (che non ha una face italic, costringerebbe il
+     browser a sintetizzare l'italic con un semplice tilt). Glifi italici
+     disegnati ad hoc, non emulati. */
+  font-family: 'Crimson Text', serif;
   font-style: italic;
   color: var(--color-accent-gold);
   text-align: center;

@@ -1,22 +1,19 @@
 /* ============================================
    RESPONSIVE DESIGN
 
-   Mobile-first media queries - tablet (768px) and mobile (480px)
-   Note: Header media queries handled in 4-header.css
-   This file handles non-header element responsiveness
+   Mobile-first media queries. Desktop breakpoint = 1024px, replicated
+   verbatim across this file + 4-header.css + 2-reset.css + 5-hero.css.
+   CSS cannot reference custom properties inside `@media` queries
+   (spec limitation), so the value is a documented magic number rather
+   than a token — keep the four files in sync when changing it.
+
+   Header media queries live in 4-header.css; this file handles
+   non-header element responsiveness.
    ============================================ */
 
 @media (width <= 599px) {
   :root {
     font-size: clamp(14px, 1.5vw, 16px);
-  }
-
-  .hero h1 {
-    font-size: clamp(1.5rem, 6vw, 2.5rem);
-  }
-
-  .hero-subtitle {
-    font-size: clamp(1rem, 3.5vw, 1.25rem);
   }
 
   .section {
@@ -41,15 +38,6 @@
 
   .section h3 {
     font-size: var(--fs-xl);
-  }
-
-  .cards-grid {
-    gap: var(--sp-lg);
-    grid-template-columns: 1fr;
-  }
-
-  .card {
-    padding: var(--sp-lg);
   }
 
   footer {
@@ -77,14 +65,18 @@
 /* Full viewport-fill: applied when height is sufficient */
 @media (height >= 500px) {
   .header-hero-wrapper {
-    height: calc(100dvh - var(--header-h, 76px));
+    /* Fallback 77px MUST match 4-header.css :root --header-h and the
+       scroll-padding-top fallback in 2-reset.css — single source of truth. */
+    height: calc(100dvh - var(--header-h, 77px));
   }
 }
 
 /* Short viewports: hero is freed from the 100dvh lock.
    min-height ensures it is always tall enough to read, even if taller
    than the viewport (user can scroll). Image is absent (see below), so
-   gap is kept compact — text items only, no need for image breathing room. */
+   gap is kept compact — text items only, no need for image breathing room.
+   Rings remain visible: they are positioned on .hero independently of the
+   image wrapper and serve as the hero's decorative background at all heights. */
 @media (height < 500px) {
   .hero {
     min-height: clamp(260px, 55vh, 400px);
@@ -95,19 +87,18 @@
   }
 }
 
-/* Mid-height viewports: compress spacing and scale the image proportionally.
-   padding-block and gap use the same vh rate as the base (.hero-content) but
-   with a lower clamp minimum so they can compress as height decreases.
+/* Mid-height viewports: compress spacing and scale image to prevent content overflow.
+   padding-block and gap are reduced with vh-based clamps to save vertical room.
    At height = 680px both values equal the base → seamless transition.
 
-   Image width formula: min(100%, calc(clamp(200px, 65vh, 393px) × 280/153))
-   • Derives wrapper width from a height-proportional max-height then multiplies
-     by the image aspect ratio (280∶153), keeping aspect-ratio: 280/153 intact.
-   • 65vh × 280/153 reaches 595px at 500px height → fills ~99% on ≤600px screens.
-   • The 393px ceiling = natural image height at full width (720px); above ~605px
-     viewport height the formula is already capped at 719px ≈ the base 720px.
-   • At height = 680px: calc(393px × 280/153) ≈ 719px → matches min(100%, 720px)
-     exactly, so crossing the 680px breakpoint is imperceptible. */
+   Image width formula: min(100%, calc(clamp(200px, 100dvh − 280px, 393px) × 280/153))
+   • Image height target = 100dvh − 280px. The 280px offset covers:
+       header (~80px) + text stack h1+divider+tagline+subtitle (~89px)
+       + padding-block (~68px) + gaps 4×~43px/4 (~43px) = 280px.
+   • This ensures image + remaining content always fits the hero without overflow.
+   • 393px ceiling = natural image height at full-width (720px wrapper).
+   • At height = 680px: 100dvh − 280 = 400px → clamped to 393px → width ≈ 719px,
+     matching the base rule seamlessly. */
 @media (height <= 680px) {
   .hero-content {
     padding-block: clamp(0.5rem, 5vh, 4rem);
@@ -115,45 +106,60 @@
   }
 
   .ghironda-wrapper {
-    width: min(100%, calc(clamp(200px, 65vh, 393px) * 280 / 153));
+    width: min(100%, calc(clamp(200px, calc(100dvh - 280px), 393px) * 280 / 153));
   }
 }
 
-/* ── Ghironda photograph — hidden on small/short viewports ───────────────────
-   (width <= 320px)  Very narrow devices only — modern phones (375px+) show the
-                     image filling ~100% of the hero width via the height-
-                     proportional formula in the height <= 680px block above.
-   (height < 500px)  Landscape/short — no vertical room for the photo.
+/* ── Ghironda photograph — hidden when viewport space is insufficient ─────────
+   Three independent conditions, each sufficient on its own:
 
-   The entire wrapper (image + glow) is hidden. The SVG rings are a direct
-   child of .hero — not inside the wrapper — so they remain visible and
-   perfectly centred on the hero at all times, independent of image presence. */
+   (width <= 320px)   Very narrow devices — image would fill > 100% of the
+                      hero width and leave no text breathing room.
+   (height < 500px)   Landscape phones / tiny windows — no vertical room for
+                      the photo alongside the text stack.
+   :has(.nav-toggle-input:checked) + mobile + height < 800px
+                      When the hamburger menu is open (CSS-only checkbox
+                      state) the header expands to ~260px, leaving the
+                      hero at (viewport_height − 260px). Below 800px that
+                      remainder < 540px — not enough to show image + text
+                      without crowding. Above 800px (iPhone 12 and taller)
+                      the remaining room is adequate.
+
+   The SVG rings are anchored to .hero::after (NOT to this wrapper), so they
+   remain visible as decorative background even when the image is hidden —
+   keeping the hero visually anchored when the wrapper collapses. */
 @media (width <= 320px), (height < 500px) {
   .ghironda-wrapper {
     display: none;
   }
 }
 
-/* ── Open nav on mobile: hide image to free hero space ───────────────────────
-   When the hamburger nav is expanded the header grows, stealing vertical room
-   from the hero. Hide the wrapper so the remaining hero shows only the
-   decorative rings and text — clean and uncluttered.
-
-   Selector: header.nav-open (set by observer.js) is a sibling of
-   .header-hero-wrapper → the general sibling combinator ~ reaches the wrapper
-   without any JS involvement. The @media guard ensures this never fires on
-   desktop where nav-toggle is hidden and .nav-open is never added. */
-@media (width <= 768px) {
-  header.nav-open ~ .header-hero-wrapper .ghironda-wrapper {
+@media (width <= 1023px) and (height < 800px) {
+  /* When the hamburger menu is open (CSS-only checkbox state), hide the
+     ghironda image so the open menu doesn't crowd the remaining hero
+     viewport. Read via :has() — replaces the legacy `header.nav-open`
+     class hook that JS used to toggle. */
+  :where(header:has(.nav-toggle-input:checked)) ~ .header-hero-wrapper .ghironda-wrapper {
     display: none;
+  }
+}
+
+
+/* ── Mobile & tablet — horizontal breathing room ─────────────────────────────
+   The base padding-inline (clamp 0.5rem→1rem on vw) is too tight on narrow
+   screens. Override to a wider fluid range; everything else (centering,
+   flex-direction, gap, padding-block) is already correct in the base styles and
+   height-based blocks above — no further overrides needed. */
+@media (width <= 1023px) and (height >= 500px) {
+  .hero-content {
+    padding-inline: clamp(1rem, 4vw, 1.5rem);
   }
 }
 
 /* ── Very narrow phones — text-only hero layout ──────────────────────────────
    Only applies at ≤ 320px where the photograph is hidden (see above).
-   Gives the four text items generous spacing to breathe in the tall hero.
-   On wider phones (321px+) the image is visible and the height-based rules
-   in the height ≤ 680px block handle spacing correctly — no override needed. */
+   Overrides the mobile/tablet block above for these tiny screens:
+   more generous padding lets the four text items breathe in the imageless hero. */
 @media (width <= 320px) and (height >= 500px) {
   .hero-content {
     gap: clamp(1rem, 2.5vh, 2rem);
@@ -162,54 +168,7 @@
   }
 }
 
-/* ── Mobile portrait — image pinned to hero centre, text above/below ──────────
-   Phones 321–480px wide in portrait (height ≥ 500px, image visible).
-
-   .ghironda-wrapper is taken out of flex flow (position: absolute) and centred
-   at 50 % of .hero-content, which fills the full hero (flex: 1) — so the photo
-   centre aligns exactly with the SVG topographic rings centre.
-
-   Text items stack from the top with a small gap; .hero-subtitle is pushed to
-   the bottom by margin-top: auto.  No text overlaps the image zone:
-   • h1 + divider + tagline sit above the image (image top ≈ 50 % – half height)
-   • .hero-subtitle sits below the image (image bottom ≈ 50 % + half height)
-
-   z-index: 0 on wrapper keeps it behind text (hero-content z-index: 1 context).
-   pointer-events: none prevents the absolutely-positioned wrapper from
-   intercepting taps on the visible text. */
-@media (width >= 321px) and (width <= 480px) and (height >= 500px) {
-  .hero-content {
-    flex: 1;
-    justify-content: flex-start;
-    gap: clamp(0.5rem, 1.5vh, 1rem);
-    padding-block: clamp(1rem, 2.5vh, 2rem);
-    padding-inline: clamp(1rem, 4vw, 1.5rem);
-  }
-
-  .ghironda-wrapper {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 0;
-    pointer-events: none;
-  }
-
-  .hero-subtitle {
-    margin-top: auto;
-  }
-}
-
 @media (width <= 480px) {
-  /* :root font-size not needed: @media (width <= 599px) already sets
-     clamp(14px, 1.5vw, 16px) which evaluates to 14px at ≤ 480px
-     (1.5vw = 7.2px < the 14px minimum). */
-
-  .hero h1 {
-    font-size: clamp(1.6rem, 6vw, 2.2rem);
-    letter-spacing: 2px;
-  }
-
   .section {
     padding: clamp(3.5rem, 7vw, 4.5rem) clamp(0.75rem, 4vw, 1.25rem) clamp(2rem, 4vw, 3rem);
   }
@@ -233,11 +192,4 @@
     font-size: var(--fs-lg);
   }
 
-  .card {
-    padding: var(--sp-lg);
-  }
-
-  .card h4 {
-    font-size: var(--fs-lg);
-  }
 }

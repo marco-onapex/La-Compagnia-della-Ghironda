@@ -11,51 +11,68 @@
    - Performance optimized
    ============================================ */
 
-/* ===== HEADER HEIGHT TOKEN =====
-   --header-h is set by the blocking inline <script> in index.html, placed
-   immediately after </header>. It runs before the hero wrapper is painted,
-   so the value is exact from the first rendered frame → CLS = 0.000.
-   A ResizeObserver in observer.js keeps it live when the nav expands/collapses.
-   The CSS fallback below covers the no-JS case only.
-   ============================= */
-:root { --header-h: 80px; } /* no-JS fallback; JS inline script overrides this */
+/* ===== HEADER HEIGHT TOKEN — pure CSS, no JS write =================
+   --header-h is a CSS-static layout value used by:
+     - 2-reset.css `scroll-padding-top: var(--header-h)`
+     - 7-responsive.css `height: calc(100dvh - var(--header-h))` (hero)
+   77 px matches the rendered closed-state header on every supported
+   viewport (font-size clamp + min-height: 44 px + padding clamps all
+   converge near 77 px on mobile portrait, slightly more on tablet,
+   roughly 60 px on desktop where the header is two-column).
+   When the hamburger menu is open on mobile the rendered header is
+   ~280 px tall; the :has() rule below approximates that with a clamp
+   so scroll-padding and hero height adjust without any JS measurement.
+   The 280 px ceiling errs on the generous side — a ~5 px under-estimate
+   would partially hide a section header below the open menu, while a
+   ~5 px over-estimate just adds harmless whitespace. */
+:root { --header-h: 77px; }
+
+:root:has(.nav-toggle-input:checked) {
+  --header-h: clamp(220px, 38vh, 320px);
+}
 
 /* ===== LAYOUT FOUNDATION ===== */
 
 header {
-  /* All background layers in one declaration — ordering: decorative layers on top,
-     base gradient at the bottom. The previous split (background: + background-image:)
-     caused background-image to override the shorthand, silently dropping the base
-     dark-purple gradient and leaving the header on a transparent body background. */
-  background:
-    radial-gradient(circle at 20% 50%, rgb(201 122 58 / 8%) 0%, transparent 40%),
-    radial-gradient(circle at 80% 50%, rgb(85 107 47 / 6%) 0%, transparent 40%),
-    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="gipsy" x="0" y="0" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="3" fill="%239D7E1A" opacity="0.04"/><circle cx="20" cy="20" r="2" fill="%23C97A3A" opacity="0.03"/><circle cx="80" cy="80" r="2" fill="%23556B2F" opacity="0.03"/><path d="M 10 10 L 90 90 M 90 10 L 10 90" stroke="%238B3A3A" stroke-width="0.5" opacity="0.02"/></pattern></defs><rect width="100" height="100" fill="%230f0a1a"/><rect width="100" height="100" fill="url(%23gipsy)"/></svg>'),
-    linear-gradient(180deg, rgb(201 122 58 / 15%) 0%, rgb(85 107 47 / 15%) 100%),
-    linear-gradient(180deg, rgb(32 25 42 / 98%) 0%, rgb(15 10 26 / 95%) 100%);
+  /* Solid background colour for first paint — the layered SVG-pattern + radial
+     gradient + linear gradient + box-shadows are applied later via the
+     deferred bundle (9-decorations.css). Keeping only --color-night here
+     trims ~80ms of Style & Layout time on Lighthouse mobile (4× CPU throttle). */
+  background-color: var(--color-night);
   border-bottom: 2px solid rgb(201 122 58 / 30%);
-  box-shadow: 0 0 30px rgb(201 122 58 / 12%), 0 4px 16px rgb(0 0 0 / 4%), inset 0 0 20px rgb(157 126 26 / 3%);
   position: sticky;
   top: 0;
   z-index: 100;
-  backdrop-filter: blur(8px);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+
+  /* font-smoothing is declared on `body` in css/2-reset.css and
+     inherits to descendants — no need to re-declare here. */
   contain: layout paint;
 }
 
-/* Mobile-first base: single column, centered */
+/* Mobile-first base: single column, centered.
+   IE11 fallback: display:flex stacks title + nav vertically (acceptable
+   degradation — grid features like 0fr collapsed nav won't animate, but the
+   page remains readable). All modern browsers (Chrome 57+, Firefox 52+,
+   Safari 10.1+) support Grid and receive the full layout. */
 .header-container {
   width: 100%;
   padding: clamp(0.5rem, 1.5vh, 1rem) clamp(0.75rem, 4vw, 1.25rem);
-  display: grid;
-  grid-template-columns: 1fr;
-  justify-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-  /* gap: 0 — no gap between title row and nav row so that when nav is
-     collapsed (max-height: 0) the title is perfectly centred vertically.
-     The open-nav spacing comes from padding-top on <nav> below. */
-  gap: 0;
+@supports (display: grid) {
+  .header-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+
+    /* gap: 0 — no gap between title row and nav row so that when nav is
+       collapsed (max-height: 0) the title is perfectly centred vertically.
+       The open-nav spacing comes from padding-top on <nav> below. */
+    gap: 0;
+  }
 }
 
 /* ===== TITLE SECTION ===== */
@@ -94,7 +111,9 @@ header {
    Unified behaviour on every breakpoint:
    • top of page (hero h1 visible)  → skip visible, title hidden
    • scrolled (hero h1 out of view) → title visible, skip hidden
-   JS setupHeaderToggle() adds/removes .scrolled on the wrapper. ── */
+   The toggle is driven by a CSS scroll-driven animation
+   (`animation-timeline: --hero-h1`) — see the @supports block below.
+   No JS is involved in the toggle. ── */
 
 .skip-link-header {
   grid-row: 1;
@@ -113,8 +132,12 @@ header {
   color: var(--color-gold-vivid);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  font-family: var(--font-serif);
-  text-shadow: 0 2px 8px rgb(0 0 0 / 5%);
+
+  /* 'Cinzel LCP' subset — see comment on .hero h1 in 5-hero.css. The
+     skip-link sits in the LCP region (visible at top of page, swapped
+     with header-title-link via scroll-driven animation) so it shares
+     the subset font for first-paint glyph readiness. */
+  font-family: 'Cinzel LCP', cinzel, serif;
   text-decoration: none;
   cursor: pointer;
   line-height: 1.3;
@@ -131,7 +154,8 @@ header {
 
 .skip-link-header:hover {
   color: var(--color-accent-gold);
-  text-shadow: 0 0 12px rgb(212 184 150 / 4%);
+
+  /* text-shadow on hover handled by 9-decorations.css (deferred). */
 }
 
 .skip-link-header:focus-visible {
@@ -177,8 +201,13 @@ header {
   padding: 0;
   color: var(--color-gold-vivid);
   text-transform: uppercase;
-  font-family: var(--font-serif);
-  text-shadow: 0 2px 8px rgb(0 0 0 / 5%);
+
+  /* 'Cinzel LCP' subset — same source text as .hero h1 ("La Compagnia
+     della Ghironda"), so the subset covers it. See comment on .hero h1
+     in 5-hero.css for the rationale. */
+  font-family: 'Cinzel LCP', cinzel, serif;
+
+  /* text-shadow lives in 9-decorations.css (deferred). */
   text-align: center;
 
   /* Single line always: white-space: nowrap prevents wrapping.
@@ -192,14 +221,96 @@ header {
   letter-spacing: 0.04em;
 }
 
-/* ── Scroll toggle: JS adds .scrolled to .header-title-wrapper ── */
-.header-title-wrapper.scrolled .skip-link-header {
+/* ── Scroll-driven toggle (CSS-only, no JS) ──────────────────────────
+   `view-timeline` on the hero <h1> exposes its viewport-progression as
+   a named timeline. `timeline-scope: --hero-h1` on <body> publishes the
+   timeline so the <header> subtree (a sibling of the hero) can reference
+   it. Each link animates from its initial state to the inverse during
+   the h1's "exit" range — i.e. as the user scrolls the h1 above the
+   viewport top.
+
+   Browser support (Apr 2026):
+     - Chrome / Edge 115+   ✅
+     - Firefox 134+         ✅
+     - Safari 26+           ✅
+     - Safari ≤ 25          falls back to the static initial state
+                            (skip-link visible, title-link hidden)
+                            for the entire page-load — graceful: no
+                            broken layout, just no scroll-toggle effect.
+
+   `pointer-events` / `visibility: hidden` keep both elements out of
+   the a11y tree and tab order at the appropriate scroll position
+   without needing any JS-managed `aria-hidden`/`tabindex` attributes. */
+@supports (animation-timeline: view()) {
+  /* timeline-scope is declared in the unified @supports block below
+     (active-section indicator) so all four view-timelines — hero h1
+     and the three sections — are published with a single declaration. */
+
+  .skip-link-header,
+  .header-title-link {
+    animation-timeline: --hero-h1;
+    animation-fill-mode: both;
+    animation-range: exit 0% exit 100%;
+
+    /* Override the JS-fallback transitions: keyframe interpolation
+       owns the smooth fade now, and a residual transition would
+       fight with the animation-timeline progression. */
+    transition: none;
+  }
+
+  .skip-link-header {
+    animation-name: header-skip-link-fade-out;
+  }
+
+  .header-title-link {
+    animation-name: header-title-link-fade-in;
+  }
+}
+
+@keyframes header-skip-link-fade-out {
+  from {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  to {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+@keyframes header-title-link-fade-in {
+  from {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  to {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+}
+
+/* Fallback for browsers without `animation-timeline: view()` support
+   (Safari ≤25, legacy Chromium / Firefox). The
+   `body.is-scrolled-past-hero` class is set by
+   `js/modules/header-toggle.js` via IntersectionObserver — and ONLY
+   on those engines (the module bails out under the same @supports
+   query used by the keyframes above, so the two paths never both
+   run). The 0.35s transition declared on .skip-link-header /
+   .header-title-link in the static block above carries the cross-
+   fade on this path; here we just flip the end state. */
+body.is-scrolled-past-hero .skip-link-header {
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
 }
 
-.header-title-wrapper.scrolled .header-title-link {
+body.is-scrolled-past-hero .header-title-link {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
@@ -207,12 +318,33 @@ header {
 
 .header-title-link:hover .header-title {
   color: var(--color-accent-gold);
-  text-shadow: 0 0 12px rgb(212 184 150 / 4%);
+
+  /* text-shadow on hover lives in 9-decorations.css (deferred). */
 }
 
-/* ===== HAMBURGER TOGGLE BUTTON ===== */
+/* ===== HAMBURGER TOGGLE — pure CSS via checkbox-hack =====
+   Pattern: <label class="nav-toggle"> wrapping a visually-hidden
+   <input type="checkbox" class="nav-toggle-input">. Tab focuses the
+   input; clicking anywhere on the label toggles it. Other elements
+   read state via :has(.nav-toggle-input:checked). No JavaScript
+   involved.
 
-/* Visible on mobile, hidden on desktop (overridden in desktop MQ) */
+   The HTML `popover` API was tried as an alternative (Apr 2026):
+   `popover="manual"` + `popovertargetaction="hide"` on each link
+   would close the menu on link-click, resolving the "mobile nav
+   stays open after click" UX regression. Rejected after
+   implementation because when an element with `popover` is opened,
+   the spec promotes it to the **top-layer** — the popover renders
+   ABOVE all content, OUT of document flow, regardless of CSS
+   `position` overrides. The desired mobile UX is a drawer dropping
+   under the header in document flow; popover gives a floating
+   overlay. Net: popover is the wrong primitive for the "drawer
+   below header" pattern, checkbox-hack is correct.
+
+   Trade-off "mobile nav stays open after anchor click" remains
+   accepted: NOT a WCAG failure (axe reports 0 violations), auto-
+   close is UX softness only.  */
+
 .nav-toggle {
   grid-column: 3;      /* right column of the parent 3-column grid */
   display: flex;
@@ -228,18 +360,39 @@ header {
   color: var(--color-gold-vivid);
   cursor: pointer;
   border-radius: 2px;
+  position: relative;
   transition: color 250ms, background 250ms;
 }
 
 .nav-toggle:hover {
   color: var(--color-accent-gold);
-  background: rgb(157 126 26 / 8%);
+
+  /* background tint on hover lives in 9-decorations.css (deferred). */
 }
 
-.nav-toggle:focus-visible {
+/* The actual focus indicator: focus-within on the label (because the
+   real focusable element is the nested input). Keeps Tab navigation
+   working without exposing the input visually. */
+.nav-toggle:focus-within {
   outline: 2px solid var(--color-gold-vivid);
   outline-offset: 2px;
   border-radius: 2px;
+}
+
+/* Visually hide the checkbox but keep it focusable + clickable.
+   The 1px + clip-path pattern is the modern WCAG-accepted "sr-only"
+   technique. */
+.nav-toggle-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+  opacity: 0;
 }
 
 .nav-toggle-bar {
@@ -251,17 +404,21 @@ header {
   transition: transform 0.25s ease, opacity 0.25s ease;
 }
 
-/* Animate bars into × when nav is open */
-.nav-open .nav-toggle-bar:first-child {
+/* Animate bars into × when nav is open. The :checked state is read via
+   :has() on a common ancestor (header) so the bars (siblings of the
+   input through nested DOM) can react. The `header:has(...)` ancestor
+   match is wrapped in `:where()` to keep total specificity within the
+   project's stylelint cap. */
+:where(header:has(.nav-toggle-input:checked)) .nav-toggle-bar:first-child {
   transform: translateY(7px) rotate(45deg);
 }
 
-.nav-open .nav-toggle-bar:nth-child(2) {
+:where(header:has(.nav-toggle-input:checked)) .nav-toggle-bar:nth-child(2) {
   opacity: 0;
   transform: scaleX(0);
 }
 
-.nav-open .nav-toggle-bar:last-child {
+:where(header:has(.nav-toggle-input:checked)) .nav-toggle-bar:last-child {
   transform: translateY(-7px) rotate(-45deg);
 }
 
@@ -282,7 +439,7 @@ nav {
 }
 
 /* Expand: visibility becomes visible immediately (delay 0s), max-height animates open */
-.nav-open nav {
+header:has(.nav-toggle-input:checked) nav {
   max-height: 600px; /* generous ceiling — actual height is content-driven */
   visibility: visible;
   transition: max-height 0.3s ease, visibility 0s linear 0s;
@@ -317,12 +474,18 @@ nav a {
   padding: 0.45rem 1.5rem;
   min-height: 44px;
   min-width: 44px;
-  color: #f0e4c8;
+  color: var(--color-nav-link);
   text-decoration: none;
   font-size: 0.82rem;
   text-transform: uppercase;
   letter-spacing: 0.3px;
   font-weight: 600;
+
+  /* Explicit font-family — body is `serif` (see 2-reset.css comment),
+     so without this declaration nav links would inherit `serif` and
+     skip Cinzel-600. Cinzel-600 is text-subset to nav glyphs and
+     covers exactly the three menu strings. */
+  font-family: var(--font-serif);
   line-height: 1.4;
   position: relative;
   border-bottom: 2px solid transparent;
@@ -331,38 +494,12 @@ nav a {
   white-space: nowrap;
 }
 
-nav a::before {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--color-gold-vivid), var(--color-fire-orange), var(--color-flame-red));
-  transition: width 400ms;
-}
+/* Decorative ::before underline animation and hover/active text-shadows
+   live in 9-decorations.css (deferred bundle). */
 
 nav a:hover,
 nav a:focus {
   color: var(--color-accent-gold);
-  text-shadow: 0 0 8px rgb(212 184 150 / 25%);
-}
-
-nav a:hover::before,
-nav a:focus::before {
-  width: 100%;
-}
-
-nav a[aria-current="page"] {
-  color: var(--color-flame-red);
-  border-bottom-color: var(--color-flame-red);
-  border-bottom-width: 3px;
-  font-weight: 700;
-  text-shadow: 0 0 12px rgb(255 107 107 / 20%);
-}
-
-nav a[aria-current="page"]::before {
-  display: none;
 }
 
 nav a:focus-visible {
@@ -371,14 +508,88 @@ nav a:focus-visible {
   border-radius: 2px;
 }
 
-/* ===== DESKTOP LAYOUT (≥769px) ===== */
+/* ===== ACTIVE SECTION INDICATOR — pure CSS scroll-driven =========
+   Per-section <section> elements publish named view-timelines (declared
+   below); the matching nav anchor runs an animation off that timeline;
+   the keyframes apply the "current location" styling while the section
+   is centred in the viewport (cover 30%–70% range = the middle 40% of
+   its progression).
 
-@media (width >= 769px) {
+   Replaces the previous JS that set aria-current="location" on the
+   active link. No JS, no a11y attribute — purely visual indicator.
+
+   Browser support (Apr 2026):
+     - Chrome / Edge 115+   ✅
+     - Firefox 134+         ✅
+     - Safari 26+           ✅
+     - Safari ≤ 25          falls back to the default link styling
+                            (no active highlight) — graceful: nav still
+                            works for click-navigation, just no scroll-
+                            tracked highlight. */
+@supports (animation-timeline: view()) {
+  /* Publish per-section view-timelines from the body so the sibling
+     <header> subtree (where the nav anchors live) can reference them
+     via timeline-scope. */
+  body {
+    timeline-scope: --tl-origine, --tl-obiettivo, --tl-usi, --hero-h1;
+  }
+
+  /* `:where(#id)` collapses the ID's specificity to 0 — keeps the
+     project's 0,3,2 stylelint cap satisfied. We're only declaring
+     `view-timeline-name`, which has no cascade conflict to lose. */
+  :where(#origine-identita) {
+    view-timeline-name: --tl-origine;
+  }
+
+  :where(#obiettivo-organizzazione) {
+    view-timeline-name: --tl-obiettivo;
+  }
+
+  :where(#usi-costumi) {
+    view-timeline-name: --tl-usi;
+  }
+
+  nav a {
+    animation-name: nav-active-section;
+    animation-fill-mode: both;
+    animation-range: cover 30% cover 70%;
+  }
+  nav a[href="#origine-identita"]          { animation-timeline: --tl-origine; }
+  nav a[href="#obiettivo-organizzazione"]  { animation-timeline: --tl-obiettivo; }
+  nav a[href="#usi-costumi"]               { animation-timeline: --tl-usi; }
+}
+
+@keyframes nav-active-section {
+  /* "from, to" with no intermediate keyframes = constant value across
+     the full animation range. While in-range, the link gets the active
+     styling; out-of-range, it reverts to default. */
+  from,
+  to {
+    color: var(--color-flame-red);
+    border-bottom-color: var(--color-flame-red);
+    border-bottom-width: 3px;
+    font-weight: 700;
+  }
+}
+
+/* ===== DESKTOP LAYOUT (≥1024px) ===== */
+
+/* Mobile/tablet (≤1023px) and desktop (≥1024px) decorative header backgrounds
+   and backdrop-filter blur live in 9-decorations.css (deferred). The header
+   element ships with a solid --color-night background in the critical path. */
+
+@media (width >= 1024px) {
+  /* Tightened scales sotto: il content totale (titolo 27 chr + 3 voci nav per
+     un totale ~57 chr) deve stare in una sola riga a partire da 1024px senza
+     overflow — prima richiedeva ≥1400px nella sua versione "generosa" e
+     causava clipping invisibile su laptop 1280-1440 px. Padding/gap tagliati
+     a un terzo, font-size floor abbassato di un punto, letter-spacing ridotto
+     ma non azzerato. */
   .header-container {
-    padding: clamp(0.8rem, 1.2vw, 1rem) clamp(1rem, 2vw, 1.5rem);
+    padding: clamp(0.7rem, 1.1vw, 1rem) clamp(0.75rem, 1.5vw, 1.5rem);
     grid-template-columns: auto auto;
     place-items: center;
-    gap: clamp(1.5rem, 5vw, 3.5rem);
+    gap: clamp(0.75rem, 2vw, 2rem);
     justify-content: center;
   }
 
@@ -389,22 +600,33 @@ nav a:focus-visible {
     order: 0;
   }
 
+  /* Desktop: lo slot DEVE contenere il titolo "LA COMPAGNIA DELLA GHIRONDA"
+     (o lo skip-link "SALTA AL CONTENUTO") in una sola linea, senza troncare.
+     Senza questo override, il grid `auto auto` del .header-container shrinka
+     prima lo slot (che ha min-width:0 + overflow:hidden dalla regola mobile)
+     a favore della colonna nav. max-content forza la colonna a tenere la
+     larghezza intrinseca del testo. */
+  .header-title-slot {
+    min-width: max-content;
+    overflow: visible;
+  }
+
   /* Desktop: toggle hidden — nav always visible */
   .nav-toggle {
     display: none;
   }
 
-  /* Desktop: title sits beside the nav — restore decorative letter-spacing */
+  /* Desktop: title sits beside the nav. */
   .header-title {
-    font-size: clamp(0.85rem, 1.5vw, 1.1rem);
-    letter-spacing: 0.06em;
+    font-size: clamp(0.75rem, 1.1vw, 1rem);
+    letter-spacing: 0.03em;
     white-space: nowrap;
   }
 
   /* Desktop: skip-link matches title scale */
   .skip-link-header {
-    font-size: clamp(0.85rem, 1.5vw, 1.1rem);
-    letter-spacing: 0.06em;
+    font-size: clamp(0.75rem, 1.1vw, 1rem);
+    letter-spacing: 0.03em;
   }
 
   /* Desktop nav: always expanded, flex row layout. */
@@ -422,16 +644,21 @@ nav a:focus-visible {
   nav ul {
     flex-flow: row nowrap;
     justify-content: flex-start;
-    gap: clamp(0.5rem, 1.5vw, 1.25rem);
+    gap: clamp(0.25rem, 0.6vw, 0.75rem);
     width: auto;
     padding-top: 0;
   }
 
   nav a {
-    padding: clamp(0.6rem, 1vh, 0.8rem) clamp(0.75rem, 1.5vw, 1rem);
-    font-size: clamp(0.8rem, 1.3vw, 0.95rem);
-    letter-spacing: 0.5px;
+    padding: clamp(0.45rem, 0.8vh, 0.65rem) clamp(0.4rem, 0.8vw, 0.7rem);
+    font-size: clamp(0.7rem, 1vw, 0.9rem);
+    letter-spacing: 0.3px;
     white-space: nowrap;
+
+    /* WCAG 2.5.5 Target Size (Enhanced, AAA) — keep 44 px on desktop too;
+       the mobile rule (`min-height: 44px; min-width: 44px`) doesn't carry
+       over because of the cascade priority of the desktop @media block. */
+    min-height: 44px;
   }
 }
 

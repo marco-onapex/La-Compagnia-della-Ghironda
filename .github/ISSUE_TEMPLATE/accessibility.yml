@@ -1,0 +1,29 @@
+name: Accessibility issue
+description: Report a WCAG / a11y problem (focus order, contrast, ARIA, keyboard nav, screen-reader experience).
+labels: [accessibility, bug]
+body:
+  - type: input
+    id: wcag
+    attributes:
+      label: WCAG criterion (if known)
+      placeholder: "e.g. 2.4.7 Focus Visible (AA)"
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: How can a maintainer reproduce the issue? Include AT (NVDA, JAWS, VoiceOver) and browser.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+  - type: input
+    id: tooling
+    attributes:
+      label: AT / browser
+      placeholder: "e.g. NVDA 2024.4 + Firefox 132"
+    validations:
+      required: true

@@ -7,8 +7,18 @@ on:
   pull_request:
     branches: [main]
 
+# Least-privilege default: every job inherits read-only contents access.
+# This workflow only audits/validates; nothing here writes to the repo.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 env:
-  NODE_VERSION: '20'
+  NODE_VERSION: "24"
+  CACHE_VERSION: v3
 
 jobs:
   seo-validation:
@@ -16,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Validate required meta tags
         run: |
@@ -56,42 +66,75 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
+
+      - name: Cache node_modules
+        id: cache-nm
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-nm-${{ env.CACHE_VERSION }}-node${{ env.NODE_VERSION }}-${{ hashFiles('**/package-lock.json') }}
 
       - name: Install dependencies
-        run: npm ci
+        if: steps.cache-nm.outputs.cache-hit != 'true'
+        run: npm ci --prefer-offline
 
-      - name: npm audit — high severity
-        run: npm audit --audit-level=high
+      - name: Full security audit (CVEs + static analysis + HTTPS + CSP)
+        run: npm run audit:security
 
   bundle-integrity:
     name: Bundle Integrity & Performance Budget
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: "npm"
+
+      - name: Cache node_modules
+        id: cache-nm
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-nm-${{ env.CACHE_VERSION }}-node${{ env.NODE_VERSION }}-${{ hashFiles('**/package-lock.json') }}
 
       - name: Install dependencies
-        run: npm ci
+        if: steps.cache-nm.outputs.cache-hit != 'true'
+        run: npm ci --prefer-offline
 
-      - name: Verify dist files exist
+      # Round 20 (option B): the deployable artefact lives under
+      # `.deploy/`, gitignored on `main`. Run the full build chain here
+      # so the integrity checks below validate the same bytes the
+      # deploy workflow will publish to gh-pages.
+      - name: Build production artefact
+        run: npm run build
+
+      - name: Verify .deploy/ outputs exist
         run: |
-          test -f dist/style.min.css \
-            && echo "  ok  dist/style.min.css" \
-            || { echo "  FAIL dist/style.min.css missing"; exit 1; }
-          test -f dist/main.min.js \
-            && echo "  ok  dist/main.min.js" \
-            || { echo "  FAIL dist/main.min.js missing"; exit 1; }
+          test -f .deploy/dist/style-deferred.min.css \
+            && echo "  ok  .deploy/dist/style-deferred.min.css" \
+            || { echo "  FAIL .deploy/dist/style-deferred.min.css missing"; exit 1; }
+          test -f .deploy/dist/main.min.js \
+            && echo "  ok  .deploy/dist/main.min.js" \
+            || { echo "  FAIL .deploy/dist/main.min.js missing"; exit 1; }
+          # Critical CSS is inlined into the BUILT copy of index.html
+          grep -q '<style>' .deploy/index.html \
+            && echo "  ok  inlined critical CSS in .deploy/index.html" \
+            || { echo "  FAIL critical CSS not inlined in .deploy/index.html"; exit 1; }
+
+      - name: Verify cache-bust hash in .deploy/index.html
+        run: |
+          grep -q 'dist/main.min.js?v=' .deploy/index.html \
+            && echo "  ok  cache-bust hash present" \
+            || { echo "  FAIL cache-bust hash missing in .deploy/index.html"; exit 1; }
 
       - name: Check performance budget
         run: node scripts/performance-budget.js

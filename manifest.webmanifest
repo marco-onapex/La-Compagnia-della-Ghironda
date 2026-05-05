@@ -1,0 +1,33 @@
+{
+  "name": "La Compagnia della Ghironda",
+  "short_name": "Ghironda",
+  "description": "Comunità di spiriti liberi che combatte l'Oscurità nell'Arcipelago Perduto. Storia, organizzazione e costumi.",
+  "lang": "it",
+  "start_url": "./",
+  "scope": "./",
+  "display": "minimal-ui",
+  "orientation": "portrait-primary",
+  "background_color": "#0f0a1a",
+  "theme_color": "#0f0a1a",
+  "icons": [
+    {
+      "src": "images/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["games", "entertainment"]
+}

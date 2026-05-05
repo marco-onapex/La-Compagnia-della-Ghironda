@@ -1,0 +1,18 @@
+# humanstxt.org — la versione "for humans" del robots.txt.
+
+/* TEAM */
+  Author: Marco Di Paola
+  Contact: marcodipaola.informatica [at] gmail.com
+  Location: Italy
+
+/* SITE */
+  Name: La Compagnia della Ghironda
+  Description: Sito vetrina della gilda omonima su The Miracle Shard (Ultima Online).
+  Language: Italian
+  Doctype: HTML5
+  Source: https://github.com/marco-onapex/La-Compagnia-della-Ghironda
+  License: MIT (codice) — testi e identità di gilda riservati agli autori.
+
+/* THANKS */
+  The Miracle Shard community
+  Ultima Online (1997–) — Origin Systems / Electronic Arts / Broadsword

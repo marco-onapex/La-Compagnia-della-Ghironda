@@ -1,71 +1,79 @@
 #!/usr/bin/env node
 
 /**
- * JavaScript Build Script - Module Bundling & Minification
+ * JavaScript Build Script - esbuild Bundling & Minification
  *
- * Concatena i moduli ES6 in un singolo file, poi minifica con la Terser JS API
- * (no child process, no temp file su disco).
+ * Usa esbuild per risolvere import/export ES6 nativamente (no regex stripping),
+ * bundlare in IIFE browser-safe, minificare e generare sourcemap.
+ *
+ * Entry point: js/main.js (risolve tutte le dipendenze automaticamente)
+ * Output: .deploy/dist/main.min.js
+ *
+ * Round 20 (option B production-grade): output goes to `.deploy/`
+ * (gitignored, pushed to `gh-pages` by the CI deploy workflow). The
+ * source tree is never mutated.
+ *
+ * Sourcemap policy:
+ *   default                       → no .map shipped (production-safe).
+ *   NODE_ENV=development          → external .map for local debugging.
+ *
+ * Any stale .map file from a previous dev build is deleted on a production
+ * build so we never accidentally publish source code to public visitors.
  */
 
-import fs from 'fs';
-import path from 'path';
-import { minify } from 'terser';
-import { fileURLToPath } from 'url';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import * as esbuild from 'esbuild';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// Ordine di caricamento (per dipendenze)
-const modules = [
-  'js/config.js',
-  'js/modules/polyfills.js',
-  'js/modules/observer.js',
-  'js/main.js',
-];
+const ENTRY = path.join(__dirname, 'js/main.js');
+const DEPLOY_DIR = path.join(__dirname, '.deploy');
+const OUT_JS = path.join(DEPLOY_DIR, 'dist', 'main.min.js');
+const IS_DEV = process.env.NODE_ENV === 'development';
 
-const OUT_JS  = path.join(__dirname, 'dist/main.min.js');
-const OUT_MAP = path.join(__dirname, 'dist/main.min.js.map');
+console.log(
+  `📦 Bundling JavaScript with esbuild${IS_DEV ? ' (development, with sourcemap)' : ' (production)'}...`,
+);
 
-console.log('📦 Bundling JavaScript modules...');
+fs.mkdirSync(path.dirname(OUT_JS), { recursive: true });
 
-let bundledCode = '';
-
-for (const module of modules) {
-  const filePath = path.join(__dirname, module);
-  let content = fs.readFileSync(filePath, 'utf-8');
-
-  // Rimuovi BOM se presente
-  if (content.charCodeAt(0) === 0xFEFF) content = content.slice(1);
-
-  // Rimuovi import/export ES6
-  content = content.replace(/^import\s+.*from\s+['"][^'"]*['"]\s*;?\s*$/gm, '');
-  content = content.replace(/^export\s+/gm, '');
-  content = content.replace(/\n\n+/g, '\n\n');
-
-  bundledCode += content + '\n\n';
-}
-
-console.log(`[OK] Bundled ${modules.length} modules`);
-
-// Minifica con Terser JS API (no child process)
-console.log('🔨 Minifying JavaScript...');
-
-const result = await minify(bundledCode, {
-  sourceMap: {
-    filename: 'main.min.js',
-    url:      'main.min.js.map',
-  },
+const result = await esbuild.build({
+  entryPoints: [ENTRY],
+  bundle: true,
+  minify: true,
+  sourcemap: IS_DEV,
+  outfile: OUT_JS,
+  format: 'iife', // Self-contained IIFE — compatible with <script defer src="...">
+  platform: 'browser',
+  // No target downgrade: the site already requires IntersectionObserver (Chrome 51+, Firefox 55+)
+  // Output stays modern ES — esbuild bundles+minifies without rewriting syntax
+  logLevel: 'warning',
+  legalComments: 'none',
 });
 
-if (!result.code) {
-  console.error('❌ Terser returned empty output');
+// Strip a stale dev .map file from production builds so a previous
+// `NODE_ENV=development` run can never leak source through deploy.
+if (!IS_DEV) {
+  const stale = OUT_JS + '.map';
+  if (fs.existsSync(stale)) {
+    fs.unlinkSync(stale);
+    console.log('🧹 Removed stale sourcemap: .deploy/dist/main.min.js.map');
+  }
+}
+
+if (result.errors.length > 0) {
+  console.error('❌ esbuild errors:', result.errors);
   process.exit(1);
 }
 
-fs.mkdirSync(path.join(__dirname, 'dist'), { recursive: true });
-fs.writeFileSync(OUT_JS,  result.code);
-if (result.map) fs.writeFileSync(OUT_MAP, result.map);
-
-console.log('✅ Minified');
+if (!fs.existsSync(OUT_JS)) {
+  console.error('❌ esbuild produced no output');
+  process.exit(1);
+}
 
 const sizeKB = (fs.statSync(OUT_JS).size / 1024).toFixed(2);
+console.log(`✅ Bundled & minified → .deploy/dist/main.min.js`);
 console.log(`📊 Final size: ${sizeKB} KB`);

@@ -1,0 +1,79 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+# CodeQL — GitHub-native static analysis for JS/TS.
+#
+# Why: surface security issues (XSS, prototype pollution, unsafe regex,
+# command injection, SQL injection, hard-coded secrets, supply-chain risks)
+# that ESLint cannot catch. Free for public repositories.
+#
+# When: on every push to main, every PR targeting main, and weekly to catch
+# newly published vulnerability rules against unchanged code.
+#
+# Permissions: requires `security-events: write` to upload SARIF results.
+name: CodeQL
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # 03:17 UTC every Monday — off-peak, picks up new CodeQL rules weekly.
+    - cron: "17 3 * * 1"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    name: Analyze (javascript)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      security-events: write # required to upload SARIF
+      packages: read # only needed if internal packages are scanned
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ["javascript"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@7fc6561ed893d15cec696e062df840b21db27eb0 # v4.35.2
+        with:
+          languages: ${{ matrix.language }}
+          # security-extended adds rules for less-common but real issues
+          # (eg. clear-text-logging, regex-injection). Default 'security' is
+          # narrower; pick extended since this repo's surface is tiny.
+          queries: security-extended
+          # `paths-ignore` is a CodeQL *config* key, not an action input —
+          # passing it under `with:` (as we did before) made the action
+          # silently ignore it and CodeQL scanned dist/, coverage/, etc.
+          # The `config:` input takes inline YAML matching the CodeQL
+          # config file format, which is where `paths-ignore` belongs.
+          # Skip minified bundles, generated coverage reports, visual
+          # regression PNGs, and Stryker mutation reports.
+          config: |
+            paths-ignore:
+              - dist/
+              # Round 20 (option B): `.deploy/` is the gitignored build
+              # artefact — minified JS, stripped HTML, vendored static
+              # assets. CodeQL on the minified bundle is noise.
+              - .deploy/
+              - coverage/
+              - test-results/
+              - playwright-report/
+              - tests/e2e/visual.spec.js-snapshots/
+              - reports/
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@7fc6561ed893d15cec696e062df840b21db27eb0 # v4.35.2
+        with:
+          category: "/language:${{ matrix.language }}"

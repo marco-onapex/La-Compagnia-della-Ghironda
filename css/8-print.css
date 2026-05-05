@@ -6,15 +6,15 @@
 
 @media print {
   /* Hide interactive elements */
-  header, nav, .skip-link, .skip-link-header,
+  header, nav, .skip-link-header,
   footer a, button, [role="button"] {
     display: none !important;
   }
 
   /* Optimize body for print */
   body {
-    background: white !important;
-    color: black !important;
+    background: #fff !important;
+    color: #000 !important;
     font-size: 12pt;
     line-height: 1.5;
   }
@@ -35,7 +35,7 @@
   /* Optimize headings */
   h1, h2, h3, h4, h5, h6 {
     break-after: avoid;
-    color: black !important;
+    color: #000 !important;
   }
 
   .section h2 {
@@ -50,8 +50,15 @@
     color: #666;
   }
 
-  /* Hide decorative elements */
-  .ghironda-wrapper::after, .hero::before,
+  /* Hide decorative elements. Selectors aligned with the actual
+     pseudo-elements declared in 9-decorations.css:
+       - .hero::after             (concentric rings SVG background)
+       - .ghironda-wrapper::before (warm glow halo)
+       - .section::before/::after (◈◆◈ ornament)
+       - footer::before/::after   (◈◆◈ ornament)
+     The previous list named .hero::before and .ghironda-wrapper::after,
+     which do not exist — every print render leaked the rings SVG. */
+  .hero::after, .ghironda-wrapper::before,
   .section::before, .section::after,
   footer::before, footer::after {
     display: none !important;

@@ -1,0 +1,12 @@
+# Security policy — RFC 9116 (https://www.rfc-editor.org/rfc/rfc9116)
+#
+# Report a security issue you've found in this site or its build pipeline.
+# This is a small static fan-site for an Ultima Online guild on
+# The Miracle Shard; there is no user data, no auth, no backend.
+# Disclosure expectations are accordingly modest, but please reach out
+# rather than going public.
+
+Contact: mailto:marcodipaola.informatica@gmail.com
+Expires: 2026-11-04T00:00:00.000Z
+Preferred-Languages: it, en
+Canonical: https://marco-onapex.github.io/La-Compagnia-della-Ghironda/.well-known/security.txt

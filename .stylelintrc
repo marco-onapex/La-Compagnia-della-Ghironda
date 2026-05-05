@@ -5,17 +5,12 @@
     "at-rule-no-unknown": [
       true,
       {
-        "ignoreAtRules": ["supports"]
+        "ignoreAtRules": ["supports", "container", "scope", "starting-style"]
       }
     ],
     "property-no-unknown": [
       true,
-      {
-        "ignoreProperties": [
-          "/^-webkit-/",
-          "/^-moz-/"
-        ]
-      }
+      { "ignoreProperties": ["/^-webkit-/", "/^-moz-/"] }
     ],
     "max-nesting-depth": [3, { "ignore": ["blockless-at-rules"] }],
     "selector-max-compound-selectors": 4,
@@ -24,8 +19,28 @@
     "function-url-quotes": "always",
     "font-weight-notation": "numeric",
     "block-no-empty": true,
-    "property-no-vendor-prefix": [true, {
-      "ignoreProperties": ["-webkit-mask-composite"]
-    }]
-  }
+    "property-no-vendor-prefix": [true, { "ignoreProperties": ["-webkit-mask-composite"] }],
+    "declaration-no-important": true,
+
+    "no-duplicate-selectors": true,
+    "color-named": "never",
+    "length-zero-no-unit": true,
+    "declaration-block-no-shorthand-property-overrides": true,
+    "shorthand-property-no-redundant-values": true,
+    "no-descending-specificity": [true, { "severity": "warning" }],
+    "selector-class-pattern": [
+      "^[a-z][a-z0-9]*(-[a-z0-9]+)*(__[a-z0-9]+(-[a-z0-9]+)*)?(--[a-z0-9]+(-[a-z0-9]+)*)?$",
+      { "message": "Class names must be kebab-case (BEM-compatible)." }
+    ],
+    "custom-property-empty-line-before": [
+      "always",
+      { "except": ["after-custom-property", "first-nested"], "ignore": ["after-comment", "inside-single-line-block"] }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["css/2-reset.css", "css/8-print.css"],
+      "rules": { "declaration-no-important": null }
+    }
+  ]
 }

@@ -1,0 +1,168 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+#
+# Round 20 (option B production-grade) — source/deploy branch separation.
+#
+# `main` holds source only; `.deploy/` is gitignored on main. This
+# workflow runs the full build chain after CI is green, then force-
+# pushes the contents of `.deploy/` to the orphan branch `gh-pages`.
+# GitHub Pages must be configured to serve from `gh-pages` (Settings
+# → Pages → Branch: `gh-pages` / root).
+#
+# Round-21 hardening: gated via `workflow_run` trigger so a deploy
+# only fires AFTER `test.yml` has reported success on the same SHA.
+# A push to main that skipped CI (admin bypass, unusual force-push)
+# can no longer publish to gh-pages without first turning the
+# pipeline green. The original `push: [main]` trigger let any push
+# directly to main publish — round 20's deploy story documented "CI
+# passes first" but never enforced it.
+#
+# Why an orphan branch:
+#   - `gh-pages` carries the deploy artefact only — never source.
+#   - Force-pushing the artefact is safe because nothing on `gh-pages`
+#     is hand-edited; the source of truth is `main`.
+#
+# Rollback semantics:
+#   Each deploy is a fresh ORPHAN-rooted commit (no parent), so
+#   `git revert` does not work on `gh-pages`. To roll back a deploy:
+#     1. Identify the source-tree SHA on `main` that produced the
+#        previous good deploy (check `gh run list --workflow=deploy.yml`).
+#     2. Re-run this workflow against that SHA:
+#          gh workflow run deploy.yml --ref <good-sha>
+#   Alternatively, revert the offending commit on `main` and push;
+#   the auto-deploy republishes the rolled-back source.
+#
+# Why we don't use the `actions/deploy-pages` action:
+#   - That action is tied to the artifacts API and the
+#     `pages-build-deployment` runner; the orphan-branch model gives
+#     us a plain git artefact history (`git log gh-pages` is the
+#     deploy log) inspectable from a vanilla git client.
+name: Deploy to gh-pages
+
+on:
+  # Round-21: gated by `workflow_run` on test.yml — deploy only
+  # fires when CI is green for the SAME commit. The `push:` trigger
+  # is intentionally absent; a push to main triggers test.yml
+  # (separately), and only test.yml's success cascades here.
+  workflow_run:
+    workflows: ["Test & Verify"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  # Round-23: cancel-in-progress is FALSE (was true). Two merges to
+  # main in quick succession used to cancel an in-flight deploy at an
+  # arbitrary point — the first deploy could have already pushed a new
+  # `index.html` to gh-pages but not yet pushed the matching `sw.js`,
+  # leaving the live site with mismatched assets until the second
+  # deploy completed. With `cancel-in-progress: false`, every deploy
+  # finishes as an atomic orphan-commit; the queued second deploy then
+  # supersedes the first. Slightly slower under burst-merge, but the
+  # gh-pages branch is never observed in a torn state.
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  # Need write to push the built artefact branch. Other workflows in
+  # this repo are read-only; this is the single privileged escape
+  # hatch and it ONLY mutates `gh-pages`, never `main`.
+  contents: write
+
+env:
+  NODE_VERSION: "24"
+  CACHE_VERSION: v3
+
+jobs:
+  build-and-deploy:
+    name: Build and push .deploy/ to gh-pages
+    runs-on: ubuntu-latest
+    # Round-21: only run when triggered by a SUCCESSFUL test.yml run
+    # OR by an explicit workflow_dispatch (manual rollback / re-deploy).
+    # Without this guard the workflow_run trigger fires on every CI
+    # run regardless of conclusion (success/failure/cancelled), so a
+    # red CI would still publish.
+    if: >-
+      ${{
+        github.event_name == 'workflow_dispatch' ||
+        github.event.workflow_run.conclusion == 'success'
+      }}
+    timeout-minutes: 15
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        # `workflow_run` triggers in the context of the workflow file
+        # ON `main`'s default branch — we explicitly fetch the SHA
+        # that produced the green CI run so the deploy is bit-aligned
+        # with what was tested. Fallback to ref for `workflow_dispatch`.
+        with:
+          fetch-depth: 1
+          ref: ${{ github.event.workflow_run.head_sha || github.ref }}
+
+      - name: Setup Node
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-audit --no-fund
+
+      - name: Build production artefact
+        run: npm run build
+
+      - name: Verify build outputs
+        # Fail loudly if any artefact is missing — `npm run build` exits
+        # 0 today on missing inputs in some sub-steps, so this is a
+        # belt-and-braces post-condition. If the deploy makes it past
+        # this gate, every file `gh-pages` needs is present.
+        run: |
+          set -e
+          test -f .deploy/index.html
+          test -f .deploy/dist/main.min.js
+          test -f .deploy/dist/style-deferred.min.css
+          test -f .deploy/sw.js
+          test -f .deploy/manifest.webmanifest
+          test -f .deploy/sitemap.xml
+          test -f .deploy/robots.txt
+          test -d .deploy/fonts
+          test -d .deploy/images
+          echo "  ok  every required deploy artefact is present"
+
+      - name: Push .deploy/ to gh-pages
+        # Standalone bash because the action ecosystem's gh-pages
+        # publishers all assume `dist/` or `build/` and we want zero
+        # third-party action surface for the privileged write step.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEPLOY_DIR: .deploy
+        run: |
+          set -e
+          # `git -C .deploy init` would create a nested repo — instead,
+          # initialise a fresh worktree-only commit at $RUNNER_TEMP and
+          # push from there. This guarantees the deploy commit has no
+          # link to main's history (orphan), so the gh-pages branch
+          # never bloats with source-tree blobs.
+          DEPLOY_TMP="$RUNNER_TEMP/gh-pages-deploy"
+          rm -rf "$DEPLOY_TMP"
+          mkdir -p "$DEPLOY_TMP"
+          cp -a "$DEPLOY_DIR"/. "$DEPLOY_TMP"/
+
+          # Touch a `.nojekyll` so GitHub Pages doesn't try to
+          # interpret `_`-prefixed paths via Jekyll. Cheap insurance
+          # against an asset directory accidentally being named `_data/`.
+          touch "$DEPLOY_TMP/.nojekyll"
+
+          cd "$DEPLOY_TMP"
+          git init -q -b gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "deploy: ${GITHUB_SHA::7} ($(date -u +%Y-%m-%dT%H:%M:%SZ))"
+
+          remote="https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          # Force-push because gh-pages is the artefact branch — every
+          # deploy is a fresh orphan-rooted commit. Branch protection
+          # for `gh-pages` should permit force-push from this workflow
+          # only (Settings → Branches → gh-pages → restrict push to
+          # actions). Never force-push to main from any workflow.
+          git push -f -q "$remote" gh-pages:gh-pages

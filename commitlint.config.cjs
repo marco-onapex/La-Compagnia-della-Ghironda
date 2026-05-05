@@ -22,10 +22,33 @@ module.exports = {
     'type-case': [2, 'always', 'lower-case'],
     'type-empty': [2, 'never'],
     'scope-case': [2, 'always', 'lower-case'],
+    /* Round-23: severity bumped from 1 (warn) to 2 (error). The warn
+       level let any unknown scope through CI with only a console
+       message, which made the enum slowly meaningless — `fix(typo):`
+       and `fix(typo-fix):` both shipped because nobody noticed the
+       warning. Errors keep the enum honest; growing it remains a
+       deliberate one-line edit when a real new scope emerges. */
     'scope-enum': [
-      1,
+      2,
       'always',
-      ['css', 'js', 'html', 'build', 'ci', 'docs', 'deps', 'config'],
+      [
+        'css',
+        'js',
+        'html',
+        'build',
+        'ci',
+        'workflow',
+        'release',
+        'hotfix',
+        'docs',
+        'deps',
+        'config',
+        'a11y',
+        'perf',
+        'security',
+        'sw',
+        'tests',
+      ],
     ],
     'subject-empty': [2, 'never'],
     'subject-full-stop': [2, 'never', '.'],

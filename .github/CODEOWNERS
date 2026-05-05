@@ -1,0 +1,18 @@
+# CODEOWNERS — auto-request review when these paths are touched.
+# Combine with branch protection ("Require review from Code Owners")
+# to make this enforceable.
+
+# Default owner — every PR has at least one mandatory reviewer.
+*                       @marco-onapex
+
+# Security-sensitive: deploy host, security policy, CSP generator,
+# strict CSP HTML (any drift in the inline script/style hashes), service
+# worker (cache poisoning surface), CI workflows.
+/.github/                  @marco-onapex
+/SECURITY.md               @marco-onapex
+/.well-known/              @marco-onapex
+/sw.js                     @marco-onapex
+/index.html                @marco-onapex
+/scripts/generate-csp.js   @marco-onapex
+/scripts/cache-bust.js     @marco-onapex
+/tests/unit/sw.test.js     @marco-onapex
