@@ -394,6 +394,15 @@ jobs:
           # round 20.
           name: build-dist
           path: .deploy/
+          # `actions/upload-artifact@v4+` excludes dot-prefixed
+          # files/folders by default. Our entire build output lives
+          # under `.deploy/` (a deliberately-hidden directory so it
+          # disappears from `ls` clutter), so the default would skip
+          # the whole tree and emit "No files were found with the
+          # provided path" — exactly the failure the lighthouse job
+          # surfaced as "Artifact not found for name: build-dist".
+          # Enable hidden-file inclusion to ship the artefact intact.
+          include-hidden-files: true
           retention-days: 30
 
   # ─────────────────────────────────────────────────────────────────────────────
