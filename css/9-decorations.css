@@ -162,7 +162,24 @@ nav a:focus {
   text-shadow: 0 1px 3px rgb(0 0 0 / 25%);
 }
 
-/* Ghironda warm-glow halo */
+/* Ghironda warm-glow halo.
+   Sizing rationale: the host `.ghironda-wrapper` has
+   `aspect-ratio: 280 / 153` (≈1.83:1), so the ::before box is also
+   ~1.83:1 (160% × 160% of the wrapper preserves the ratio). The
+   `radial-gradient(closest-side, …)` form draws an ELLIPSE (the
+   default shape when none is specified) sized to be tangent to
+   the closest side on each axis — i.e. inscribed in the box — so
+   the `100%` stop (transparent) lands exactly on every box edge.
+
+   Why this matters: the previous `radial-gradient(circle, …)`
+   defaulted to `farthest-corner`, which sized the circle to reach
+   the box DIAGONAL at 100%. On a 1.83:1 box that means the
+   horizontal mid-edges fall at ~47% of the gradient — where the
+   stop is still ~5% red opacity — and then the box clips the
+   bleed. Visible result: a hard ring artefact along the wrapper
+   edges instead of a smooth fade. Switching to ellipse +
+   closest-side makes every edge the "100% transparent" stop, so
+   the halo dissolves cleanly with no clip line. */
 .ghironda-wrapper::before {
   content: '';
   position: absolute;
@@ -171,7 +188,7 @@ nav a:focus {
   transform: translate(-50%, -50%);
   width: 160%;
   height: 160%;
-  background: radial-gradient(circle,
+  background: radial-gradient(closest-side,
     rgb(201 122 58 / 12%) 0%,
     rgb(201 122 58 / 7%) 30%,
     rgb(167 58 58 / 4%) 60%,
