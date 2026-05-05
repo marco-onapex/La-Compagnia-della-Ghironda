@@ -153,7 +153,7 @@ test.describe('Navigation and Scrolling', () => {
      location" on the nav links). Visual correctness of the active-section
      highlight is covered by tests/e2e/visual.spec.js — there is no
      attribute to assert here, so the previous test was deleted. */
-  test('active-section nav highlight respects @supports gate (chromium/webkit → red, firefox → fallback)', async ({
+  test('active-section nav highlight respects @supports gate (chromium/webkit → accent-gold, firefox → fallback)', async ({
     page,
     browserName,
   }) => {
@@ -165,8 +165,12 @@ test.describe('Navigation and Scrolling', () => {
 
          - Chromium 115+: `@supports (animation-timeline: view())`
            gates a keyframe that flips `nav a` to
-           `var(--color-flame-red)` (#ff6b6b → rgb(255, 107, 107))
-           while the section is centred in the viewport.
+           `var(--color-accent-gold)` (#d4b896 → rgb(212, 184, 150))
+           while the section is centred in the viewport. (Round-23
+           changed the highlight from flame-red to accent-gold so
+           the active state matches the hover/focus colour and stays
+           coherent with the gold-warm header palette across
+           browsers.)
          - WebKit (Playwright current trunk): also applies the
            keyframe — Safari 26+ shipped scroll-driven view-timeline
            by default and Playwright's WebKit build picks it up.
@@ -179,7 +183,7 @@ test.describe('Navigation and Scrolling', () => {
        Pinning the per-browser expected colour catches:
          (a) the @supports rule accidentally applying on a browser
              where view-timeline isn't actually wired up
-         (b) a token rename of either --color-flame-red or
+         (b) a token rename of either --color-accent-gold or
              --color-nav-link
          (c) the keyframe range being misconfigured so the link never
              enters the highlighted state on engines that DO support
@@ -209,7 +213,7 @@ test.describe('Navigation and Scrolling', () => {
     const navLink = page.locator(`nav a[href="#${sectionId}"]`);
     const colour = await navLink.evaluate((el) => getComputedStyle(el).color);
 
-    const HIGHLIGHTED = 'rgb(255, 107, 107)'; /* --color-flame-red */
+    const HIGHLIGHTED = 'rgb(212, 184, 150)'; /* --color-accent-gold */
     const FALLBACK = 'rgb(240, 228, 200)'; /* --color-nav-link */
 
     /* Round-23 regression guard. The previous CSS used

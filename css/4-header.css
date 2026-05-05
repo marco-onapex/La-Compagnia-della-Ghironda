@@ -572,11 +572,17 @@ nav a:focus-visible {
 @keyframes nav-active-section {
   /* "from, to" with no intermediate keyframes = constant value across
      the full animation range. While in-range, the link gets the active
-     styling; out-of-range, it reverts to default. */
+     styling; out-of-range, it reverts to default.
+     Round-23 cross-browser tweak: the active highlight uses
+     `--color-accent-gold` (the same warm gold used by `nav a:hover`
+     and `nav a:focus`) rather than `--color-flame-red`. The earlier
+     red was visually jarring against the gold-warm header palette
+     and inconsistent with the hover affordance. The whole-design now
+     reads "the active section is the one in gold". */
   from,
   to {
-    color: var(--color-flame-red);
-    border-bottom-color: var(--color-flame-red);
+    color: var(--color-accent-gold);
+    border-bottom-color: var(--color-accent-gold);
     border-bottom-width: 3px;
     font-weight: 700;
   }
