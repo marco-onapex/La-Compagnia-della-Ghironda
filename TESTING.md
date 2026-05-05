@@ -343,7 +343,7 @@ npm run test:e2e -- --grep "should show focus indicator"
 
 ### Bundle Sizes (auto-injected via `scripts/inject-doc-numbers.js` — see Round 9 of the Apr 2026 follow-up)
 
-- CSS critical (inlined in HTML): ~<!-- AUTO:CSS_INLINE_RAW -->13.2<!-- /AUTO --> KB raw / ~<!-- AUTO:CSS_INLINE_GZIP -->3.5<!-- /AUTO --> KB gzip
+- CSS critical (inlined in HTML): ~<!-- AUTO:CSS_INLINE_RAW -->13.1<!-- /AUTO --> KB raw / ~<!-- AUTO:CSS_INLINE_GZIP -->3.5<!-- /AUTO --> KB gzip
 - CSS deferred (`dist/style-deferred.min.css`): ~<!-- AUTO:CSS_DEFERRED_RAW -->8.8<!-- /AUTO --> KB raw / ~<!-- AUTO:CSS_DEFERRED_GZIP -->2.5<!-- /AUTO --> KB gzip
 - JavaScript (`dist/main.min.js`): ~<!-- AUTO:JS_RAW -->2.7<!-- /AUTO --> KB raw / ~<!-- AUTO:JS_GZIP -->1.2<!-- /AUTO --> KB gzip
 - **Total raw: ~<!-- AUTO:TOTAL_RAW -->24.6<!-- /AUTO --> KB; gzip: ~<!-- AUTO:TOTAL_GZIP -->7.1<!-- /AUTO --> KB** (sotto budget <!-- AUTO:BUDGET_TOTAL_MAX -->10<!-- /AUTO --> KB gzip)

@@ -142,7 +142,7 @@ Slow-4G bandwidth. main.js fetches the sheet itself on the `load` event so the d
 2. **Scalability**: Adding new component = new file + entry in CRITICAL_MODULES o DEFERRED_MODULES
 3. **Maintainability**: Single responsibility per file
 4. **Reusability**: Tokens available to all modules
-5. **Performance**: ~<!-- AUTO:CSS_INLINE_RAW -->13.2<!-- /AUTO --> KB inline + ~<!-- AUTO:CSS_DEFERRED_RAW -->8.8<!-- /AUTO --> KB deferred (totale ~<!-- AUTO:CSS_TOTAL_RAW -->22.0<!-- /AUTO --> KB raw, ~<!-- AUTO:CSS_TOTAL_GZIP -->5.9<!-- /AUTO --> KB gzip — auto-iniettati da `scripts/inject-doc-numbers.js`)
+5. **Performance**: ~<!-- AUTO:CSS_INLINE_RAW -->13.1<!-- /AUTO --> KB inline + ~<!-- AUTO:CSS_DEFERRED_RAW -->8.8<!-- /AUTO --> KB deferred (totale ~<!-- AUTO:CSS_TOTAL_RAW -->21.9<!-- /AUTO --> KB raw, ~<!-- AUTO:CSS_TOTAL_GZIP -->5.9<!-- /AUTO --> KB gzip — auto-iniettati da `scripts/inject-doc-numbers.js`)
 
 ---
 
@@ -381,7 +381,7 @@ Il branch `main` non contiene MAI `.deploy/`. Il workflow [`deploy.yml`](.github
 
 ### Why No Framework
 
-- **Project size**: <!-- AUTO:LOC_HTML -->395<!-- /AUTO --> HTML lines, <!-- AUTO:LOC_JS_PROD -->726<!-- /AUTO --> JS lines (incl. `sw.js`), <!-- AUTO:LOC_CSS -->2115<!-- /AUTO --> CSS lines (auto-injected; values track the live source)
+- **Project size**: <!-- AUTO:LOC_HTML -->395<!-- /AUTO --> HTML lines, <!-- AUTO:LOC_JS_PROD -->726<!-- /AUTO --> JS lines (incl. `sw.js`), <!-- AUTO:LOC_CSS -->2131<!-- /AUTO --> CSS lines (auto-injected; values track the live source)
 - **Complexity**: Pure-CSS Level B architecture — JS is plumbing only (deferred-CSS loader + Web Vitals telemetry + Service Worker registration). No `IntersectionObserver`, no `ResizeObserver`, no DOM-state mutations from JS. Every visual transition is driven by `:has()`, `view-timeline`, or the checkbox-hack pattern.
 - **Performance**: No framework overhead — total deployed gzip is **<!-- AUTO:TOTAL_GZIP -->7.1<!-- /AUTO --> KB** (JS + critical CSS + deferred CSS) within a <!-- AUTO:BUDGET_TOTAL_MAX -->10<!-- /AUTO --> KB performance budget.
 - **Maintenance**: Vanilla JS is future-proof (no version deprecation)

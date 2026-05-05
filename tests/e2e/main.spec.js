@@ -232,12 +232,35 @@ test.describe('Navigation and Scrolling', () => {
     const otherSections = await page.locator('section[id]').all();
     const otherIds = await Promise.all(otherSections.map((s) => s.getAttribute('id')));
     const inactiveIds = otherIds.filter((id) => id !== sectionId);
-    const inactiveColours = await Promise.all(
+    const inactiveStates = await Promise.all(
       inactiveIds.map((id) =>
-        page.locator(`nav a[href="#${id}"]`).evaluate((el) => getComputedStyle(el).color),
+        page.locator(`nav a[href="#${id}"]`).evaluate((el) => {
+          const cs = getComputedStyle(el);
+          return {
+            color: cs.color,
+            borderBottomColor: cs.borderBottomColor,
+            borderBottomWidth: cs.borderBottomWidth,
+          };
+        }),
       ),
     );
-    expect(inactiveColours.every((c) => c === FALLBACK)).toBe(true);
+    expect(inactiveStates.every((s) => s.color === FALLBACK)).toBe(true);
+    /* Round-23 fix #2 regression guard: the keyframe used to set
+       `border-bottom-width: 3px`, which Chromium's scroll-driven
+       animation engine claimed and never released — leaving every
+       link with a permanent 3px underline. The fix removed the
+       width animation; we pin both halves of the contract here.
+       (a) Inactive links must keep the base transparent border
+       (no leaked colour from the animation). (b) Width must equal
+       the base 2px on every link (not the historical 3px). */
+    expect(inactiveStates.every((s) => s.borderBottomColor === 'rgba(0, 0, 0, 0)')).toBe(true);
+    expect(inactiveStates.every((s) => s.borderBottomWidth === '2px')).toBe(true);
+    /* The active link's width is also 2px now — confirms the fix
+       did not just hide the 3px somewhere else. */
+    const activeBorderWidth = await navLink.evaluate(
+      (el) => getComputedStyle(el).borderBottomWidth,
+    );
+    expect(activeBorderWidth).toBe('2px');
     /* Per-browser expected value — see matrix in the test docstring.
        Encoded as a lookup table (NOT a ternary) so
        playwright/no-conditional-in-test stays satisfied: there is no

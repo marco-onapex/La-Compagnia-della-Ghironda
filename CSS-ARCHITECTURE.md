@@ -372,10 +372,10 @@ Then add `'9-my-component.css'` to `CSS_MODULES` in `build-css.js`.
 
 | Bundle                        | Modules                                                          | Output                               | Size                                                                                                                |
 | ----------------------------- | ---------------------------------------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
-| **Critical** (above-the-fold) | fonts, 1-variables, 2-reset, 4-header, 5-hero, 7-responsive      | inlined into `<style>` in index.html | ~<!-- AUTO:CSS_INLINE_RAW -->13.2<!-- /AUTO --> KB raw / ~<!-- AUTO:CSS_INLINE_GZIP -->3.5<!-- /AUTO --> KB gzip    |
+| **Critical** (above-the-fold) | fonts, 1-variables, 2-reset, 4-header, 5-hero, 7-responsive      | inlined into `<style>` in index.html | ~<!-- AUTO:CSS_INLINE_RAW -->13.1<!-- /AUTO --> KB raw / ~<!-- AUTO:CSS_INLINE_GZIP -->3.5<!-- /AUTO --> KB gzip    |
 | **Deferred** (below-the-fold) | fonts-deferred, 3-typography, 6-sections, 8-print, 9-decorations | `dist/style-deferred.min.css`        | ~<!-- AUTO:CSS_DEFERRED_RAW -->8.8<!-- /AUTO --> KB raw / ~<!-- AUTO:CSS_DEFERRED_GZIP -->2.5<!-- /AUTO --> KB gzip |
 
-Il deferred CSS è fetchato da `main.js` sul `load` event (vedi `PERFORMANCE-STRATEGY.md` per la motivazione del NO-`<link rel="preload">`). Nessuna richiesta CSS render-blocking. Totale: **~<!-- AUTO:CSS_TOTAL_RAW -->22.0<!-- /AUTO --> KB raw / ~<!-- AUTO:CSS_TOTAL_GZIP -->5.9<!-- /AUTO --> KB gzip**, sotto il budget di <!-- AUTO:BUDGET_TOTAL_MAX -->10<!-- /AUTO --> KB gzip enforced da `scripts/performance-budget.js`.
+Il deferred CSS è fetchato da `main.js` sul `load` event (vedi `PERFORMANCE-STRATEGY.md` per la motivazione del NO-`<link rel="preload">`). Nessuna richiesta CSS render-blocking. Totale: **~<!-- AUTO:CSS_TOTAL_RAW -->21.9<!-- /AUTO --> KB raw / ~<!-- AUTO:CSS_TOTAL_GZIP -->5.9<!-- /AUTO --> KB gzip**, sotto il budget di <!-- AUTO:BUDGET_TOTAL_MAX -->10<!-- /AUTO --> KB gzip enforced da `scripts/performance-budget.js`.
 
 ---
 
