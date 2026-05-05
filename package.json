@@ -96,7 +96,7 @@
     "*.{json,md,yml}": "prettier --write"
   },
   "devDependencies": {
-    "@babel/preset-env": "~7.29.2",
+    "@babel/preset-env": "~7.29.3",
     "@commitlint/config-conventional": "~20.5.0",
     "@eslint/js": "~9.39.4",
     "@playwright/test": "~1.59.1",
