@@ -321,14 +321,39 @@ jobs:
           echo "  ok  source tree clean — all AUTO markers are current"
 
       - name: Verify .deploy/ outputs
+        # Each check uses an explicit `if/then/else/fi` rather than the
+        # idiomatic `cmd && ok || fail` because shellcheck SC2015 — and
+        # actionlint+reviewdog treat its info-level finding as fatal —
+        # flag that idiom: when `ok` itself fails (rare for `echo`, but
+        # possible under non-default IFS or with redirected stdout), the
+        # `fail` branch fires too. The if/else form is the canonical
+        # workaround.
         run: |
-          test -f .deploy/dist/style-deferred.min.css && echo "  ok  deferred CSS bundle" || { echo "  FAIL deferred CSS bundle missing"; exit 1; }
-          test -f .deploy/dist/main.min.js            && echo "  ok  JS bundle"           || { echo "  FAIL JS bundle missing";           exit 1; }
-          grep -q '<style>' .deploy/index.html        && echo "  ok  inlined critical CSS" || { echo "  FAIL critical CSS not inlined";  exit 1; }
-          grep -q 'dist/main.min.js?v=' .deploy/index.html \
-            && echo "  ok  cache-bust hash present" \
-            || { echo "  FAIL cache-bust hash missing in .deploy/index.html"; exit 1; }
-          test ! -f .deploy/dist/main.min.js.map && echo "  ok  no source map shipped" || { echo "  FAIL source map present in production build"; exit 1; }
+          if test -f .deploy/dist/style-deferred.min.css; then
+            echo "  ok  deferred CSS bundle"
+          else
+            echo "  FAIL deferred CSS bundle missing"; exit 1
+          fi
+          if test -f .deploy/dist/main.min.js; then
+            echo "  ok  JS bundle"
+          else
+            echo "  FAIL JS bundle missing"; exit 1
+          fi
+          if grep -q '<style>' .deploy/index.html; then
+            echo "  ok  inlined critical CSS"
+          else
+            echo "  FAIL critical CSS not inlined"; exit 1
+          fi
+          if grep -q 'dist/main.min.js?v=' .deploy/index.html; then
+            echo "  ok  cache-bust hash present"
+          else
+            echo "  FAIL cache-bust hash missing in .deploy/index.html"; exit 1
+          fi
+          if test ! -f .deploy/dist/main.min.js.map; then
+            echo "  ok  no source map shipped"
+          else
+            echo "  FAIL source map present in production build"; exit 1
+          fi
 
       - name: Verify auto-injected doc markers are current
         # Belt-and-braces: if for some reason `docs:numbers` produced
@@ -402,7 +427,10 @@ jobs:
       - name: Start local server
         run: |
           TEST_MODE=1 node scripts/dev-server.js &
-          for i in $(seq 1 15); do
+          # `_` placeholder — the loop counter is intentionally unused
+          # (we just need 15 retry attempts), and shellcheck SC2034
+          # would flag a named `i`.
+          for _ in $(seq 1 15); do
             curl -sf http://localhost:8000 > /dev/null && break
             sleep 1
           done
