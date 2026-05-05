@@ -381,7 +381,7 @@ Il branch `main` non contiene MAI `.deploy/`. Il workflow [`deploy.yml`](.github
 
 ### Why No Framework
 
-- **Project size**: <!-- AUTO:LOC_HTML -->395<!-- /AUTO --> HTML lines, <!-- AUTO:LOC_JS_PROD -->726<!-- /AUTO --> JS lines (incl. `sw.js`), <!-- AUTO:LOC_CSS -->2130<!-- /AUTO --> CSS lines (auto-injected; values track the live source)
+- **Project size**: <!-- AUTO:LOC_HTML -->395<!-- /AUTO --> HTML lines, <!-- AUTO:LOC_JS_PROD -->726<!-- /AUTO --> JS lines (incl. `sw.js`), <!-- AUTO:LOC_CSS -->2147<!-- /AUTO --> CSS lines (auto-injected; values track the live source)
 - **Complexity**: Pure-CSS Level B architecture — JS is plumbing only (deferred-CSS loader + Web Vitals telemetry + Service Worker registration). No `IntersectionObserver`, no `ResizeObserver`, no DOM-state mutations from JS. Every visual transition is driven by `:has()`, `view-timeline`, or the checkbox-hack pattern.
 - **Performance**: No framework overhead — total deployed gzip is **<!-- AUTO:TOTAL_GZIP -->7.1<!-- /AUTO --> KB** (JS + critical CSS + deferred CSS) within a <!-- AUTO:BUDGET_TOTAL_MAX -->10<!-- /AUTO --> KB performance budget.
 - **Maintenance**: Vanilla JS is future-proof (no version deprecation)
