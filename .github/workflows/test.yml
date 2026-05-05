@@ -486,8 +486,9 @@ jobs:
           best_report=""
           for attempt in 1 2 3; do
             echo "=== Lighthouse ${{ matrix.preset }} attempt $attempt/3 ==="
-            # shellcheck disable=SC2086 — PRESET_ARGS is intentionally
-            # word-split: empty for mobile (no flag), single token for desktop.
+            # PRESET_ARGS is intentionally word-split: empty for mobile
+            # (no flag), single token (`--preset=desktop`) for desktop.
+            # shellcheck disable=SC2086
             npx lighthouse http://localhost:8000 \
               --chrome-flags="--headless=new --no-sandbox --disable-gpu" \
               $PRESET_ARGS \
