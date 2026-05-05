@@ -378,9 +378,14 @@ jobs:
               | grep -E "^- (feat|fix|perf|docs|BREAKING)" | head -20 || true)
           fi
           [ -z "$LOG" ] && LOG="- Maintenance release"
-          echo "log<<EOF" >> "$GITHUB_OUTPUT"
-          echo "$LOG" >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
+          # Grouped redirect to satisfy shellcheck SC2129 — one
+          # `>>` invocation that emits the whole heredoc-style
+          # multi-line `log<<EOF … EOF` block at once.
+          {
+            echo "log<<EOF"
+            echo "$LOG"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # v3.0.0

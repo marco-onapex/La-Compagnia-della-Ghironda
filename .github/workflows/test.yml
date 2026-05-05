@@ -65,7 +65,15 @@ jobs:
       - name: Lint GitHub Actions workflows (actionlint)
         uses: reviewdog/action-actionlint@6fb7acc99f4a1008869fa8a0f09cfca740837d9d # v1.72.0
         with:
-          fail_on_error: true
+          # `fail_on_error` is the deprecated all-or-nothing knob — it
+          # turns even shellcheck info-level findings (SC2015 idiomatic
+          # `cmd && ok || fail`, SC2034 unused loop counters, SC2086
+          # unquoted GitHub-template expansions that can't actually
+          # word-split) into CI failures. `fail_level: error` is the
+          # modern threshold parameter: only true error-level findings
+          # block the pipeline; info / warning still surface as
+          # annotations on the PR but don't gate the merge.
+          fail_level: error
           reporter: github-check
           level: error
 
@@ -248,8 +256,16 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Run E2E tests (3 browsers, skip visual when baselines missing)
+        # The output count is read from a step env, NOT inlined in the
+        # shell expression: shellcheck SC2170 (test arg type ambiguity)
+        # flags `[ "${{ … }}" -eq 0 ]` because the templated value
+        # arrives as an untyped string. Going through `env:` lets the
+        # `[ "$BASELINE_COUNT" -eq 0 ]` form take a real shell variable,
+        # which shellcheck can verify is a number-shaped expansion.
+        env:
+          BASELINE_COUNT: ${{ steps.visual-baselines.outputs.count }}
         run: |
-          if [ "${{ steps.visual-baselines.outputs.count }}" -eq 0 ]; then
+          if [ "$BASELINE_COUNT" -eq 0 ]; then
             npm run test:e2e -- --workers=1 --ignore-snapshots --grep-invert "Visual Regression"
           else
             npm run test:e2e -- --workers=1

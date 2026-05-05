@@ -175,17 +175,26 @@ jobs:
 
       - name: Write job summary
         if: always()
+        # Single grouped redirect (`{ … } >> "$file"`) instead of one
+        # `>>` per line — shellcheck SC2129 flags the per-line form
+        # because each redirect re-opens the file descriptor (slower
+        # and racier under concurrent writers, even though neither
+        # matters here). The grouped form is also easier to audit:
+        # one redirection target, one place to change if the env var
+        # name evolves.
         run: |
-          echo "## Hotfix Validation — ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Job | Result |" >> $GITHUB_STEP_SUMMARY
-          echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Lint | ${{ needs.lint.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Unit Tests | ${{ needs.unit-tests.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| E2E Tests (Chromium) | ${{ needs.e2e-tests.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "**Triggered by:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
-          if [ -n "${{ inputs.reason }}" ]; then
-            echo "**Reason:** ${{ inputs.reason }}" >> $GITHUB_STEP_SUMMARY
-          fi
+          {
+            echo "## Hotfix Validation — ${{ github.ref_name }}"
+            echo ""
+            echo "| Job | Result |"
+            echo "|-----|--------|"
+            echo "| Lint | ${{ needs.lint.result }} |"
+            echo "| Unit Tests | ${{ needs.unit-tests.result }} |"
+            echo "| E2E Tests (Chromium) | ${{ needs.e2e-tests.result }} |"
+            echo ""
+            echo "**Commit:** \`${{ github.sha }}\`"
+            echo "**Triggered by:** ${{ github.actor }}"
+            if [ -n "${{ inputs.reason }}" ]; then
+              echo "**Reason:** ${{ inputs.reason }}"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
