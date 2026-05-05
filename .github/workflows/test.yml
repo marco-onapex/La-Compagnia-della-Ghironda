@@ -136,7 +136,16 @@ jobs:
     name: E2E Tests (Playwright)
     runs-on: ubuntu-latest
     needs: lint
-    timeout-minutes: 20
+    # 30 (was 20) — `Install Playwright browsers --with-deps` issues
+    # apt-get to install chromium/firefox/webkit native dependencies
+    # on every cache miss; on a slow runner this single step has been
+    # observed taking ~17 minutes, which combined with the ~3 minute
+    # test execution would push past 20. The headroom catches the
+    # cold-runner path without masking a real infinite-loop test
+    # (E2E test execution itself stays bounded by Playwright's per-
+    # test timeout, default 30s, and the test suite's wall-time
+    # budget around 4-5 min on warm cache).
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
