@@ -469,14 +469,28 @@ jobs:
         # 0.97. Run up to 3 times and keep the report that hit 100 (or
         # the last-best Performance score otherwise). enforce-lighthouse.js
         # then reads the kept report.
+        #
+        # Preset flag — Lighthouse only accepts `--preset=desktop`,
+        # `--preset=perf`, or `--preset=experimental`; "mobile" is the
+        # default form-factor and is selected by the absence of any
+        # `--preset` flag (passing `--preset=mobile` is a CLI error).
+        # We map the matrix value to a CLI fragment instead of inlining
+        # `--preset=${{ matrix.preset }}` directly.
         run: |
+          if [ "${{ matrix.preset }}" = "desktop" ]; then
+            PRESET_ARGS="--preset=desktop"
+          else
+            PRESET_ARGS=""
+          fi
           best_perf=-1
           best_report=""
           for attempt in 1 2 3; do
             echo "=== Lighthouse ${{ matrix.preset }} attempt $attempt/3 ==="
+            # shellcheck disable=SC2086 — PRESET_ARGS is intentionally
+            # word-split: empty for mobile (no flag), single token for desktop.
             npx lighthouse http://localhost:8000 \
               --chrome-flags="--headless=new --no-sandbox --disable-gpu" \
-              --preset=${{ matrix.preset }} \
+              $PRESET_ARGS \
               --output-path=./lighthouse-report-${{ matrix.preset }}-attempt-$attempt \
               --output=json \
               --output=html \
