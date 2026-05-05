@@ -551,7 +551,17 @@ nav a:focus-visible {
 
   nav a {
     animation-name: nav-active-section;
-    animation-fill-mode: both;
+
+    /* No `animation-fill-mode` (default `none`). With `both` the
+       keyframe value (flame-red) would persist BACKWARDS before the
+       section ever entered its `cover 30% 70%` range AND FORWARDS
+       after it left, leaving every nav link permanently
+       highlighted on engines that support animation-timeline (Round-23
+       cross-browser inconsistency: Chromium showed all three links
+       red simultaneously while Firefox — without animation-timeline —
+       fell through to the default colour and only the centred section
+       differed). The default `none` confines the highlight to the
+       moment the section is between 30% and 70% of viewport cover. */
     animation-range: cover 30% cover 70%;
   }
   nav a[href="#origine-identita"]          { animation-timeline: --tl-origine; }

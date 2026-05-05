@@ -211,6 +211,29 @@ test.describe('Navigation and Scrolling', () => {
 
     const HIGHLIGHTED = 'rgb(255, 107, 107)'; /* --color-flame-red */
     const FALLBACK = 'rgb(240, 228, 200)'; /* --color-nav-link */
+
+    /* Round-23 regression guard. The previous CSS used
+       `animation-fill-mode: both`, which extended the keyframe value
+       backwards/forwards beyond `animation-range`, leaving EVERY nav
+       link permanently highlighted on engines that support
+       animation-timeline — a visible inconsistency with Firefox's
+       fallback (which only differentiates the active section).
+       The contract pinned here is uniform across every engine: the
+       two NON-centred links are always at the fallback colour. On
+       Chromium / WebKit this means "highlight is confined to the
+       active section". On Firefox (without animation-timeline) every
+       link including the active one is at the fallback — the non-
+       centred ones still match, so the assertion is tautological
+       there but stays true. No conditional needed in the test. */
+    const otherSections = await page.locator('section[id]').all();
+    const otherIds = await Promise.all(otherSections.map((s) => s.getAttribute('id')));
+    const inactiveIds = otherIds.filter((id) => id !== sectionId);
+    const inactiveColours = await Promise.all(
+      inactiveIds.map((id) =>
+        page.locator(`nav a[href="#${id}"]`).evaluate((el) => getComputedStyle(el).color),
+      ),
+    );
+    expect(inactiveColours.every((c) => c === FALLBACK)).toBe(true);
     /* Per-browser expected value — see matrix in the test docstring.
        Encoded as a lookup table (NOT a ternary) so
        playwright/no-conditional-in-test stays satisfied: there is no
