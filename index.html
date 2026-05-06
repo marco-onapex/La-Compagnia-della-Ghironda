@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    
+    <link rel="preload" as="image" href="images/ghironda-720.avif" type="image/avif" fetchpriority="high">
+    <link rel="preload" as="font" type="font/woff2" href="fonts/cinzel-700-lcp.woff2" crossorigin>
+    
+    <link rel="preload" as="font" type="font/woff2" href="fonts/cinzel-400.woff2" crossorigin>
+
+    <meta name="description" content="La Compagnia della Ghironda: comunità di spiriti liberi che combatte l'Oscurità nell'Arcipelago Perduto. Storia, organizzazione e costumi.">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="theme-color" content="#0f0a1a">
+    <meta name="author" content="La Compagnia della Ghironda">
+    <meta property="og:title" content="La Compagnia della Ghironda - The Miracle Shard">
+    <meta property="og:description" content="Una comunità di spiriti liberi che combatte l'Oscurità nell'Arcipelago Perduto.">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="it_IT">
+    
+    <meta property="og:image" content="https://marco-onapex.github.io/La-Compagnia-della-Ghironda/images/og-card.jpg">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:alt" content="La Compagnia della Ghironda — share card con la ghironda stilizzata su sfondo notturno.">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:url" content="https://marco-onapex.github.io/La-Compagnia-della-Ghironda/">
+    <meta property="og:site_name" content="La Compagnia della Ghironda">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="La Compagnia della Ghironda - The Miracle Shard">
+    <meta name="twitter:description" content="Una comunità di spiriti liberi che combatte l'Oscurità nell'Arcipelago Perduto. Scopri la storia della gilda.">
+    <meta name="twitter:image" content="https://marco-onapex.github.io/La-Compagnia-della-Ghironda/images/og-card.jpg">
+    <meta name="twitter:image:alt" content="La Compagnia della Ghironda — share card con la ghironda stilizzata su sfondo notturno.">
+    
+    <link rel="canonical" href="https://marco-onapex.github.io/La-Compagnia-della-Ghironda/">
+    <link rel="alternate" hreflang="it" href="https://marco-onapex.github.io/La-Compagnia-della-Ghironda/">
+    <link rel="alternate" hreflang="x-default" href="https://marco-onapex.github.io/La-Compagnia-della-Ghironda/">
+    <title>La Compagnia della Ghironda - The Miracle Shard</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75'>🎻</text></svg>">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+    <link rel="manifest" href="manifest.webmanifest">
+    
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-cum2Kb2xshyCeyW/bTbrCMFUKhfIG9AQZNb4/Vt+8oE='; style-src 'self' 'sha256-0527rMeHJp5oJv/6h5UgiAi/f4UlR5Hv9JBAjEO59zE='; img-src 'self' data:; font-src 'self'; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; manifest-src 'self'">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    
+    <noscript><link rel="stylesheet" href="dist/style-deferred.min.css"></noscript>
+
+    <!-- CSS:BEGIN --><style>@font-face{font-family:Cinzel;src:url(fonts/cinzel-400.woff2) format("woff2");font-weight:400;font-display:optional}@font-face{font-family:Cinzel LCP;src:url(fonts/cinzel-700-lcp.woff2) format("woff2");font-weight:700;font-display:optional}:root{--color-night: #0f0a1a;--color-gold: #9d7e1a;--color-accent-gold: #d4b896;--color-gipsy-red: #a73a3a;--color-gipsy-red-text: #d56060;--color-gipsy-green: #4a5f2f;--color-fire-orange: #c97a3a;--color-gold-vivid: #efc966;--color-flame-red: #ff6b6b;--color-text: #e8e0d4;--color-nav-link: #f0e4c8;--color-tagline: #e8d9be;--color-text-secondary: #c4b5a0;--font-serif: cinzel, serif;--font-decorative: cinzel decorative, serif;--fs-sm: .875rem;--fs-base: 1rem;--fs-lg: 1.125rem;--fs-xl: 1.266rem;--fs-2xl: 1.424rem;--fs-3xl: 1.602rem;--lh-tight: 1.3;--lh-normal: 1.6;--lh-relaxed: 1.85;--sp-sm: .75rem;--sp-lg: 1.5rem;--sp-xl: 2rem;--sp-2xl: 3rem;--sp-3xl: 4rem;--transition-normal: .4s cubic-bezier(.25, .46, .45, .94)}@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}*{margin:0;padding:0;box-sizing:border-box}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--color-accent-gold);outline-offset:2px}html{scroll-behavior:smooth;font-size:clamp(15px,1vw,18px);height:100%;scrollbar-gutter:stable;scroll-padding-top:var(--header-h, 77px)}body{display:flex;flex-direction:column;min-height:100dvh;background-color:var(--color-night);color:var(--color-text);font-family:var(--font-serif);font-size:var(--fs-base);line-height:var(--lh-normal);font-weight:400;letter-spacing:.3px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}button{margin:0;padding:0;font-family:inherit;font-size:inherit;font-weight:inherit;line-height:inherit;color:inherit;background:transparent;border:0;cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}hr{margin:var(--sp-2xl) 0;padding:0;border:none}ul,ol{margin:var(--sp-lg) 0;padding-left:var(--sp-2xl)}li{margin:var(--sp-sm) 0}a{color:var(--color-accent-gold);text-decoration:none;transition:color var(--transition-normal);position:relative}a:hover{color:var(--color-fire-orange)}a:active{opacity:.8}a:focus-visible{outline:2px solid var(--color-accent-gold);outline-offset:2px}[hidden]{display:none!important}[disabled]{cursor:not-allowed;opacity:.6}[aria-busy=true]{opacity:.6}[aria-disabled=true]{cursor:not-allowed;opacity:.6}img,picture{display:block;max-width:100%;height:auto;margin:var(--sp-lg) 0}svg{overflow:visible}.section{content-visibility:auto;contain-intrinsic-block-size:auto 1100px}:root{--header-h: 77px}:root:has(.nav-toggle-input:checked){--header-h: clamp(220px, 38vh, 320px)}header{background-color:var(--color-night);border-bottom:2px solid rgb(201 122 58 / 30%);position:sticky;top:0;z-index:100;contain:layout paint}.header-container{width:100%;padding:clamp(.5rem,1.5vh,1rem) clamp(.75rem,4vw,1.25rem);display:flex;flex-direction:column;align-items:center}@supports (display: grid){.header-container{display:grid;grid-template-columns:1fr;justify-items:center;gap:0}}.header-title-wrapper{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;width:100%;min-height:44px;position:relative;order:-1}.header-title-slot{grid-column:2;min-width:0;overflow:hidden;display:grid;grid-template-rows:auto;grid-template-columns:1fr;align-items:center}.skip-link-header{grid-row:1;grid-column:1;display:flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;font-size:clamp(.65rem,3.5vw,1rem);font-weight:700;color:var(--color-gold-vivid);text-transform:uppercase;letter-spacing:.5px;font-family:Cinzel LCP,cinzel,serif;text-decoration:none;cursor:pointer;line-height:1.3;text-align:center;white-space:nowrap;outline:none;opacity:1;visibility:visible;pointer-events:auto;transition:opacity .35s ease,visibility .35s ease}.skip-link-header:hover{color:var(--color-accent-gold)}.skip-link-header:focus-visible{outline:2px solid var(--color-gold-vivid);outline-offset:2px;border-radius:2px}.header-title-link{grid-row:1;grid-column:1;display:flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;font-weight:700;color:var(--color-gold-vivid);text-decoration:none;cursor:pointer;line-height:1.3;outline:none;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .35s ease,visibility .35s ease}.header-title-link:hover{opacity:.95}.header-title-link:focus-visible{outline:2px solid var(--color-gold-vivid);outline-offset:2px;border-radius:2px}.header-title{margin:0;padding:0;color:var(--color-gold-vivid);text-transform:uppercase;font-family:Cinzel LCP,cinzel,serif;text-align:center;white-space:nowrap;font-size:clamp(.6rem,3.5vw,1rem);letter-spacing:.04em}@supports (animation-timeline: view()){.skip-link-header,.header-title-link{animation-timeline:--hero-h1;animation-fill-mode:both;animation-range:exit 0% exit 100%;transition:none}.skip-link-header{animation-name:header-skip-link-fade-out}.header-title-link{animation-name:header-title-link-fade-in}}@keyframes header-skip-link-fade-out{0%{opacity:1;visibility:visible;pointer-events:auto}to{opacity:0;visibility:hidden;pointer-events:none}}@keyframes header-title-link-fade-in{0%{opacity:0;visibility:hidden;pointer-events:none}to{opacity:1;visibility:visible;pointer-events:auto}}body.is-scrolled-past-hero .skip-link-header{opacity:0;visibility:hidden;pointer-events:none}body.is-scrolled-past-hero .header-title-link{opacity:1;visibility:visible;pointer-events:auto}.header-title-link:hover .header-title{color:var(--color-accent-gold)}.nav-toggle{grid-column:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:44px;height:44px;padding:.625rem;background:transparent;border:none;color:var(--color-gold-vivid);cursor:pointer;border-radius:2px;position:relative;transition:color .25s,background .25s}.nav-toggle:hover{color:var(--color-accent-gold)}.nav-toggle:focus-within{outline:2px solid var(--color-gold-vivid);outline-offset:2px;border-radius:2px}.nav-toggle-input{position:absolute;width:1px;height:1px;padding:0;margin:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0;opacity:0}.nav-toggle-bar{display:block;width:20px;height:2px;background:currentcolor;border-radius:1px;transition:transform .25s ease,opacity .25s ease}:where(header:has(.nav-toggle-input:checked)) .nav-toggle-bar:first-child{transform:translateY(7px) rotate(45deg)}:where(header:has(.nav-toggle-input:checked)) .nav-toggle-bar:nth-child(2){opacity:0;transform:scaleX(0)}:where(header:has(.nav-toggle-input:checked)) .nav-toggle-bar:last-child{transform:translateY(-7px) rotate(-45deg)}nav{overflow:hidden;max-height:0;visibility:hidden;transition:max-height .3s ease,visibility 0s linear .3s;width:100%;order:1}header:has(.nav-toggle-input:checked) nav{max-height:600px;visibility:visible;transition:max-height .3s ease,visibility 0s linear 0s}nav ul{list-style:none;display:flex;flex-flow:column nowrap;align-items:center;gap:.125rem;padding:0;margin:0;width:100%;padding-top:clamp(.25rem,1vh,.5rem)}nav li{display:flex;align-items:center}nav a{display:inline-flex;align-items:center;justify-content:center;padding:.45rem 1.5rem;min-height:44px;min-width:44px;color:var(--color-nav-link);text-decoration:none;font-size:.82rem;text-transform:uppercase;letter-spacing:.3px;font-weight:600;font-family:var(--font-serif);line-height:1.4;position:relative;outline-offset:2px;transition:color .4s,text-shadow .4s;white-space:nowrap}nav a:hover,nav a:focus{color:var(--color-accent-gold)}nav a:focus-visible{outline:2px solid var(--color-gold);outline-offset:4px;border-radius:2px}@supports (animation-timeline: view()){body{timeline-scope:--tl-origine,--tl-obiettivo,--tl-usi,--hero-h1}:where(#origine-identita){view-timeline-name:--tl-origine}:where(#obiettivo-organizzazione){view-timeline-name:--tl-obiettivo}:where(#usi-costumi){view-timeline-name:--tl-usi}nav a{animation-name:nav-active-section;animation-range:cover 30% cover 70%}nav a[href="#origine-identita"]{animation-timeline:--tl-origine}nav a[href="#obiettivo-organizzazione"]{animation-timeline:--tl-obiettivo}nav a[href="#usi-costumi"]{animation-timeline:--tl-usi}}@keyframes nav-active-section{0%,to{color:var(--color-accent-gold)}}@media(min-width:1024px){.header-container{padding:clamp(.7rem,1.1vw,1rem) clamp(.75rem,1.5vw,1.5rem);grid-template-columns:auto auto;place-items:center;gap:clamp(.75rem,2vw,2rem);justify-content:center}.header-title-wrapper{display:flex;width:auto;order:0}.header-title-slot{min-width:max-content;overflow:visible}.nav-toggle{display:none}.header-title{font-size:clamp(.75rem,1.1vw,1rem);letter-spacing:.03em;white-space:nowrap}.skip-link-header{font-size:clamp(.75rem,1.1vw,1rem);letter-spacing:.03em}nav{display:flex;overflow:visible;max-height:none;visibility:visible;width:auto;order:0;transition:none;padding-top:0}nav ul{flex-flow:row nowrap;justify-content:flex-start;gap:clamp(.25rem,.6vw,.75rem);width:auto;padding-top:0}nav a{padding:clamp(.45rem,.8vh,.65rem) clamp(.4rem,.8vw,.7rem);font-size:clamp(.7rem,1vw,.9rem);letter-spacing:.3px;white-space:nowrap;min-height:44px}}@media(max-width:480px){.header-container{padding:clamp(.9rem,2vh,1.1rem) clamp(.8rem,3vw,1.3rem)}.header-title-wrapper{min-height:44px}.skip-link-header,.header-title-link{min-height:44px;min-width:44px}nav ul{gap:clamp(.5rem,2vw,.8rem)}nav a{font-size:clamp(.8rem,1.5vw,.9rem);padding:clamp(.6rem,1vh,.7rem) clamp(.75rem,1.5vw,.85rem);letter-spacing:.2px;min-height:44px;min-width:44px}}.header-hero-wrapper{width:100%;display:flex;flex-direction:column}.hero{background-color:var(--color-night);width:100%;flex:1 0 0;min-height:0;text-align:center;border-bottom:1px solid rgb(157 126 26 / 25%);position:relative;overflow:hidden;overflow:clip;display:flex;flex-direction:column;align-items:center;justify-content:center;contain:paint}.hero-content{max-width:900px;padding:clamp(2rem,5vh,4rem) clamp(.5rem,1.5vw,1rem);position:relative;z-index:1;display:grid;grid-template-rows:1fr auto 1fr;place-items:center;row-gap:clamp(.5rem,1.5vh,1.25rem);width:100%;flex:1 0 0;min-height:0}.hero-text-above{display:flex;flex-direction:column;align-items:center;align-self:end;gap:clamp(.5rem,1.5vh,1.25rem);position:relative;z-index:1}.hero h1{font-size:clamp(1.75rem,calc(1.5rem + 2vw),4rem);font-weight:700;letter-spacing:2px;margin:0;color:var(--color-gold-vivid);line-height:1.2;word-spacing:.1em;font-family:Cinzel LCP,cinzel,serif;text-transform:uppercase;view-timeline-name:--hero-h1}.hero-subtitle{font-size:clamp(1.1rem,calc(.9rem + 1.2vw),1.9rem);color:var(--color-flame-red);font-style:normal;margin:0;letter-spacing:1.5px;line-height:1.25;font-weight:700;font-family:Cinzel LCP,cinzel,serif;text-transform:uppercase;align-self:start;position:relative;z-index:1}.hero-tagline{font-size:clamp(1rem,2vw,1.15rem);color:var(--color-tagline);font-style:italic;margin:0;letter-spacing:.5px;line-height:1.5;font-weight:400;font-family:Crimson Text,serif}.hero-divider{width:140px;height:2.5px;margin:0;background-color:var(--color-gold-vivid)}.ghironda-wrapper{position:relative;display:flex;align-items:center;justify-content:center;width:min(100%,clamp(720px,calc(55vh * 280 / 153),1200px));aspect-ratio:280 / 153;min-height:0;isolation:isolate}.ghironda-icon{width:100%;height:100%;object-fit:contain;position:relative;z-index:2}@media(max-width:1023px){.hero-tagline{font-family:serif}.ghironda-wrapper{isolation:auto}}@media(max-width:599px){:root{font-size:clamp(14px,1.5vw,16px)}.section{padding:clamp(4rem,8vw,5rem) clamp(1rem,5vw,1.5rem) clamp(2rem,5vw,3rem);border-left:2px solid var(--color-gold);border-right:2px solid var(--color-gipsy-red)}.section:before,.section:after{font-size:var(--fs-sm);letter-spacing:.4rem;top:1rem}.section:before{left:1rem}.section:after{right:1rem}.section h2{font-size:var(--fs-3xl)}.section h3{font-size:var(--fs-xl)}footer{padding:clamp(2rem,5vw,3rem) clamp(1rem,5vw,1.5rem)}.footer-divider{width:200px}}@media(min-height:500px){.header-hero-wrapper{height:calc(100dvh - var(--header-h, 77px))}}@media(max-height:499px){.hero{min-height:clamp(260px,55vh,400px)}.hero-content{gap:clamp(.5rem,1.5vh,1rem)}}@media(max-height:680px){.hero-content{padding-block:clamp(.5rem,5vh,4rem);gap:clamp(.25rem,1.5vh,1.25rem)}.ghironda-wrapper{width:min(100%,calc(clamp(200px,calc(100dvh - 280px),393px) * 280 / 153))}}@media(max-width:320px),(max-height:499px){.ghironda-wrapper{display:none}}@media(max-width:1023px)and (max-height:799px){:where(header:has(.nav-toggle-input:checked))~.header-hero-wrapper .ghironda-wrapper{display:none}}@media(max-width:1023px)and (min-height:500px){.hero-content{padding-inline:clamp(1rem,4vw,1.5rem)}}@media(max-width:320px)and (min-height:500px){.hero-content{gap:clamp(1rem,2.5vh,2rem);padding-block:clamp(1.5rem,4vh,3rem);padding-inline:clamp(1.25rem,4vw,2rem)}}@media(max-width:480px){.section{padding:clamp(3.5rem,7vw,4.5rem) clamp(.75rem,4vw,1.25rem) clamp(2rem,4vw,3rem)}.section:before,.section:after{font-size:.65rem;letter-spacing:.15rem;top:.75rem}.section:before{left:.75rem}.section:after{right:.75rem}.section h2{font-size:var(--fs-2xl);letter-spacing:2px}.section h3{font-size:var(--fs-lg)}}
+</style><!-- CSS:END -->
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://marco-onapex.github.io/La-Compagnia-della-Ghironda/#website",
+          "url": "https://marco-onapex.github.io/La-Compagnia-della-Ghironda/",
+          "name": "La Compagnia della Ghironda",
+          "inLanguage": "it-IT"
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://marco-onapex.github.io/La-Compagnia-della-Ghironda/#organization",
+          "name": "La Compagnia della Ghironda",
+          "url": "https://marco-onapex.github.io/La-Compagnia-della-Ghironda/",
+          "logo": "https://marco-onapex.github.io/La-Compagnia-della-Ghironda/images/icon-512.png",
+          "description": "Una comunità di spiriti liberi dedita alla ricerca, al commercio e alla lotta contro le entità demoniache di Ardania nel gioco Ultima Online su The Miracle Shard.",
+          "foundingDate": "2026",
+          "sameAs": [
+            "https://www.themiracleshard.com"
+          ]
+        }
+      ]
+    }
+    </script>
+</head>
+<body>
+    
+    <header>
+        <div class="header-container">
+            
+            <div class="header-title-wrapper">
+                
+                <div class="header-title-slot">
+                    
+                    <a href="#main-content" class="skip-link-header">Salta al contenuto</a>
+                    
+                    <a href="#top" class="header-title-link"
+                       aria-label="La Compagnia della Ghironda - Torna all'inizio della pagina">
+                        <span class="header-title">La Compagnia della Ghironda</span>
+                    </a>
+                </div>
+                
+                <label class="nav-toggle"
+                       aria-label="Apri o chiudi il menu di navigazione">
+                    <input type="checkbox" class="nav-toggle-input">
+                    <span class="nav-toggle-bar"></span>
+                    <span class="nav-toggle-bar"></span>
+                    <span class="nav-toggle-bar"></span>
+                </label>
+            </div>
+            <nav id="main-nav" aria-label="Navigazione principale">
+                <ul>
+                    <li><a href="#origine-identita">Origine e Identità</a></li>
+                    <li><a href="#obiettivo-organizzazione">Obiettivo e Organizzazione</a></li>
+                    <li><a href="#usi-costumi">Usi e Costumi</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <div class="header-hero-wrapper">
+        
+        <section class="hero" aria-labelledby="hero-heading">
+
+        <div class="hero-content">
+            <div class="hero-text-above">
+              <h1 id="hero-heading">La Compagnia della Ghironda</h1>
+              <div class="hero-divider"></div>
+              <p class="hero-tagline">Nel cuore dell'Arcipelago Perduto, dove la Libertà combatte l'Oscurità</p>
+            </div>
+            <div class="ghironda-wrapper">
+                
+                <picture>
+                  
+                  <source
+                    type="image/avif"
+                    srcset="images/ghironda-720.avif"
+                    sizes="(max-width: 736px) calc(100vw - 2rem), (max-width: 1280px) 720px, (max-height: 953px) 880px, 1080px">
+                  <source
+                    type="image/webp"
+                    srcset="images/ghironda-280.webp  280w,
+                            images/ghironda-420.webp  420w,
+                            images/ghironda-560.webp  560w,
+                            images/ghironda-720.webp  720w,
+                            images/ghironda-880.webp  880w,
+                            images/ghironda-1080.webp 1080w,
+                            images/ghironda.webp      1408w"
+                    sizes="(max-width: 736px) calc(100vw - 2rem), (max-width: 1280px) 720px, (max-height: 953px) 880px, 1080px">
+                  
+                  <img src="images/ghironda-fallback.png" alt="Ghironda — strumento musicale gitano" class="ghironda-icon" width="280" height="153" decoding="sync" fetchpriority="high">
+                </picture>
+            </div>
+            <p class="hero-subtitle">Finché Gira, il Mondo Resta</p>
+        </div>
+    </section>
+    </div>
+
+    
+    <main id="main-content" tabindex="-1">
+
+    <section class="section" id="origine-identita" tabindex="-1" aria-labelledby="origine-identita-h">
+        <h2 id="origine-identita-h">Origine e Identità</h2>
+        
+        <h3>Chi Siamo</h3>
+        <p>
+            Nel cuore dell'Isola più remota dell'Arcipelago Perduto, lì dove il Villaggio di Samsara si erge come primo baluardo di Ardania contro le entità maligne, un gruppo di uomini e donne erranti ha scelto di stabilirsi non per riposare, ma per vegliare.
+        </p>
+
+        <p>
+            Al principio erano Samsariani di nascita, figli del vento e della polvere, artisti di strada, idealisti e lavoratori che, dopo aver completato i loro viaggi e concluso affari in ogni angolo dei regni conosciuti, hanno sentito il richiamo della famiglia. Facendo ritorno a casa, hanno montato le loro tende sotto il cielo dell'arcipelago, scoprendo che la libertà che tanto amavano era minacciata da un male che continuava a crescere tra le cave di Kur Nughul.
+        </p>
+
+        <p>
+            Con il tempo, altri spiriti liberi si sono uniti attorno al loro fuoco, attratti dal calore di una fratellanza che non conosce confini di sangue ma solo d'intento. Insieme hanno condiviso lo spirito combattivo di un popolo antico, l'astuzia del mercante che non teme l'azzardo e la spavalderia di chi affronta l'ignoto con un sorriso e una lama pronta.
+        </p>
+
+        <h3>Il Nome</h3>
+        <p>
+            Oggi, questa comunione di intenti si consolida nella <strong>Compagnia della Ghironda</strong>.
+            Scelgono questo nome perché, come lo strumento del loro folclore, la Compagnia è l'insieme di pezzi scompagnati che insieme trovano un'armonia inaspettata.
+            Non sono un esercito di soldati, ma una carovana di colori contro le tenebre. 
+            Sono il rumore della festa che scaccia il silenzio del terrore;
+            La mano scaltra che ruba il segreto al maligno per volgerlo contro di lui.
+        </p>
+
+        <h3>Lo Spirito</h3>
+        <p>
+            Mentre i regni di Ardania si rifugiano dietro mura di pietra, i samsariani restano sulla soglia del baratro. Non lo fanno per eroismo o per spregio, ma come spiriti liberi che si rifiutano di smettere di ridere solo perché l'inferno ha deciso di emergere.
+        </p>
+
+        <p class="quote-liberty">
+            Finché una tenda resterà in piedi o un samsariano avrà fiato per cantare, la Libertà rimarrà un baluardo inespugnabile dall'Oscurità.
+        </p>
+    </section>
+
+    <section class="section" id="obiettivo-organizzazione" tabindex="-1" aria-labelledby="obiettivo-organizzazione-h">
+        <h2 id="obiettivo-organizzazione-h">Obiettivo e Organizzazione</h2>
+        
+        <h3>Gli Obiettivi</h3>
+        <p>
+            Lo scopo della Compagnia della Ghironda è ampliare le proprie conoscenze sulle entità maligne che popolano Ardania, in particolare sulla razza demoniaca, con l'obiettivo di contrastare, dominare o distruggere ogni esemplare che incontrano sul loro cammino. Tale obiettivo è accompagnato da uno spiccato interesse per il commercio: i samsariani non si limitano alla caccia e alle esplorazioni ma coltivano fitte reti di scambio con altri popoli, sia per l'arricchimento personale che per il sostentamento del proprio insediamento.
+        </p>
+
+        <h3>La Struttura</h3>
+        <p>
+            Non sono organizzati in una rigida gerarchia ma ogni elemento ha la sua importanza e ricoprire il ruolo che più si addice alle sue capacità e alle esigenze del Campo, ci sono coloro che affinano maggiormente l'arte del combattimento, chi si occupa dei rapporti commerciali e chi è più dedito agli studi.
+            Si fanno chiamare "Krujal", termine che un demone utilizzò una volta per schernirli, definendoli in modo dispregiativo "girotondi", ma che loro adottarono con orgoglio dopo averlo sconfitto.
+            Le decisioni vengono prese insieme con le modalità più disparate, dalle discussioni accese, alle sfide e perfino scommesse per poi essere rappresentate da un Portavoce, solitamente il più morigerato del gruppo. Tuttavia, non viene mai tollerato chi compromette l'armonia e la sicurezza del campo.
+        </p>
+    </section>
+
+    <section class="section" id="usi-costumi" tabindex="-1" aria-labelledby="usi-costumi-h">
+        <h2 id="usi-costumi-h">Usi e Costumi</h2>
+        
+        <h3>Apertura e Tolleranza</h3>
+        <p>
+            La Compagnia della Ghironda accoglie uomini e donne di ogni provenienza e religione, promuovendo l'apertura verso il mondo e i suoi popoli e la conoscenza di culture diverse.
+        </p>
+
+        <h3>Influenza Samsariana</h3>
+        <p>
+            Essendo una compagnia fondata da Samsariani, i suoi membri subiscono fortemente l'influenza delle credenze del popolo dei Vaghi, sia chi lo è di sangue che non, e per questo motivo molte loro abitudini sono accompagnate da piccoli rituali scaramantici.
+        </p>
+
+        <h3>Bottino e Fiamme</h3>
+        <p>
+            Sono inoltre soliti, durante le loro cacce, spogliare i corpi dei demoni di ogni loro possedimento, che siano essi reagenti, tomi o preziosi, per poi bruciare in una grossa pira tutto ciò che non è utile al campo e ai loro studi, per essere certi di privare il maligno anche della più piccola fonte che possa contribuire alla sua crescita.
+        </p>
+    </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-divider"></div>
+            <p>
+                <strong>La Compagnia della Ghironda</strong> | <a href="https://www.themiracleshard.com" target="_blank" rel="noopener noreferrer" class="footer-link" lang="en">The Miracle Shard</a>
+            </p>
+        </div>
+    </footer>
+
+    <script defer src="dist/main.min.js?v=cffb59a5"></script>
+</body>
+</html>
