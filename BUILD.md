@@ -68,7 +68,7 @@ npm run build
 [parallel] npm run build:css || npm run build:js
   ├─ build:css                    ← Concatena + minifica CSS (esbuild loader 'css')
   │   ├─ Critical → inline <style> in .deploy/index.html
-  │   │     (~<!-- AUTO:CSS_INLINE_RAW -->13.1<!-- /AUTO --> KB raw / ~<!-- AUTO:CSS_INLINE_GZIP -->3.5<!-- /AUTO --> KB gzip)
+  │   │     (~<!-- AUTO:CSS_INLINE_RAW -->13.0<!-- /AUTO --> KB raw / ~<!-- AUTO:CSS_INLINE_GZIP -->3.5<!-- /AUTO --> KB gzip)
   │   └─ Deferred → .deploy/dist/style-deferred.min.css
   │         (~<!-- AUTO:CSS_DEFERRED_RAW -->8.8<!-- /AUTO --> KB raw / ~<!-- AUTO:CSS_DEFERRED_GZIP -->2.5<!-- /AUTO --> KB gzip)
   └─ build:js                     ← Bundle + minifica JS (esbuild iife)
@@ -108,7 +108,7 @@ the regex extractor includes the source-comment block above
 
 **Dopo minificazione (auto-injected dai marker AUTO):**
 
-- CSS critical inlined in HTML: ~<!-- AUTO:CSS_INLINE_GZIP -->3.5<!-- /AUTO --> KB gzip (~<!-- AUTO:CSS_INLINE_RAW -->13.1<!-- /AUTO --> KB raw)
+- CSS critical inlined in HTML: ~<!-- AUTO:CSS_INLINE_GZIP -->3.5<!-- /AUTO --> KB gzip (~<!-- AUTO:CSS_INLINE_RAW -->13.0<!-- /AUTO --> KB raw)
 - CSS deferred (`dist/style-deferred.min.css`): ~<!-- AUTO:CSS_DEFERRED_GZIP -->2.5<!-- /AUTO --> KB gzip (~<!-- AUTO:CSS_DEFERRED_RAW -->8.8<!-- /AUTO --> KB raw)
 - JS (`dist/main.min.js`): ~<!-- AUTO:JS_GZIP -->1.2<!-- /AUTO --> KB gzip (~<!-- AUTO:JS_RAW -->2.7<!-- /AUTO --> KB raw)
 - **Totale shipped: ~<!-- AUTO:TOTAL_GZIP -->7.1<!-- /AUTO --> KB gzip** (entro il budget enforced di <!-- AUTO:BUDGET_TOTAL_MAX -->10<!-- /AUTO --> KB; vedi `scripts/performance-budget.js`)

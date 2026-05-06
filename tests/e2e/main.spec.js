@@ -260,6 +260,21 @@ test.describe('Navigation and Scrolling', () => {
       (el) => getComputedStyle(el).borderBottomWidth,
     );
     expect(activeBorderWidth).toBe('0px');
+
+    /* Round-23 layout-shift regression guard. The keyframe used
+       to also animate `font-weight: 700` on the active link.
+       Because `nav ul` is `flex row nowrap` with `gap`, the
+       wider bold text pushed sibling links outward by a few
+       pixels per scroll-driven section change — visible on
+       Chromium as nav-link "movement" while scrolling, invisible
+       on Firefox (keyframe never runs). Pin every link's
+       `font-weight: 600` (the base value) to lock zero layout
+       impact from the active-section animation across every
+       engine — regardless of which section is centred. */
+    const allFontWeights = await page
+      .locator('nav a')
+      .evaluateAll((els) => els.map((el) => getComputedStyle(el).fontWeight));
+    expect(allFontWeights.every((w) => w === '600')).toBe(true);
     /* Per-browser expected value — see matrix in the test docstring.
        Encoded as a lookup table (NOT a ternary) so
        playwright/no-conditional-in-test stays satisfied: there is no

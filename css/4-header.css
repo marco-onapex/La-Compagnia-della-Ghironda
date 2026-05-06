@@ -584,22 +584,30 @@ nav a:focus-visible {
      the full animation range. While in-range, the link gets the active
      styling; out-of-range, it reverts to default.
 
-     Round-23 final shape: the active highlight is COLOUR ONLY
-     (plus font-weight). Earlier iterations animated
-     `border-bottom-color` on top of a `border-bottom: 2px solid
-     transparent` base, but on Chromium the scroll-driven animation
-     engine was leaking a 2px gold underline onto the active link
-     that Firefox — without animation-timeline support — never
-     showed. The user wanted the Firefox affordance ("just the
-     hover-style colour swap, no underline") to be uniform across
-     every engine. Animating `color` alone produces exactly that:
-     a hover-feeling cross-fade onto `--color-accent-gold` (the
-     same gold `nav a:hover` and `nav a:focus` use), no border, no
-     layout-affecting longhand for Chromium to claim. */
+     Round-23 final shape: the active highlight is COLOUR ONLY.
+
+     Earlier iterations animated `border-bottom-color` (over a
+     `border-bottom: 2px solid transparent` base) and `font-weight`
+     (600 → 700 only on the active section). Both were dropped:
+       - The `border-bottom` animation produced a residual 2px
+         underline on Chromium (engine claimed the longhand under a
+         scroll-driven timeline and never released it cleanly).
+       - The `font-weight` animation (600 → 700) made the bolded
+         text physically wider than its 600 counterpart. Because
+         `nav ul` is `flex-flow: row nowrap` with `gap`, every
+         pixel the active link grows pushes the siblings outward —
+         a horizontal layout shift visible on Chromium during
+         every scroll-driven section change. Firefox was immune
+         only because Playwright's bundled build doesn't run the
+         keyframe at all.
+
+     `color` alone is rendering-only: zero layout impact on either
+     engine, and matches `nav a:hover` / `nav a:focus` (which also
+     swap only the colour) so the active state reads as
+     "permanent hover on the current section". */
   from,
   to {
     color: var(--color-accent-gold);
-    font-weight: 700;
   }
 }
 
